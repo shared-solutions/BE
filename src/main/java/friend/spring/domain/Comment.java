@@ -3,9 +3,9 @@ package friend.spring.domain;
 import friend.spring.domain.common.BaseEntity;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 

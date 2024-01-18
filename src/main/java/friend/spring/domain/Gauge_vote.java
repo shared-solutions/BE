@@ -1,8 +1,9 @@
 package friend.spring.domain;
 
 import friend.spring.domain.common.BaseEntity;
-import jakarta.persistence.*;
 import lombok.*;
+
+import javax.persistence.*;
 
 @Entity
 @Getter

@@ -7,9 +7,9 @@ import friend.spring.domain.enums.PostVoteType;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;

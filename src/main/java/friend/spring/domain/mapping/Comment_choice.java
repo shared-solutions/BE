@@ -4,8 +4,9 @@ import friend.spring.domain.Comment;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.common.BaseEntity;
-import jakarta.persistence.*;
 import lombok.*;
+
+import javax.persistence.*;
 
 @Entity
 @Getter
