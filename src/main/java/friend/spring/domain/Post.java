@@ -68,27 +68,35 @@ public class Post extends BaseEntity {
     private Post parentPost;
 
     // 자식 글 정의
+    @Builder.Default
     @OneToMany(mappedBy = "parentPost")
     private List<Post> reviewPostList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Alarm> alarmList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Post_like> postLikeList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Post_scrap> postScrapList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Comment_choice> commentChoiceList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<General_question> generalQuestionList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Gauge_question> gaugeQuestionList = new ArrayList<>();
 }

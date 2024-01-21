@@ -36,12 +36,15 @@ public class Comment extends BaseEntity {
     private Comment parentComment;
 
     // 자식 댓글 정의
+    @Builder.Default
     @OneToMany(mappedBy = "parentComment")
     private List<Comment> subCommentList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "comment")
     private List<Comment_choice> commentChoiceList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "comment")
     private List<Comment_like> commentLikeList = new ArrayList<>();
 }
