@@ -81,6 +81,7 @@ public class General_question extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @Builder.Default
     @OneToMany(mappedBy = "generalQuestion")
     private List<General_vote> generalVoteList = new ArrayList<>();
 }
