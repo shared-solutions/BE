@@ -18,3 +18,24 @@ spring:
           auto: update
         default_batch_fetch_size: 1000
         globally_quoted_identifiers: true
+  cloud:
+    aws:
+      s3:
+        bucket: solution-friend-bucket
+        path:
+          user: users
+          post: posts
+          report: reports
+      region:
+        static: ap-northeast-2
+      stack:
+        auto: false
+      credentials:
+        accessKey: ${AWS_ACCESS_KEY_ID}
+        secretKey: ${AWS_SECRET_ACCESS_KEY}
+  logging:
+    level:
+      com:
+        amazonaws:
+          util:
+            EC2MetadataUtils: error
