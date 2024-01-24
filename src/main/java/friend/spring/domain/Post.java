@@ -53,10 +53,10 @@ public class Post extends BaseEntity {
     private PostState state;
 
     @Column(nullable = false)
-    private Integer view;
+    private Integer view=0;
 
     @Column(nullable = false)
-    private Integer scrap; ///////////////////////////////
+    private Integer scrap=0; ///////////////////////////////
 
     @Column(nullable = true)
     private Timestamp deadline;
