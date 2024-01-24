@@ -1,6 +1,5 @@
 package friend.spring.converter;
 import friend.spring.domain.Post;
-import friend.spring.domain.User;
 import friend.spring.domain.enums.PostCategory;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
