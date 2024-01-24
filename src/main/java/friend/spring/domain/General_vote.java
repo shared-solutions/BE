@@ -4,6 +4,8 @@ import friend.spring.domain.common.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -15,35 +17,11 @@ public class General_vote extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Boolean select1;
-
-    @Column(nullable = true)
-    private Boolean select2;
-
-    @Column(nullable = true)
-    private Boolean select3;
-
-    @Column(nullable = true)
-    private Boolean select4;
-
-    @Column(nullable = true)
-    private Boolean select5;
-
-    @Column(nullable = true)
-    private Boolean select6;
-
-    @Column(nullable = true)
-    private Boolean select7;
-
-    @Column(nullable = true)
-    private Boolean select8;
-
-    @Column(nullable = true)
-    private Boolean select9;
-
-    @Column(nullable = true)
-    private Boolean select10;
+    // 투표 옵션을 저장하는 리스트
+    @ElementCollection
+    @CollectionTable(name = "general_vote_options", joinColumns = @JoinColumn(name = "general_vote_id"))
+    @Column(name = "option")
+    private List<String> options = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -52,4 +30,14 @@ public class General_vote extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "general_question_id")
     private General_question generalQuestion;
+
+    @OneToOne(mappedBy = "generalVote", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Post post;
+
+    public void setPost(Post post) {
+        this.post = post;
+        if (post != null) {
+            post.setGeneralVote(this);
+        }
+    }
 }
