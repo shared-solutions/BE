@@ -19,9 +19,14 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Optional<User> findUser(Long id) {
-        return userRepository.findById(id);
+    public User findMyPage(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if(user.isEmpty()){
+            throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
+        }
+        return user.get();
     }
+
     @Override
     public void checkUser(Boolean flag) {
         if (!flag) {

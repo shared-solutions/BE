@@ -22,8 +22,8 @@ public class UserRestController {
     private final UserService userService;
 
     @GetMapping("/my-page")
-    public ApiResponse<UserResponseDTO.MyPageResDTO> myPage(@RequestHeader(name = "id") Long userId){
-        User user = userService.findUser(userId).get();
-        return ApiResponse.onSuccess(UserConverter.toMypageResDTO(user));
+    public ApiResponse<UserResponseDTO.MyPageResDTO> myPage(@RequestHeader(name = "id") Long userId) {
+        User Page = userService.findMyPage(userId);
+        return ApiResponse.onSuccess(UserConverter.toMypageResDTO(Page));
     }
 }
