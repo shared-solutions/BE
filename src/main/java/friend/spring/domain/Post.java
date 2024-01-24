@@ -1,6 +1,7 @@
 package friend.spring.domain;
 
 import friend.spring.domain.common.BaseEntity;
+import friend.spring.domain.enums.PostCategory;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
@@ -38,6 +39,9 @@ public class Post extends BaseEntity {
     @Column
     private PostVoteType voteType;
 
+    @Enumerated(EnumType.STRING)
+    private PostCategory category;
+
     @Column(nullable = true, length = 1000)
     private String file;
 
@@ -50,6 +54,9 @@ public class Post extends BaseEntity {
 
     @Column(nullable = false)
     private Integer view;
+
+    @Column(nullable = false)
+    private Integer scrap; ///////////////////////////////
 
     @Column(nullable = true)
     private Timestamp deadline;
@@ -91,4 +98,21 @@ public class Post extends BaseEntity {
 
     @OneToMany(mappedBy = "post")
     private List<Gauge_question> gaugeQuestionList = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "general_vote_id")
+    private General_vote generalVote;
+
+    public void setUser(User user){
+        if(this.user != null)
+            user.getPostList().remove(this);
+        this.user = user;
+        user.getPostList().add(this);
+    }
+
+    public void setGeneralVote(General_vote generalVote) {
+        this.generalVote=generalVote;
+        if(this.generalVote!=null)
+            generalVote.setPost(this);
+    }
 }
