@@ -1,11 +1,9 @@
 package friend.spring.web.dto;
 
-import friend.spring.domain.enums.PostType;
-import friend.spring.domain.enums.PostVoteType;
+
 import lombok.Getter;
 import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.List;
 
 public class PostRequestDTO {
