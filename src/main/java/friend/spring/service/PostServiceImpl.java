@@ -5,7 +5,6 @@ import friend.spring.converter.PostConverter;
 import friend.spring.domain.General_vote;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
-import friend.spring.domain.enums.PostType;
 import friend.spring.repository.General_voteRepository;
 import friend.spring.repository.PostRepository;
 import friend.spring.repository.UserRepository;
@@ -14,8 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static friend.spring.domain.enums.PostType.VOTE;
 
