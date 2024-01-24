@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class PostServiceImpl implements PostService {
     @Override
-    public void checkUser(Boolean flag) {
+    public void checkPost(Boolean flag) {
         if (!flag) {
-            throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
+            throw new UserHandler(ErrorStatus.POST_NOT_FOUND);
         }
     }
 }
