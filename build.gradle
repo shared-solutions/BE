@@ -28,7 +28,7 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation 'mysql:mysql-connector-java:8.0.35'
+	implementation 'mysql:mysql-connector-java:8.0.32'
 	implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
 	implementation 'io.springfox:springfox-swagger2:2.9.2'
 	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
