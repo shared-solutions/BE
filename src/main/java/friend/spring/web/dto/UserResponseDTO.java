@@ -19,11 +19,5 @@ public class UserResponseDTO {
         String userLevelName;
         Integer userRecommend;
     }
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class QuestionResDTO {
 
-    }
 }
