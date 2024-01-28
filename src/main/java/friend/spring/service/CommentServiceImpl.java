@@ -6,6 +6,8 @@ import friend.spring.converter.CommentConverter;
 import friend.spring.domain.Comment;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
+import friend.spring.domain.mapping.Comment_like;
+import friend.spring.repository.CommentLikeRepository;
 import friend.spring.repository.CommentRepository;
 import friend.spring.repository.PostRepository;
 import friend.spring.repository.UserRepository;
@@ -24,6 +26,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final CommentLikeRepository commentLikeRepository;
     private final UserService userService;
     private final PostService postService;
 
@@ -54,7 +57,7 @@ public class CommentServiceImpl implements CommentService {
         if (request.getParentId() != null) {
             Optional<Comment> optionalParentComment = commentRepository.findById(request.getParentId());
             if (optionalParentComment.isEmpty()) {
-                checkComment(false);
+                this.checkComment(false);
             }
 
             parentComment = optionalParentComment.get();
@@ -63,5 +66,30 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = CommentConverter.toComment(request, post, user, parentComment);
 
         return commentRepository.save(comment);
+    }
+
+    @Override
+    public Comment_like likeComment(Long postId, Long commentId, Long userId) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            postService.checkPost(false);
+        }
+
+        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        if (optionalComment.isEmpty()) {
+            this.checkComment(false);
+        }
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
+        Post post = optionalPost.get();
+        Comment comment = optionalComment.get();
+        User user = optionalUser.get();
+
+        Comment_like comment_like = CommentConverter.toCommentLike(post, comment, user);
+        return commentLikeRepository.save(comment_like);
     }
 }

@@ -14,4 +14,12 @@ public class CommentResponseDTO {
     public static class commentCreateRes {
         Long commentId;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class commentLikeRes {
+        Long commentLikeId; // 댓글-좋아요 아이디
+    }
 }
