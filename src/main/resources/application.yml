@@ -55,3 +55,18 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
+
+          mail:
+            smtp:
+              auth: true
+              starttls:
+                required: true
+                enable: true
+              socketFactory:
+                class: javax.net.ssl.SSLSocketFactory
+                fallback: false
+              port: 587
+              socketFactoryPort: 587
+            AdminMail:
+              id: gominchingu@gmail.com
+              password: ibjz alpg rhto caxf

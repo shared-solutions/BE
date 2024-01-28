@@ -10,12 +10,12 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum ErrorStatus implements BaseErrorCode {
 
+
     // 가장 일반적인 응답
     _INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON5000", "서버 에러, 관리자에게 문의 바랍니다."),
     _BAD_REQUEST(HttpStatus.BAD_REQUEST,"COMMON4000","잘못된 요청입니다."),
     _UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON4001","인증이 필요합니다."),
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON4003", "금지된 요청입니다."),
-
 
     // 멤버 관련 응답
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4001", "회원정보가 존재하지 않습니다."),
@@ -57,6 +57,8 @@ public enum ErrorStatus implements BaseErrorCode {
                 .httpStatus(httpStatus)
                 .build()
                 ;
+
     }
+
 }
 
