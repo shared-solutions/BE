@@ -11,7 +11,6 @@ import friend.spring.domain.mapping.Post_scrap;
 import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,11 +41,12 @@ public class Post extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PostCategory category;
 
-    @Column(nullable = true, length = 1000)
-    private String file;
+//    @Column(nullable = true, length = 1000)
+//    private String file;
 
+    @ElementCollection
     @Column(nullable = true, length = 100)
-    private String tag;
+    private List<String> tag=new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column
@@ -55,11 +55,6 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private Integer view=0;
 
-    @Column(nullable = false)
-    private Integer scrap=0; ///////////////////////////////
-
-    @Column(nullable = true)
-    private Timestamp deadline;
 
     @Column(nullable = true)
     private Integer point;
@@ -93,15 +88,17 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<Comment_choice> commentChoiceList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
-    private List<General_question> generalQuestionList = new ArrayList<>();
+//    @OneToMany(mappedBy = "post")
+//    private List<General_vote> generalQuestionList = new ArrayList<>();
 
     @OneToMany(mappedBy = "post")
-    private List<Gauge_question> gaugeQuestionList = new ArrayList<>();
+    private List<Gauge_poll> gaugeQuestionList = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "general_vote_id")
-    private General_vote generalVote;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "generalPoll_id")
+    private General_poll generalPoll;
+
+
 
     public void setUser(User user){
         if(this.user != null)
@@ -110,9 +107,23 @@ public class Post extends BaseEntity {
         user.getPostList().add(this);
     }
 
-    public void setGeneralVote(General_vote generalVote) {
-        this.generalVote=generalVote;
-        if(this.generalVote!=null)
-            generalVote.setPost(this);
+    public void setParentPost(Post parent){
+        if(this.parentPost != null)
+            parent.getReviewPostList().remove(this);
+        this.parentPost=parent;
+        parent.getReviewPostList().add(this);
+    }
+    public void setTags(List<String> tags) {
+        if (tags != null) {
+            this.tag = new ArrayList<>(tags);
+        } else {
+            this.tag.clear();
+        }
+    }
+    public void setGeneralPoll(General_poll generalPoll) {
+        this.generalPoll = generalPoll;
+        if (generalPoll != null && generalPoll.getPost() != this) {
+            generalPoll.setPost(this);
+        }
     }
 }
