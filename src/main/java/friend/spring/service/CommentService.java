@@ -10,9 +10,12 @@ import java.util.List;
 
 public interface CommentService {
     void checkComment(Boolean flag);
+    void checkCommentLike(Boolean flag);
     public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq request, Long userId);
 
     Comment_like likeComment(Long postId, Long commentId, Long userId);
 
     Page<CommentResponseDTO.commentGetRes> getComments(Long postId, Integer page, Integer size);
+
+    void dislikeComment(Long postId, Long commentId, Long userId);
 }

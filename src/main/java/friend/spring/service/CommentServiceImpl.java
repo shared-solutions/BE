@@ -44,6 +44,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
+    public void checkCommentLike(Boolean flag) {
+        if (!flag) {
+            throw new UserHandler(ErrorStatus.COMMENT_LIKE_NOT_FOUND);
+        }
+    }
+
+    @Override
     public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq request, Long userId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
@@ -118,5 +125,31 @@ public class CommentServiceImpl implements CommentService {
                 .collect(Collectors.toList());
 
         return new PageImpl<>(commentGetResList, pageable, commentPage.getTotalElements());
+    }
+
+    @Override
+    public void dislikeComment(Long postId, Long commentId, Long userId) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            postService.checkPost(false);
+        }
+
+        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        if (optionalComment.isEmpty()) {
+            this.checkComment(false);
+        }
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
+        Optional<Comment_like> optionalComment_like = commentLikeRepository.findByCommentIdAndUserId(commentId, userId);
+        if (optionalComment_like.isEmpty()) {
+            this.checkCommentLike(false);
+        }
+
+        Comment_like comment_like = optionalComment_like.get();
+        commentLikeRepository.delete(comment_like);
     }
 }
