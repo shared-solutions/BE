@@ -20,6 +20,8 @@ import static friend.spring.domain.enums.PostType.*;
 import static friend.spring.domain.enums.PostVoteType.GAUGE;
 import static friend.spring.domain.enums.PostVoteType.GENERAL;
 
+
+
 @Service
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService{
@@ -30,8 +32,17 @@ public class PostServiceImpl implements PostService{
     private final CandidateRepository candidateRepository;
 
     @Override
+    public void checkPost(Boolean flag) {
+        if (!flag) {
+            throw new UserHandler(ErrorStatus.POST_NOT_FOUND);
+        }
+    }
+    
+    @Override
     @Transactional
     public Post joinPost(PostRequestDTO.AddPostDTO request, Long userId) {
+
+        
         Post newPost= PostConverter.toPost(request);
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new RuntimeException("\""+userId+"\"해당 유저가 없습니다"));
@@ -87,5 +98,6 @@ public class PostServiceImpl implements PostService{
         }
 
         return postRepository.save(newPost);
+
     }
 }

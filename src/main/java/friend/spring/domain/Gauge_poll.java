@@ -27,6 +27,7 @@ public class Gauge_poll extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @Builder.Default
     @OneToMany(mappedBy = "gaugeQuestion")
     private List<Gauge_vote> gaugeVoteList = new ArrayList<>();
 }

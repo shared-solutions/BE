@@ -23,6 +23,7 @@ public class Level extends BaseEntity {
     @Column(nullable = false)
     private Integer like;
 
+    @Builder.Default
     @OneToMany(mappedBy = "level")
     private List<User> userList = new ArrayList<>();
 }
