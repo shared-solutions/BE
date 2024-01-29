@@ -15,15 +15,14 @@ import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -101,25 +100,38 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentResponseDTO.commentGetRes> getComments(Long postId, Integer page) {
+    public Page<CommentResponseDTO.commentGetRes> getComments(Long postId, Integer page, Integer size) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
         }
 
-        Post post = optionalPost.get();
-        List<Comment> comments = post.getCommentList(); // 댓글 리스트 전체 조회
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Comment> commentPage = commentRepository.findByPostIdAndParentCommentIsNull(postId, pageable); // 루트 댓글만 가져옴
+        List<CommentResponseDTO.commentGetRes> commentGetResList = commentPage
+                .map(comment -> {
+                    CommentResponseDTO.commentGetRes commentGetRes = CommentConverter.toCommentGetRes(comment);
+                    return commentGetRes;
+                })
+                .filter(Objects::nonNull) // null인 요소는 필터링
+                .get()
+                .collect(Collectors.toList());
 
-        List<CommentResponseDTO.commentGetRes> commentGetResList = new ArrayList<>();
 
-        for (Comment comment : comments) {
-            CommentResponseDTO.commentGetRes commentGetResDto = CommentConverter.toCommentGetRes(comment);
+//        Post post = optionalPost.get();
+//        List<Comment> comments = post.getCommentList(); // 댓글 리스트 전체 조회
 
-            if (comment.getParentComment() == null) { // 루트댓글인 경우
-                commentGetResList.add(commentGetResDto);
-            }
-        }
-
-        return commentGetResList; // page로 주고 싶은데 어떻게 해야 할까?
+//        List<CommentResponseDTO.commentGetRes> commentGetResList = new ArrayList<>();
+//
+//        for (Comment comment : comments) {
+//            CommentResponseDTO.commentGetRes commentGetResDto = CommentConverter.toCommentGetRes(comment);
+//
+//            if (comment.getParentComment() == null) { // 루트댓글인 경우
+//                commentGetResList.add(commentGetResDto);
+//            }
+//        }
+//
+//        return commentGetResList; // page로 주고 싶은데 어떻게 해야 할까?
+        return new PageImpl<>(commentGetResList, pageable, commentPage.getTotalElements());
     }
 }

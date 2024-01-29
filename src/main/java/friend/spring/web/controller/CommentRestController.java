@@ -55,10 +55,12 @@ public class CommentRestController {
     @Parameters({
             @Parameter(name = "post-id", description = "글 아이디, path variable 입니다!")
     })
-    public ApiResponse<List<CommentResponseDTO.commentGetRes>> getComments(
+    public ApiResponse<Page<CommentResponseDTO.commentGetRes>> getComments(
             @PathVariable("post-id") Long postId,
-            @RequestParam("name = page") Integer page
+            @RequestParam(name = "page") Integer page,
+            @RequestParam(name = "size") Integer size
+
     ) {
-        return ApiResponse.onSuccess(commentService.getComments(postId, page));
+        return ApiResponse.onSuccess(commentService.getComments(postId, page, size));
     }
 }

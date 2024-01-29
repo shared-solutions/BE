@@ -14,5 +14,5 @@ public interface CommentService {
 
     Comment_like likeComment(Long postId, Long commentId, Long userId);
 
-    List<CommentResponseDTO.commentGetRes> getComments(Long postId, Integer page);
+    Page<CommentResponseDTO.commentGetRes> getComments(Long postId, Integer page, Integer size);
 }
