@@ -24,5 +24,5 @@ public class Gauge_vote extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "gauge_question_id")
-    private Gauge_question gaugeQuestion;
+    private Gauge_poll gaugeQuestion;
 }
