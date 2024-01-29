@@ -12,10 +12,17 @@ import friend.spring.repository.CommentRepository;
 import friend.spring.repository.PostRepository;
 import friend.spring.repository.UserRepository;
 import friend.spring.web.dto.CommentRequestDTO;
+import friend.spring.web.dto.CommentResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -91,5 +98,28 @@ public class CommentServiceImpl implements CommentService {
 
         Comment_like comment_like = CommentConverter.toCommentLike(post, comment, user);
         return commentLikeRepository.save(comment_like);
+    }
+
+    @Override
+    public List<CommentResponseDTO.commentGetRes> getComments(Long postId, Integer page) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            postService.checkPost(false);
+        }
+
+        Post post = optionalPost.get();
+        List<Comment> comments = post.getCommentList(); // 댓글 리스트 전체 조회
+
+        List<CommentResponseDTO.commentGetRes> commentGetResList = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            CommentResponseDTO.commentGetRes commentGetResDto = CommentConverter.toCommentGetRes(comment);
+
+            if (comment.getParentComment() == null) { // 루트댓글인 경우
+                commentGetResList.add(commentGetResDto);
+            }
+        }
+
+        return commentGetResList; // page로 주고 싶은데 어떻게 해야 할까?
     }
 }
