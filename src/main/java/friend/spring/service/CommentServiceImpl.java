@@ -117,21 +117,6 @@ public class CommentServiceImpl implements CommentService {
                 .get()
                 .collect(Collectors.toList());
 
-
-//        Post post = optionalPost.get();
-//        List<Comment> comments = post.getCommentList(); // 댓글 리스트 전체 조회
-
-//        List<CommentResponseDTO.commentGetRes> commentGetResList = new ArrayList<>();
-//
-//        for (Comment comment : comments) {
-//            CommentResponseDTO.commentGetRes commentGetResDto = CommentConverter.toCommentGetRes(comment);
-//
-//            if (comment.getParentComment() == null) { // 루트댓글인 경우
-//                commentGetResList.add(commentGetResDto);
-//            }
-//        }
-//
-//        return commentGetResList; // page로 주고 싶은데 어떻게 해야 할까?
         return new PageImpl<>(commentGetResList, pageable, commentPage.getTotalElements());
     }
 }
