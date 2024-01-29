@@ -17,27 +17,74 @@ public class General_vote extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 투표 옵션을 저장하는 리스트
-    @ElementCollection
-    @CollectionTable(name = "general_vote_options", joinColumns = @JoinColumn(name = "general_vote_id"))
-    @Column(name = "option")
-    private List<String> options = new ArrayList<>();
+    @Column(nullable = false)
+    private String candidate1;
+
+    @Column(nullable = true)
+    private String candidate2;
+
+    @Column(nullable = true)
+    private String candidate3;
+
+    @Column(nullable = true)
+    private String candidate4;
+
+    @Column(nullable = true)
+    private String candidate5;
+
+    @Column(nullable = true)
+    private String candidate6;
+
+    @Column(nullable = true)
+    private String candidate7;
+
+    @Column(nullable = true)
+    private String candidate8;
+
+    @Column(nullable = true)
+    private String candidate9;
+
+    @Column(nullable = true)
+    private String candidate10;
+
+    @Column(nullable = true)
+    private String c1_img;
+
+    @Column(nullable = true)
+    private String c2_img;
+
+    @Column(nullable = true)
+    private String c3_img;
+
+    @Column(nullable = true)
+    private String c4_img;
+
+    @Column(nullable = true)
+    private String c5_img;
+
+    @Column(nullable = true)
+    private String c6_img;
+
+    @Column(nullable = true)
+    private String c7_img;
+
+    @Column(nullable = true)
+    private String c8_img;
+
+    @Column(nullable = true)
+    private String c9_img;
+
+    @Column(nullable = true)
+    private String c10_img;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
+    private Post post;
+
+    @OneToMany(mappedBy = "generalVote")
+    private List<General_poll> generalPollList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "general_question_id")
-    private General_question generalQuestion;
-
-    @OneToOne(mappedBy = "generalVote", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Post post;
-
-    public void setPost(Post post) {
-        this.post = post;
-        if (post != null) {
-            post.setGeneralVote(this);
-        }
-    }
 }
