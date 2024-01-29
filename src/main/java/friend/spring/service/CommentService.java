@@ -1,6 +1,7 @@
 package friend.spring.service;
 
 import friend.spring.domain.Comment;
+import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
@@ -11,6 +12,8 @@ import java.util.List;
 public interface CommentService {
     void checkComment(Boolean flag);
     void checkCommentLike(Boolean flag);
+    void checkCommentChoice(Boolean flag);
+    void checkSelectCommentAnotherUser(Boolean flag);
     public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq request, Long userId);
 
     Comment_like likeComment(Long postId, Long commentId, Long userId);
@@ -18,4 +21,6 @@ public interface CommentService {
     Page<CommentResponseDTO.commentGetRes> getComments(Long postId, Integer page, Integer size);
 
     void dislikeComment(Long postId, Long commentId, Long userId);
+
+    Comment_choice selectComment(Long postId, Long commentId, Long userId);
 }

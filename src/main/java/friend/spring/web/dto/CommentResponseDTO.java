@@ -42,4 +42,13 @@ public class CommentResponseDTO {
         Integer commentLike;
         List<commentGetRes> childrenComments;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class commentSelectRes {
+        Long commentChoiceId;
+        Integer point;
+    }
 }

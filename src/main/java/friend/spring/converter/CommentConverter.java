@@ -3,6 +3,7 @@ package friend.spring.converter;
 import friend.spring.domain.Comment;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
+import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
@@ -63,6 +64,21 @@ public class CommentConverter {
                 .parentCommentId(parentCommentId)
                 .commentLike(comment.getCommentLikeList().size())
                 .childrenComments(subComments)
+                .build();
+    }
+
+    public static Comment_choice toCommentChoice(Post post, Comment comment) {
+        return Comment_choice.builder()
+                .point(post.getPoint())
+                .post(post)
+                .comment(comment)
+                .build();
+    }
+
+    public static CommentResponseDTO.commentSelectRes toCommentSelectRes(Comment_choice comment_choice) {
+        return CommentResponseDTO.commentSelectRes.builder()
+                .commentChoiceId(comment_choice.getId())
+                .point(comment_choice.getPoint())
                 .build();
     }
 }

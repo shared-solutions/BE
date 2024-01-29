@@ -14,4 +14,11 @@ public class PostServiceImpl implements PostService {
             throw new UserHandler(ErrorStatus.POST_NOT_FOUND);
         }
     }
+
+    @Override
+    public void checkPostWriterUser(Boolean flag) {
+        if (!flag) {
+            throw new UserHandler(ErrorStatus.NOT_CORRECT_USER);
+        }
+    }
 }

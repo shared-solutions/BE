@@ -6,11 +6,9 @@ import friend.spring.converter.CommentConverter;
 import friend.spring.domain.Comment;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
+import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
-import friend.spring.repository.CommentLikeRepository;
-import friend.spring.repository.CommentRepository;
-import friend.spring.repository.PostRepository;
-import friend.spring.repository.UserRepository;
+import friend.spring.repository.*;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +31,7 @@ public class CommentServiceImpl implements CommentService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CommentLikeRepository commentLikeRepository;
+    private final CommentChoiceRepository commentChoiceRepository;
     private final UserService userService;
     private final PostService postService;
 
@@ -47,6 +46,20 @@ public class CommentServiceImpl implements CommentService {
     public void checkCommentLike(Boolean flag) {
         if (!flag) {
             throw new UserHandler(ErrorStatus.COMMENT_LIKE_NOT_FOUND);
+        }
+    }
+
+    @Override
+    public void checkCommentChoice(Boolean flag) {
+        if (!flag) {
+            throw new UserHandler(ErrorStatus.COMMENT_CHOICE_OVER_ONE);
+        }
+    }
+
+    @Override
+    public void checkSelectCommentAnotherUser(Boolean flag) {
+        if (!flag) {
+            throw new UserHandler(ErrorStatus.COMMENT_SELECT_MYSELF);
         }
     }
 
@@ -152,4 +165,48 @@ public class CommentServiceImpl implements CommentService {
         Comment_like comment_like = optionalComment_like.get();
         commentLikeRepository.delete(comment_like);
     }
+
+    @Override
+    public Comment_choice selectComment(Long postId, Long commentId, Long userId) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            postService.checkPost(false);
+        }
+
+        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        if (optionalComment.isEmpty()) {
+            this.checkComment(false);
+        }
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        // 이 사용자가 존재하는지 확인
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
+        Post post = optionalPost.get();
+        Comment comment = optionalComment.get();
+        User user = optionalUser.get();
+
+        // 로그인한 사용자가 이 글의 작성자인지 확인
+        if (!Objects.equals(user.getId(), post.getUser().getId())) {
+            // 작성자가 아닌 경우 -> 에러 반환
+            postService.checkPostWriterUser(false);
+        }
+
+        // 자기 자신을 채택했는지 확인
+        if (Objects.equals(user.getId(), comment.getUser().getId())) {
+            this.checkSelectCommentAnotherUser(false);
+        }
+
+        Optional<Comment_choice> optionalComment_choice = commentChoiceRepository.findByPostId(postId);
+        if (!optionalComment_choice.isEmpty()) { // 이미 1명 채택을 한 상태이므로 에러로 반환
+            this.checkCommentChoice(false);
+        }
+
+        Comment_choice comment_choice = CommentConverter.toCommentChoice(post, comment);
+        return commentChoiceRepository.save(comment_choice);
+    }
+
+
 }
