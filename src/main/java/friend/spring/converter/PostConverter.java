@@ -1,6 +1,7 @@
 package friend.spring.converter;
 import friend.spring.domain.Post;
 import friend.spring.domain.enums.PostCategory;
+import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
 import friend.spring.web.dto.PostRequestDTO;
@@ -34,6 +35,8 @@ public class PostConverter {
             case 3:
                 postType=PostType.REVIEW;
                 break;
+            default:
+                break;
         }
 
         if(postType== VOTE) {
@@ -44,18 +47,31 @@ public class PostConverter {
                 case 2:
                     postVoteType = PostVoteType.GAUGE;
                     break;
+                default:
+                    break;
             }
         }
 
         switch (request.getCategory()){
             case 1:
-                category=PostCategory.SPORTS;
+                category=PostCategory.EDUCATION;
                 break;
             case 2:
-                category=PostCategory.ANIMALS;
+                category=PostCategory.ENTERTAINMENT;
                 break;
             case 3:
-                category=PostCategory.FASHION;
+                category=PostCategory.LIFESTYLE;
+                break;
+            case 4:
+                category=PostCategory.ECONOMY;
+                break;
+            case 5:
+                category=PostCategory.SHOPPING;
+                break;
+            case 6:
+                category=PostCategory.OTHERS;
+                break;
+            default:
                 break;
         }
 
@@ -66,12 +82,9 @@ public class PostConverter {
                 .postType(postType)
                 .category(category)
                 .voteType(postVoteType)
-                .file(request.getFile())
-                .tag(request.getTag())
-                .deadline(request.getDeadline())
                 .point(request.getPoint())
                 .view(0)
-                .scrap(0)
+                .state(PostState.POSTING)
                 .build();
     }
 }
