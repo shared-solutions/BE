@@ -1,5 +1,5 @@
 package friend.spring.domain.enums;
 
 public enum PostVoteType {
-    GENERAL, GAUGE
+    GENERAL, GAUGE, CARD
 }

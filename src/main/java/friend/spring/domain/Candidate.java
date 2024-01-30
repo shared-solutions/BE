@@ -20,22 +20,14 @@ public class Candidate extends BaseEntity {
 
     private String image;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "generalPoll_id")
-//    private General_poll generalPoll;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "generalPoll_id")
     private General_poll generalPoll;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cardPoll_id")
+    private Card_poll cardPoll;
 
-
-//    public void setGeneralPoll(General_poll generalPoll){
-//        this.generalPoll = generalPoll;
-//        if (generalPoll != null) {
-//            generalPoll.getCandidateList().add(this);
-//        }
-//
-//    }
     public void setGeneralPoll(General_poll generalPoll) {
     this.generalPoll = generalPoll;
     if (this.generalPoll != null) {
@@ -45,6 +37,16 @@ public class Candidate extends BaseEntity {
         }
     }
 }
+
+    public void setCardPoll(Card_poll cardPoll) {
+        this.cardPoll = cardPoll;
+        if (this.cardPoll != null) {
+            Hibernate.initialize(this.cardPoll);
+            if (this.cardPoll.getCandidateList() != null) {
+                this.cardPoll.getCandidateList().add(this);
+            }
+        }
+    }
 
 
 }

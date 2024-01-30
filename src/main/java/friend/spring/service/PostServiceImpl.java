@@ -1,15 +1,11 @@
 package friend.spring.service;
 
+import friend.spring.apiPayload.code.status.ErrorStatus;
+import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.converter.PostConverter;
-import friend.spring.domain.Candidate;
-import friend.spring.domain.General_poll;
-import friend.spring.domain.Post;
-import friend.spring.domain.User;
+import friend.spring.domain.*;
 import friend.spring.domain.enums.PostVoteType;
-import friend.spring.repository.CandidateRepository;
-import friend.spring.repository.General_PollRepository;
-import friend.spring.repository.PostRepository;
-import friend.spring.repository.UserRepository;
+import friend.spring.repository.*;
 import friend.spring.web.dto.PollOptionDTO;
 import friend.spring.web.dto.PostRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static friend.spring.domain.enums.PostType.*;
-import static friend.spring.domain.enums.PostVoteType.GAUGE;
-import static friend.spring.domain.enums.PostVoteType.GENERAL;
-
+import static friend.spring.domain.enums.PostVoteType.*;
 
 
 @Service
@@ -30,7 +24,8 @@ public class PostServiceImpl implements PostService{
     private final General_PollRepository generalPollRepository;
     private final UserRepository userRepository;
     private final CandidateRepository candidateRepository;
-
+    private final Gauge_PollRepository gaugePollRepository;
+    private final Card_PollRepository cardPollRepository;
     @Override
     public void checkPost(Boolean flag) {
         if (!flag) {
@@ -73,12 +68,12 @@ public class PostServiceImpl implements PostService{
             }
         }
 
-        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GAUGE&&request.getPollOption()!=null){
-            General_poll generalPoll = General_poll.builder()
+        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==CARD&&request.getPollOption()!=null){
+            Card_poll cardPoll = Card_poll.builder()
                     .deadline(request.getDeadline())
                     .build();
-            newPost.setGeneralPoll(generalPoll);
-            generalPollRepository.save(generalPoll);
+            newPost.setCardPoll(cardPoll);
+            cardPollRepository.save(cardPoll);
 
             for (PollOptionDTO option : request.getPollOption()) {
                 Candidate candidate = Candidate.builder()
@@ -86,9 +81,21 @@ public class PostServiceImpl implements PostService{
                         .image(option.getOptionImg())
                         .build();
 
-                candidate.setGeneralPoll(generalPoll);
+                candidate.setCardPoll(cardPoll);
                 candidateRepository.save(candidate);
             }
+        }
+
+        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GAUGE&&request.getPollOption()!=null){
+            Gauge_poll gaugePoll = Gauge_poll.builder()
+                    .max(100)
+                    .min(0)
+                    .value(0)
+                    .deadline(request.getDeadline())
+                    .build();
+
+            newPost.setGaugePoll(gaugePoll);
+            gaugePollRepository.save(gaugePoll);
         }
 
         if(newPost.getPostType()==REVIEW&&request.getParent_id()!=null){

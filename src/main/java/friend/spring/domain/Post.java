@@ -91,8 +91,13 @@ public class Post extends BaseEntity {
 //    @OneToMany(mappedBy = "post")
 //    private List<General_vote> generalQuestionList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
-    private List<Gauge_poll> gaugeQuestionList = new ArrayList<>();
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cardPoll_id")
+    private Card_poll cardPoll;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="gaugePoll_id")
+    private Gauge_poll gaugePoll;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "generalPoll_id")
@@ -124,6 +129,20 @@ public class Post extends BaseEntity {
         this.generalPoll = generalPoll;
         if (generalPoll != null && generalPoll.getPost() != this) {
             generalPoll.setPost(this);
+        }
+    }
+
+    public void setGaugePoll(Gauge_poll gaugePoll) {
+        this.gaugePoll = gaugePoll;
+        if (gaugePoll != null && gaugePoll.getPost() != this) {
+            gaugePoll.setPost(this);
+        }
+    }
+
+    public void setCardPoll(Card_poll cardPoll) {
+        this.cardPoll = cardPoll;
+        if (cardPoll != null && cardPoll.getPost() != this) {
+            cardPoll.setPost(this);
         }
     }
 }

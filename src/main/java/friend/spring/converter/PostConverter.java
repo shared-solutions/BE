@@ -47,6 +47,9 @@ public class PostConverter {
                 case 2:
                     postVoteType = PostVoteType.GAUGE;
                     break;
+                case 3:
+                    postVoteType = PostVoteType.CARD;
+                    break;
                 default:
                     break;
             }
