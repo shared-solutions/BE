@@ -150,5 +150,9 @@ public class User extends BaseEntity implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Card_vote> cardVoteList = new ArrayList<>();
 }
 
