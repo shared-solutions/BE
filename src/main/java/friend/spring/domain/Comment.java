@@ -25,7 +25,7 @@ public class Comment extends BaseEntity {
     private String content;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column
     private CommentState state;
 
     @ManyToOne(fetch = FetchType.LAZY)
