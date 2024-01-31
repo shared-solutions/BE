@@ -1,6 +1,8 @@
 package friend.spring.service;
 
 import friend.spring.apiPayload.GeneralException;
+import friend.spring.apiPayload.code.status.ErrorStatus;
+import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.config.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,7 @@ public class EmailService {
         public boolean CheckAuthNum(String email,String authNum){
             if(redisUtil.getData(authNum)==null){
                 System.out.println("false1");
-                return false;
+                throw new UserHandler(ErrorStatus.INCORRECT_CODE);
             }
             else if(redisUtil.getData(authNum).equals(email)){
                 System.out.println("true");
@@ -34,7 +36,7 @@ public class EmailService {
             }
             else{
                 System.out.println("false2");
-                return false;
+                throw new UserHandler(ErrorStatus.INCORRECT_CODE);
             }
         }
         //임의의 6자리 인증 코드생성
