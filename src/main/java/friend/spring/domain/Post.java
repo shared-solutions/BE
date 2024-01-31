@@ -42,6 +42,7 @@ public class Post extends BaseEntity {
     private PostCategory category;
 
 
+    @Builder.Default
     @ElementCollection
     @Column(nullable = true, length = 100)
     private List<String> tag=new ArrayList<>();
@@ -50,6 +51,7 @@ public class Post extends BaseEntity {
     @Column
     private PostState state;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer view=0;
 
@@ -67,22 +69,28 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "parent_id")
     private Post parentPost;
 
+    @Builder.Default
     // 자식 글 정의
     @OneToMany(mappedBy = "parentPost")
     private List<Post> reviewPostList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Alarm> alarmList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Post_like> postLikeList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Post_scrap> postScrapList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Comment_choice> commentChoiceList = new ArrayList<>();
 

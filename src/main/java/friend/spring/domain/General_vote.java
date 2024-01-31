@@ -18,6 +18,7 @@ public class General_vote extends BaseEntity {
     private Long id;
 
     @ElementCollection
+    @Builder.Default
     @Column(nullable = true, length = 100)
     private List<Long> select_list=new ArrayList<Long>();
 
