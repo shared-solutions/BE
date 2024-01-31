@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class General_vote extends BaseEntity {
+public class Card_vote extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -27,8 +27,8 @@ public class General_vote extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "general_poll_id")
-    private General_poll generalPoll;
+    @JoinColumn(name = "card_poll_id")
+    private Card_poll cardPoll;
 
     public void setSelect_list(List<Long> select_list) {
         if (select_list != null) {
@@ -37,16 +37,16 @@ public class General_vote extends BaseEntity {
             this.select_list.clear();
         }
     }
-    public void setGeneralPoll(General_poll generalPoll){
-        if(this.generalPoll != null)
-            generalPoll.getGeneralVoteList().remove(this);
-        this.generalPoll = generalPoll;
-        generalPoll.getGeneralVoteList().add(this);
+    public void setCardPoll(Card_poll cardPoll){
+        if(this.cardPoll != null)
+            cardPoll.getCardVoteList().remove(this);
+        this.cardPoll = cardPoll;
+        cardPoll.getCardVoteList().add(this);
     }
     public void setUser(User user){
         if(this.user != null)
-            user.getGeneralVoteList().remove(this);
+            user.getCardVoteList().remove(this);
         this.user = user;
-        user.getGeneralVoteList().add(this);
+        user.getCardVoteList().add(this);
     }
 }
