@@ -3,14 +3,16 @@ package friend.spring.web.controller;
 import friend.spring.apiPayload.ApiResponse;
 import friend.spring.converter.UserConverter;
 import friend.spring.domain.Level;
+import friend.spring.domain.Post;
 import friend.spring.domain.User;
+import friend.spring.repository.PostRepository;
+import friend.spring.service.CommentService;
+import friend.spring.service.PostService;
 import friend.spring.service.UserService;
 import friend.spring.web.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -20,10 +22,23 @@ import java.util.Optional;
 public class UserRestController {
 
     private final UserService userService;
-
+    private final PostService postService;
+    private final CommentService commentService;
     @GetMapping("/my-page")
-    public ApiResponse<UserResponseDTO.MyPageResDTO> myPage(@RequestHeader(name = "id") Long userId) {
-        User Page = userService.findMyPage(userId);
-        return ApiResponse.onSuccess(UserConverter.toMypageResDTO(Page));
+    public ApiResponse<UserResponseDTO.MyPageResDTO> getMyPage(
+            @RequestHeader(name = "id") Long userId) {
+        User myPage = userService.findMyPage(userId);
+        return ApiResponse.onSuccess(UserConverter.toMypageResDTO(myPage));
+    }
+
+    @GetMapping("/my-page/profile/question")
+    public ApiResponse<UserResponseDTO.QuestionResDTO> getQuestion(
+            @RequestHeader(name = "id") Long userId,
+            @RequestParam(name = "page") Integer page){
+        User myPage = userService.findMyPage(userId);
+        Level nxtLevel = userService.nextLevel(userId);
+
+        Page<Post> myPostList = postService.getMyPostList(userId, page);
+        return ApiResponse.onSuccess(UserConverter.toQuestionResDTO(myPage, nxtLevel, ));
     }
 }

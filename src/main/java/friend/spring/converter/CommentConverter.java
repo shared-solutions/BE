@@ -21,4 +21,6 @@ public class CommentConverter {
                 .commentId(comment.getId())
                 .build();
     }
+
+    public static CommentResponseDTO.myCommentRes toMyCommentRes()
 }

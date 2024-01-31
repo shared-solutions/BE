@@ -5,27 +5,21 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class CommentResponseDTO {
+public class PostResponseDTO {
 
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class commentCreateRes {
-        Long commentId;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class myCommentRes {
+    public static class MyPostDTO {
         String nickName;
         LocalDateTime createdAt;
-        String content;
-        Integer commentLike;
-        Integer reComment;
+        String title;
+        Integer postLike;
+        Integer comment;
     }
 }
+
