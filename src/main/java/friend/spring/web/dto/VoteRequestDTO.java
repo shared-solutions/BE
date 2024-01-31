@@ -12,4 +12,11 @@ public class VoteRequestDTO {
         Long postId;
         List<Long> selectList;
     }
+
+    @Getter
+    public static class GaugeVoteRequestDTO{
+        Long postId;
+        Integer value;
+    }
+
 }

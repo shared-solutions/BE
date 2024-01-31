@@ -1,5 +1,6 @@
 package friend.spring.converter;
 
+import friend.spring.domain.Gauge_vote;
 import friend.spring.domain.General_vote;
 import friend.spring.domain.Post;
 import friend.spring.domain.enums.PostCategory;
@@ -26,6 +27,13 @@ public class VoteConverter {
     public static General_vote toGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request) {
 
         return General_vote.builder()
+                .build();
+    }
+
+    public static Gauge_vote toGaugeVote(VoteRequestDTO.GaugeVoteRequestDTO request) {
+
+        return Gauge_vote.builder()
+                .value(request.getValue())
                 .build();
     }
 }

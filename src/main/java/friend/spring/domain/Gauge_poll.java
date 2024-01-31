@@ -36,7 +36,7 @@ public class Gauge_poll extends BaseEntity {
     private Post post;
 
     @Builder.Default
-    @OneToMany(mappedBy = "gaugeQuestion")
+    @OneToMany(mappedBy = "gaugePoll")
     private List<Gauge_vote> gaugeVoteList = new ArrayList<>();
 
     public void setPost(Post post) {

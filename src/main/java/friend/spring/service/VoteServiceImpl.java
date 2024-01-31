@@ -29,6 +29,7 @@ public class VoteServiceImpl implements VoteService{
                 .orElseThrow(()-> new RuntimeException("\"" + request.getPostId() + "\"해당 글이 없습니다"));
 
         General_poll generalPoll=post.getGeneralPoll();
+        newGeneralVote.setGeneralPoll(generalPoll);
 
         List<Long> selectedCandidateIds = request.getSelectList();
         List<Long> validCandidateIds = generalPoll.getCandidateList().stream()
