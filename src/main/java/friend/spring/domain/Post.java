@@ -1,6 +1,7 @@
 package friend.spring.domain;
 
 import friend.spring.domain.common.BaseEntity;
+import friend.spring.domain.enums.PostCategory;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
@@ -10,7 +11,6 @@ import friend.spring.domain.mapping.Post_scrap;
 import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,21 +38,21 @@ public class Post extends BaseEntity {
     @Column
     private PostVoteType voteType;
 
-    @Column(nullable = true, length = 1000)
-    private String file;
+    @Enumerated(EnumType.STRING)
+    private PostCategory category;
 
+
+    @ElementCollection
     @Column(nullable = true, length = 100)
-    private String tag;
+    private List<String> tag=new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column
     private PostState state;
 
     @Column(nullable = false)
-    private Integer view;
+    private Integer view=0;
 
-    @Column(nullable = true)
-    private Timestamp deadline;
 
     @Column(nullable = true)
     private Integer point;
@@ -68,35 +68,77 @@ public class Post extends BaseEntity {
     private Post parentPost;
 
     // 자식 글 정의
-    @Builder.Default
     @OneToMany(mappedBy = "parentPost")
     private List<Post> reviewPostList = new ArrayList<>();
 
-    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Alarm> alarmList = new ArrayList<>();
 
-    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Post_like> postLikeList = new ArrayList<>();
 
-    @Builder.Default
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<Post_scrap> postScrapList = new ArrayList<>();
 
-    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList = new ArrayList<>();
 
-    @Builder.Default
     @OneToMany(mappedBy = "post")
     private List<Comment_choice> commentChoiceList = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "post")
-    private List<General_question> generalQuestionList = new ArrayList<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "post")
-    private List<Gauge_question> gaugeQuestionList = new ArrayList<>();
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cardPoll_id")
+    private Card_poll cardPoll;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="gaugePoll_id")
+    private Gauge_poll gaugePoll;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "generalPoll_id")
+    private General_poll generalPoll;
+
+
+
+    public void setUser(User user){
+        if(this.user != null)
+            user.getPostList().remove(this);
+        this.user = user;
+        user.getPostList().add(this);
+    }
+
+    public void setParentPost(Post parent){
+        if(this.parentPost != null)
+            parent.getReviewPostList().remove(this);
+        this.parentPost=parent;
+        parent.getReviewPostList().add(this);
+    }
+    public void setTags(List<String> tags) {
+        if (tags != null) {
+            this.tag = new ArrayList<>(tags);
+        } else {
+            this.tag.clear();
+        }
+    }
+    public void setGeneralPoll(General_poll generalPoll) {
+        this.generalPoll = generalPoll;
+        if (generalPoll != null && generalPoll.getPost() != this) {
+            generalPoll.setPost(this);
+        }
+    }
+
+    public void setGaugePoll(Gauge_poll gaugePoll) {
+        this.gaugePoll = gaugePoll;
+        if (gaugePoll != null && gaugePoll.getPost() != this) {
+            gaugePoll.setPost(this);
+        }
+    }
+
+    public void setCardPoll(Card_poll cardPoll) {
+        this.cardPoll = cardPoll;
+        if (cardPoll != null && cardPoll.getPost() != this) {
+            cardPoll.setPost(this);
+        }
+    }
 }
