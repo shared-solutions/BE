@@ -26,9 +26,8 @@ public class General_poll extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "general_vote_id")
-    private General_vote generalVote;
+    @OneToMany(mappedBy = "generalPoll", cascade = CascadeType.ALL)
+    private List<General_vote> generalVoteList = new ArrayList<>();
 
     @OneToOne(mappedBy = "generalPoll", cascade = CascadeType.ALL)
     private Post post;

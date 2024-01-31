@@ -17,74 +17,35 @@ public class General_vote extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String candidate1;
-
-    @Column(nullable = true)
-    private String candidate2;
-
-    @Column(nullable = true)
-    private String candidate3;
-
-    @Column(nullable = true)
-    private String candidate4;
-
-    @Column(nullable = true)
-    private String candidate5;
-
-    @Column(nullable = true)
-    private String candidate6;
-
-    @Column(nullable = true)
-    private String candidate7;
-
-    @Column(nullable = true)
-    private String candidate8;
-
-    @Column(nullable = true)
-    private String candidate9;
-
-    @Column(nullable = true)
-    private String candidate10;
-
-    @Column(nullable = true)
-    private String c1_img;
-
-    @Column(nullable = true)
-    private String c2_img;
-
-    @Column(nullable = true)
-    private String c3_img;
-
-    @Column(nullable = true)
-    private String c4_img;
-
-    @Column(nullable = true)
-    private String c5_img;
-
-    @Column(nullable = true)
-    private String c6_img;
-
-    @Column(nullable = true)
-    private String c7_img;
-
-    @Column(nullable = true)
-    private String c8_img;
-
-    @Column(nullable = true)
-    private String c9_img;
-
-    @Column(nullable = true)
-    private String c10_img;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private Post post;
-
-    @OneToMany(mappedBy = "generalVote")
-    private List<General_poll> generalPollList = new ArrayList<>();
+    @ElementCollection
+    @Column(nullable = true, length = 100)
+    private List<Long> select_list=new ArrayList<Long>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "general_poll_id")
+    private General_poll generalPoll;
+
+    public void setSelect_list(List<Long> select_list) {
+        if (select_list != null) {
+            this.select_list = new ArrayList<Long>(select_list);
+        } else {
+            this.select_list.clear();
+        }
+    }
+    public void setGeneralPoll(General_poll generalPoll){
+        if(this.generalPoll != null)
+            generalPoll.getGeneralVoteList().remove(this);
+        this.generalPoll = generalPoll;
+        generalPoll.getGeneralVoteList().add(this);
+    }
+    public void setUser(User user){
+        if(this.user != null)
+            user.getGeneralVoteList().remove(this);
+        this.user = user;
+        user.getGeneralVoteList().add(this);
+    }
 }

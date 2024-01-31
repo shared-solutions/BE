@@ -7,7 +7,7 @@ import java.util.List;
 
 public class General_PollConverter {
 
-    public static General_poll toGeneralVoteList(List<Candidate> pollOptions) {
+    public static General_poll toGeneralPollList(List<Candidate> pollOptions) {
         return General_poll.builder()
                 .candidateList(pollOptions)
                 .build();

@@ -41,8 +41,6 @@ public class Post extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PostCategory category;
 
-//    @Column(nullable = true, length = 1000)
-//    private String file;
 
     @ElementCollection
     @Column(nullable = true, length = 100)
