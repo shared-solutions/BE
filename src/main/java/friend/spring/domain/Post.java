@@ -45,7 +45,7 @@ public class Post extends BaseEntity {
     private String tag;
 
     @Enumerated(EnumType.STRING)
-    @Column
+    @Column(nullable = false)
     private PostState state;
 
     @Column(nullable = false)
