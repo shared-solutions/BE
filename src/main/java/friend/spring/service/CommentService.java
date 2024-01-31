@@ -14,6 +14,8 @@ public interface CommentService {
     void checkCommentLike(Boolean flag);
     void checkCommentChoice(Boolean flag);
     void checkSelectCommentAnotherUser(Boolean flag);
+
+    void checkCommentWriterUser(Boolean flag);
     public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq request, Long userId);
 
     Comment_like likeComment(Long postId, Long commentId, Long userId);
@@ -23,4 +25,6 @@ public interface CommentService {
     void dislikeComment(Long postId, Long commentId, Long userId);
 
     Comment_choice selectComment(Long postId, Long commentId, Long userId);
+
+    void editComment(Long postId, Long commentId, CommentRequestDTO.commentEditReq request, Long userId);
 }

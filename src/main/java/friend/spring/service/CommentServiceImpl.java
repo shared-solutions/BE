@@ -1,7 +1,8 @@
 package friend.spring.service;
 
+import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
-import friend.spring.apiPayload.handler.UserHandler;
+import friend.spring.apiPayload.handler.CommentHandler;
 import friend.spring.converter.CommentConverter;
 import friend.spring.domain.Comment;
 import friend.spring.domain.Post;
@@ -38,32 +39,40 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void checkComment(Boolean flag) {
         if (!flag) {
-            throw new UserHandler(ErrorStatus.COMMENT_NOT_FOUND);
+            throw new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND);
         }
     }
 
     @Override
     public void checkCommentLike(Boolean flag) {
         if (!flag) {
-            throw new UserHandler(ErrorStatus.COMMENT_LIKE_NOT_FOUND);
+            throw new CommentHandler(ErrorStatus.COMMENT_LIKE_NOT_FOUND);
         }
     }
 
     @Override
     public void checkCommentChoice(Boolean flag) {
         if (!flag) {
-            throw new UserHandler(ErrorStatus.COMMENT_CHOICE_OVER_ONE);
+            throw new CommentHandler(ErrorStatus.COMMENT_CHOICE_OVER_ONE);
         }
     }
 
     @Override
     public void checkSelectCommentAnotherUser(Boolean flag) {
         if (!flag) {
-            throw new UserHandler(ErrorStatus.COMMENT_SELECT_MYSELF);
+            throw new CommentHandler(ErrorStatus.COMMENT_SELECT_MYSELF);
         }
     }
 
     @Override
+    public void checkCommentWriterUser(Boolean flag) {
+        if (!flag) {
+            throw new CommentHandler(ErrorStatus.COMMENT_NOT_CORRECT_USER);
+        }
+    }
+
+    @Override
+    @Transactional
     public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq request, Long userId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
@@ -208,5 +217,17 @@ public class CommentServiceImpl implements CommentService {
         return commentChoiceRepository.save(comment_choice);
     }
 
-
+    @Override
+    @Transactional
+    public void editComment(Long postId, Long commentId, CommentRequestDTO.commentEditReq request, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+        // 로그인한 사용자가 이 댓글의 작성자인지 확인
+        if (!Objects.equals(user.getId(), comment.getUser().getId())) {
+            // 작성자가 아닌 경우 -> 에러 반환
+            this.checkCommentWriterUser(false);
+        }
+        comment.update(request.getContent());
+    }
 }

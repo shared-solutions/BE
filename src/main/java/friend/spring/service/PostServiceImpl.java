@@ -1,7 +1,7 @@
 package friend.spring.service;
 
 import friend.spring.apiPayload.code.status.ErrorStatus;
-import friend.spring.apiPayload.handler.UserHandler;
+import friend.spring.apiPayload.handler.PostHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,14 +11,14 @@ public class PostServiceImpl implements PostService {
     @Override
     public void checkPost(Boolean flag) {
         if (!flag) {
-            throw new UserHandler(ErrorStatus.POST_NOT_FOUND);
+            throw new PostHandler(ErrorStatus.POST_NOT_FOUND);
         }
     }
 
     @Override
     public void checkPostWriterUser(Boolean flag) {
         if (!flag) {
-            throw new UserHandler(ErrorStatus.NOT_CORRECT_USER);
+            throw new PostHandler(ErrorStatus.POST_NOT_CORRECT_USER);
         }
     }
 }

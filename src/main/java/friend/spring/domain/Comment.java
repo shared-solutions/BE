@@ -47,4 +47,8 @@ public class Comment extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "comment")
     private List<Comment_like> commentLikeList = new ArrayList<>();
+
+    public void update(String content) {
+        this.content = content;
+    }
 }

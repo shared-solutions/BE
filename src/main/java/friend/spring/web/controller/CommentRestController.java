@@ -143,4 +143,27 @@ public class CommentRestController {
         Comment_choice comment_choice = commentService.selectComment(postId, commentId, userId);
         return ApiResponse.onSuccess(CommentConverter.toCommentSelectRes(comment_choice));
     }
+
+    // 댓글 수정
+    @PostMapping("/{post-id}/comment/{comment-id}/edit")
+    @Operation(summary = "댓글 수정 API", description = "댓글 수정하는 API입니다. ex) /posts/1/comment/1/edit")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "post-id", description = "path variable - 글 아이디"),
+            @Parameter(name = "comment-id", description = "path variable - 댓글 아이디"),
+            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+    })
+    public ApiResponse<Void> editComment(
+            @PathVariable("post-id") Long postId,
+            @PathVariable("comment-id") Long commentId,
+            @RequestBody CommentRequestDTO.commentEditReq request,
+            @RequestHeader("userId") Long userId
+    ) {
+        commentService.editComment(postId, commentId, request, userId);
+        return ApiResponse.onSuccess(null);
+    }
 }

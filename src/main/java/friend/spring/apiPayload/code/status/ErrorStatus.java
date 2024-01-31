@@ -21,13 +21,14 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // 글 관련 응답
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4001", "글을 찾을 수 없습니다."),
-    NOT_CORRECT_USER(HttpStatus.BAD_REQUEST, "POST4002", "올바른 사용자(글 작성자)가 아닙니다."),
+    POST_NOT_CORRECT_USER(HttpStatus.BAD_REQUEST, "POST4002", "올바른 사용자(글 작성자)가 아닙니다."),
 
     // 댓글 관련 응답
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT4001", "댓글을 찾을 수 없습니다."),
     COMMENT_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT4002", "댓글에 대한 좋아요 데이터를 찾을 수 없습니다."),
     COMMENT_CHOICE_OVER_ONE(HttpStatus.BAD_REQUEST, "COMMENT4003", "댓글 채택은 1개 댓글에 대해서만 가능합니다."),
     COMMENT_SELECT_MYSELF(HttpStatus.BAD_REQUEST, "COMMENT4004", "자기 자신은 채택할 수 없습니다."),
+    COMMENT_NOT_CORRECT_USER(HttpStatus.BAD_REQUEST, "COMMENT4005", "올바른 사용자(댓글 작성자)가 아닙니다."),
 
     ;
 
