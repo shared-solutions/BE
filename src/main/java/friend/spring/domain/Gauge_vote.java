@@ -16,9 +16,6 @@ public class Gauge_vote extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private Integer gauge;
-
-    @Column(nullable = false)
     private Integer value=0;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,7 +23,7 @@ public class Gauge_vote extends BaseEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "gauge_question_id")
+    @JoinColumn(name = "gauge_poll_id")
     private Gauge_poll gaugePoll;
 
 

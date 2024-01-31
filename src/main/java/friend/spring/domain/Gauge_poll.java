@@ -26,7 +26,7 @@ public class Gauge_poll extends BaseEntity {
     private Integer max=100;
 
     @Column(nullable = false)
-    private Integer value=0;
+    private Integer gauge =0;
 
     @Column(nullable = true)
     private Timestamp deadline= Timestamp.valueOf(LocalDateTime.now().plusHours(1)); // 디폴트 시간 1시간 설정.

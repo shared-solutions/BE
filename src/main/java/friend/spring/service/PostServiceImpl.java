@@ -90,7 +90,7 @@ public class PostServiceImpl implements PostService{
             Gauge_poll gaugePoll = Gauge_poll.builder()
                     .max(100)
                     .min(0)
-                    .value(0)
+                    .gauge(0)
                     .deadline(request.getDeadline())
                     .build();
 

@@ -24,6 +24,13 @@ public class VoteConverter {
                 .build();
     }
 
+    public static VoteResponseDTO.GaugeVoteResponseDTO toAddGaugelVoteResultDTO(Gauge_vote gaugeVote) {
+        return VoteResponseDTO.GaugeVoteResponseDTO.builder()
+                .gaugeVoteId(gaugeVote.getId())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
     public static General_vote toGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request) {
 
         return General_vote.builder()

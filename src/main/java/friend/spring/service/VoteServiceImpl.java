@@ -16,10 +16,11 @@ import java.util.stream.Collectors;
 public class VoteServiceImpl implements VoteService{
     private final UserRepository userRepository;
     private final General_VoteRepository generalVoteRepository;
+    private final Gauge_VoteRepository gaugeVoteRepository;
     private final PostRepository postRepository;
     @Override
     @Transactional
-    public General_vote castVote(VoteRequestDTO.GeneralVoteRequestDTO request, Long userId) {
+    public General_vote castGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request, Long userId) {
         General_vote newGeneralVote = VoteConverter.toGeneralVote(request);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("\"" + userId + "\"해당 유저가 없습니다"));
@@ -46,4 +47,22 @@ public class VoteServiceImpl implements VoteService{
         }
         return generalVoteRepository.save(newGeneralVote);
     }
+
+    @Override
+    @Transactional
+    public Gauge_vote castGaugeVote(VoteRequestDTO.GaugeVoteRequestDTO request, Long userId){
+        Gauge_vote newGaugeVote = VoteConverter.toGaugeVote(request);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("\"" + userId + "\"해당 유저가 없습니다"));
+        newGaugeVote.setUser(user);
+
+        Post post=postRepository.findById(request.getPostId())
+                .orElseThrow(()-> new RuntimeException("\"" + request.getPostId() + "\"해당 글이 없습니다"));
+
+        Gauge_poll gaugePoll=post.getGaugePoll();
+        newGaugeVote.setGaugePoll(gaugePoll);
+
+        return gaugeVoteRepository.save(newGaugeVote);
+    }
+
 }
