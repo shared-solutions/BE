@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: ${aws.db.url}
-    username: ${aws.db.username}
-    password: ${aws.db.password}
+    url: jdbc:mysql://localhost:3306/gomin
+    username: root
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
@@ -15,27 +15,6 @@ spring:
         format_sql: true
         use_sql_comments: true
         hbm2ddl:
-          auto: update
+          auto: create
         default_batch_fetch_size: 1000
         globally_quoted_identifiers: true
-cloud:
-  aws:
-    s3:
-      bucket: solution-friend-bucket
-      path:
-        user: users
-        post: posts
-        report: reports
-    region:
-      static: ap-northeast-2
-    stack:
-      auto: false
-    credentials:
-      accessKey: ${AWS_ACCESS_KEY_ID}
-      secretKey: ${AWS_SECRET_ACCESS_KEY}
-logging:
-  level:
-    com:
-      amazonaws:
-        util:
-          EC2MetadataUtils: error
