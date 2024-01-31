@@ -1,5 +1,6 @@
 package friend.spring.domain;
 
+import friend.spring.domain.common.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Card_poll {
+public class Card_poll extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,13 +21,12 @@ public class Card_poll {
     @Column(nullable = true)
     private Timestamp deadline= Timestamp.valueOf(LocalDateTime.now().plusHours(1)); // 디폴트 시간 1시간 설정.
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "card_vote_id")
-    private Card_vote cardVote;
+    @OneToMany(mappedBy = "cardPoll", cascade = CascadeType.ALL)
+    private List<Card_vote> cardVoteList = new ArrayList<>();
 
     @OneToOne(mappedBy = "cardPoll", cascade = CascadeType.ALL)
     private Post post;

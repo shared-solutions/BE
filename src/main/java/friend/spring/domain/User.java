@@ -110,4 +110,8 @@ public class User extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Gauge_vote> gaugeVoteList = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Card_vote> cardVoteList = new ArrayList<>();
 }

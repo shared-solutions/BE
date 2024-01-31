@@ -86,8 +86,6 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<Comment_choice> commentChoiceList = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "post")
-//    private List<General_vote> generalQuestionList = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cardPoll_id")

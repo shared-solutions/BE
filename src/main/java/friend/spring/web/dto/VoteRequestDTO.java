@@ -19,4 +19,9 @@ public class VoteRequestDTO {
         Integer value;
     }
 
+    @Getter
+    public static class CardVoteRequestDTO{
+        Long postId;
+        List<Long> selectList;
+    }
 }

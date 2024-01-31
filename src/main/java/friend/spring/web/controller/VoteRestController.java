@@ -2,6 +2,7 @@ package friend.spring.web.controller;
 
 import friend.spring.apiPayload.ApiResponse;
 import friend.spring.converter.VoteConverter;
+import friend.spring.domain.Card_vote;
 import friend.spring.domain.Gauge_vote;
 import friend.spring.domain.General_vote;
 import friend.spring.service.VoteService;
@@ -34,6 +35,14 @@ public class VoteRestController {
                                                                     @PathVariable(name="user-id")Long UserId){
         Gauge_vote gaugeVote= voteService.castGaugeVote(request,UserId);
         return ApiResponse.onSuccess(VoteConverter.toAddGaugelVoteResultDTO(gaugeVote));
+    }
+
+    @PostMapping("/{post-id}/{user-id}/cardVote")
+    @Operation(summary = "카드 투표 API", description = "임시로 user-id 입력")
+    public ApiResponse<VoteResponseDTO.CardVoteResponseDTO> join(@RequestBody @Valid VoteRequestDTO.CardVoteRequestDTO request,
+                                                                  @PathVariable(name="user-id")Long UserId){
+        Card_vote cardVote= voteService.castCardVote(request,UserId);
+        return ApiResponse.onSuccess(VoteConverter.toAddCardVoteResultDTO(cardVote));
     }
 }
 

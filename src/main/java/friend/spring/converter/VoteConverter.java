@@ -1,5 +1,6 @@
 package friend.spring.converter;
 
+import friend.spring.domain.Card_vote;
 import friend.spring.domain.Gauge_vote;
 import friend.spring.domain.General_vote;
 import friend.spring.domain.Post;
@@ -31,6 +32,13 @@ public class VoteConverter {
                 .build();
     }
 
+    public static VoteResponseDTO.CardVoteResponseDTO toAddCardVoteResultDTO(Card_vote cardVote) {
+        return VoteResponseDTO.CardVoteResponseDTO.builder()
+                .cardVoteId(cardVote.getId())
+                .createdAt(LocalDateTime.now())
+                .build();
+    }
+
     public static General_vote toGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request) {
 
         return General_vote.builder()
@@ -41,6 +49,12 @@ public class VoteConverter {
 
         return Gauge_vote.builder()
                 .value(request.getValue())
+                .build();
+    }
+
+    public static Card_vote toCardVote(VoteRequestDTO.CardVoteRequestDTO request) {
+
+        return Card_vote.builder()
                 .build();
     }
 }

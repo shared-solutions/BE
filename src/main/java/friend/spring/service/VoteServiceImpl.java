@@ -17,6 +17,7 @@ public class VoteServiceImpl implements VoteService{
     private final UserRepository userRepository;
     private final General_VoteRepository generalVoteRepository;
     private final Gauge_VoteRepository gaugeVoteRepository;
+    private final Card_VoteRepository cardVoteRepository;
     private final PostRepository postRepository;
     @Override
     @Transactional
@@ -63,6 +64,35 @@ public class VoteServiceImpl implements VoteService{
         newGaugeVote.setGaugePoll(gaugePoll);
 
         return gaugeVoteRepository.save(newGaugeVote);
+    }
+    @Override
+    @Transactional
+    public Card_vote castCardVote(VoteRequestDTO.CardVoteRequestDTO request, Long userId){
+        Card_vote newCardVote = VoteConverter.toCardVote(request);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("\"" + userId + "\"해당 유저가 없습니다"));
+        newCardVote.setUser(user);
+
+        Post post=postRepository.findById(request.getPostId())
+                .orElseThrow(()-> new RuntimeException("\"" + request.getPostId() + "\"해당 글이 없습니다"));
+
+        Card_poll cardPoll=post.getCardPoll();
+        newCardVote.setCardPoll(cardPoll);
+
+        List<Long> selectedCandidateIds = request.getSelectList();
+        List<Long> validCandidateIds = cardPoll.getCandidateList().stream()
+                .map(Candidate::getId)
+                .collect(Collectors.toList());
+        for (Long selectedId : selectedCandidateIds) {
+            if (!validCandidateIds.contains(selectedId)) {
+                throw new RuntimeException("해당 후보 ID가 존재하지 않습니다: " + selectedId);
+            }
+        }
+
+        if (request.getSelectList() != null) {
+            newCardVote.setSelect_list(request.getSelectList());
+        }
+        return cardVoteRepository.save(newCardVote);
     }
 
 }

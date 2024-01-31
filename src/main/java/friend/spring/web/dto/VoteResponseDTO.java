@@ -25,4 +25,13 @@ public class VoteResponseDTO {
         Long gaugeVoteId;
         LocalDateTime createdAt;
     }
+
+    @Builder
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CardVoteResponseDTO {
+        Long cardVoteId;
+        LocalDateTime createdAt;
+    }
 }

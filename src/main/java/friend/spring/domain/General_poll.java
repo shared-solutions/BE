@@ -22,9 +22,9 @@ public class General_poll extends BaseEntity {
     @Column(nullable = true)
     private Timestamp deadline= Timestamp.valueOf(LocalDateTime.now().plusHours(1)); // 디폴트 시간 1시간 설정.
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id")
+//    private User user;
 
     @OneToMany(mappedBy = "generalPoll", cascade = CascadeType.ALL)
     private List<General_vote> generalVoteList = new ArrayList<>();
