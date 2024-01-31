@@ -145,12 +145,14 @@ public class CommentRestController {
     }
 
     // 댓글 수정
-    @PostMapping("/{post-id}/comment/{comment-id}/edit")
+    @PatchMapping("/{post-id}/comment/{comment-id}/edit")
     @Operation(summary = "댓글 수정 API", description = "댓글 수정하는 API입니다. ex) /posts/1/comment/1/edit")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001",description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4005",description = "올바른 사용자(댓글 작성자)가 아닙니다."),
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
