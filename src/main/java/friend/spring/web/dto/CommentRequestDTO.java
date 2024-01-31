@@ -18,4 +18,13 @@ public class CommentRequestDTO {
         String content;
         Long parentId;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class commentEditReq {
+        @NotBlank
+        String content;
+    }
 }
