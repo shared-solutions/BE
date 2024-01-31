@@ -26,6 +26,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INCORRECT_CODE(HttpStatus.UNAUTHORIZED, "USER4005", "인증 코드가 일치하지 않습니다."),
     EMPTY_JWT(HttpStatus.BAD_REQUEST, "USER4006", "JWT를 입력해주세요."),
     INVALID_JWT(HttpStatus.UNAUTHORIZED, "USER4007", "유효하지 않은 JWT입니다."),
+    PASSWORD_INCORRECT(HttpStatus.NOT_FOUND, "USER4008", "비밀번호가 틀렸습니다."),
 
     // 글 관련 응답
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4001", "글을 찾을 수 없습니다."),
@@ -58,7 +59,7 @@ public enum ErrorStatus implements BaseErrorCode {
                 .build()
                 ;
 
-    }
 
+    }
 }
 

@@ -13,6 +13,8 @@ import java.util.Properties;
 @PropertySource(value = {"/application.yml"}, factory = YmlSourceFactory.class)
 public class EmailConfig {
 
+    @Value("${mail.smtp.host}")
+    private String host;
     @Value("${mail.smtp.port}")
     private int port;
     @Value("${mail.smtp.socketFactoryPort}")
@@ -49,7 +51,7 @@ public class EmailConfig {
         pt.put("mail.smtp.starttls.enable", starttls);
         pt.put("mail.smtp.starttls.required", startlls_required);
         pt.put("mail.smtp.socketFactory.fallback",fallback);
-        pt.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+        //pt.put("mail.smtp.socketFactory.class", "javax.net.tls.SSLSocketFactory");
         return pt;
     }
 }
