@@ -4,11 +4,10 @@ spring:
     port: 6379
   jwt:
     secret: c4lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
-
   datasource:
-    url: jdbc:mysql://localhost:3306/gomin
-    username: root
-    password: 1234
+    url: ${aws.db.url}
+    username: ${aws.db.username}
+    password: ${aws.db.password}
     driver-class-name: com.mysql.cj.jdbc.Driver
   sql:
     init:
@@ -21,11 +20,9 @@ spring:
         format_sql: true
         use_sql_comments: true
         hbm2ddl:
-          auto: create
+          auto: update
         default_batch_fetch_size: 1000
         globally_quoted_identifiers: true
-
-
 cloud:
   aws:
     s3:
@@ -47,7 +44,6 @@ logging:
       amazonaws:
         util:
           EC2MetadataUtils: error
-
 mail:
   smtp:
     host: smtp.gmail.com
