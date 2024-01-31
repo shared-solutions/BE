@@ -28,4 +28,5 @@ public class CommentResponseDTO {
         Integer commentLike;
         Integer reComment;
     }
+
 }

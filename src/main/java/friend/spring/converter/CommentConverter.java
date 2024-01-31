@@ -6,6 +6,9 @@ import friend.spring.domain.User;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
 
+import java.util.List;
+import java.util.Optional;
+
 public class CommentConverter {
     public static Comment toComment(CommentRequestDTO.commentCreateReq request, Post post, User user, Comment parentComment) {
         return Comment.builder()
@@ -22,5 +25,13 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.myCommentRes toMyCommentRes()
+    public static CommentResponseDTO.myCommentRes toMyCommentResDTO(Comment comment){
+        return CommentResponseDTO.myCommentRes.builder()
+                .nickName(comment.getUser().getNickname())
+                .createdAt(comment.getCreatedAt())
+                .content(comment.getContent())
+                .commentLike(comment.getCommentLikeList().size())
+                .reComment(comment.getSubCommentList().size())
+                .build();
+    }
 }

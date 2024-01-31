@@ -2,6 +2,7 @@ package friend.spring.web.controller;
 
 import friend.spring.apiPayload.ApiResponse;
 import friend.spring.converter.UserConverter;
+import friend.spring.domain.Comment;
 import friend.spring.domain.Level;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
@@ -37,8 +38,18 @@ public class UserRestController {
             @RequestParam(name = "page") Integer page){
         User myPage = userService.findMyPage(userId);
         Level nxtLevel = userService.nextLevel(userId);
-
         Page<Post> myPostList = postService.getMyPostList(userId, page);
-        return ApiResponse.onSuccess(UserConverter.toQuestionResDTO(myPage, nxtLevel, ));
+        Page<Comment> myCommentList = commentService.getMyCommentList(userId, page);
+        return ApiResponse.onSuccess(UserConverter.toQuestionResDTO(myPage, nxtLevel, myPostList, myCommentList));
+    }
+
+    @GetMapping("/my-page/profile/answer")
+    public ApiResponse<UserResponseDTO.AnswerResDTO> getAnswer(
+            @RequestHeader(name = "id") Long userId,
+            @RequestParam(name = "page") Integer page){
+        User myPage = userService.findMyPage(userId);
+        Level nxtLevel = userService.nextLevel(userId);
+        Page<Comment> myCommentList = commentService.getMyCommentList(userId, page);
+        return ApiResponse.onSuccess(UserConverter.toAnswerResDTO(myPage, nxtLevel, myCommentList));
     }
 }

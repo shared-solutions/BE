@@ -4,7 +4,7 @@ import friend.spring.domain.Post;
 import friend.spring.web.dto.PostResponseDTO;
 
 public class PostConverter {
-    public static PostResponseDTO.MyPostDTO toMyPostDTO(Post post){
+    public static PostResponseDTO.MyPostDTO toMyPostResDTO(Post post){
         return PostResponseDTO.MyPostDTO.builder()
                 .nickName(post.getUser().getNickname())
                 .createdAt(post.getCreatedAt())

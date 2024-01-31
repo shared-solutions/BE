@@ -28,6 +28,7 @@ public class PostServiceImpl implements PostService {
         }
     }
 
+    //한 유저의 모든 질문글
     @Override
     public Page<Post> getMyPostList(Long userId, Integer page) {
         Optional<User> user = userRepository.findById(userId);

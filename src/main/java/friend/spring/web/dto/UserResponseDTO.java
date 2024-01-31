@@ -42,6 +42,20 @@ public class UserResponseDTO {
         List<PostResponseDTO.MyPostDTO> postList;
     }
 
-
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AnswerResDTO {
+        String userPhoto;
+        String nickName;
+        Integer recommend;
+        String grade;
+        Double nextGrade;
+        String nextGradeName;
+        Integer adoptComments;
+        Double adoptCommentPercent;
+        List<CommentResponseDTO.myCommentRes> commentList;
+    }
 
 }

@@ -11,10 +11,15 @@ import friend.spring.repository.PostRepository;
 import friend.spring.repository.UserRepository;
 import friend.spring.web.dto.CommentRequestDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -63,5 +68,17 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = CommentConverter.toComment(request, post, user, parentComment);
 
         return commentRepository.save(comment);
+    }
+
+
+    //한 유저의 모든 댓글
+    @Override
+    public Page<Comment> getMyCommentList(Long userId, Integer page) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()){
+            userService.checkUser(false);
+        }
+        User user = optionalUser.get();
+        return commentRepository.findAllByMyComment(user, PageRequest.of(page, 5));
     }
 }
