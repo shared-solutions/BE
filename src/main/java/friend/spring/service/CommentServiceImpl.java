@@ -242,5 +242,19 @@ public class CommentServiceImpl implements CommentService {
         Page<Comment> userPage = commentRepository.findAllByUser(user, PageRequest.of(page, 5));
         return userPage;
     }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long postId, Long commentId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+        // 로그인한 사용자가 이 댓글의 작성자인지 확인
+        if (!Objects.equals(user.getId(), comment.getUser().getId())) {
+            // 작성자가 아닌 경우 -> 에러 반환
+            this.checkCommentWriterUser(false);
+        }
+        comment.updateStateToDeleted();
+    }
 }
 

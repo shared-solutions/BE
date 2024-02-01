@@ -168,4 +168,28 @@ public class CommentRestController {
         commentService.editComment(postId, commentId, request, userId);
         return ApiResponse.onSuccess(null);
     }
+
+    // 댓글 삭제
+    @PatchMapping("/{post-id}/comment/{comment-id}/like/del")
+    @Operation(summary = "댓글 삭제 API", description = "댓글 삭제하는 API입니다. ex) /posts/1/comment/1/del")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001",description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4005",description = "올바른 사용자(댓글 작성자)가 아닙니다."),
+    })
+    @Parameters({
+            @Parameter(name = "post-id", description = "path variable - 글 아이디"),
+            @Parameter(name = "comment-id", description = "path variable - 댓글 아이디"),
+            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+    })
+    public ApiResponse<Void> deleteComment(
+            @PathVariable("post-id") Long postId,
+            @PathVariable("comment-id") Long commentId,
+            @RequestHeader("userId") Long userId
+    ) {
+        commentService.deleteComment(postId, commentId, userId);
+        return ApiResponse.onSuccess(null);
+    }
 }
