@@ -62,7 +62,7 @@ public class PostServiceImpl implements PostService{
                 user.setPoint(user.getPoint() - request.getPoint());
                 Point newPoint=Point.builder()
                         .amount(user.getPoint())
-                        .content("일반 투표에 대한 "+request.getPoint()+" 포인트 차감")
+                        .content("일반 투표 작성에 대한 "+request.getPoint()+" 포인트 차감")
                         .build();
                 newPoint.setUser(user);
                 pointRepository.save(newPoint);
@@ -99,7 +99,7 @@ public class PostServiceImpl implements PostService{
                 user.setPoint(user.getPoint() - request.getPoint());
                 Point newPoint=Point.builder()
                         .amount(user.getPoint())
-                        .content("일반 투표에 대한 "+request.getPoint()+" 포인트 차감")
+                        .content("게이지 투표 등록에 대한 "+request.getPoint()+" 포인트 차감")
                         .build();
                 newPoint.setUser(user);
                 pointRepository.save(newPoint);
@@ -139,7 +139,7 @@ public class PostServiceImpl implements PostService{
                 user.setPoint(user.getPoint() - request.getPoint());
                 Point newPoint=Point.builder()
                         .amount(user.getPoint())
-                        .content("일반 투표에 대한 "+request.getPoint()+" 포인트 차감")
+                        .content("카드 투표 등록에 대한 "+request.getPoint()+" 포인트 차감")
                         .build();
                 newPoint.setUser(user);
                 pointRepository.save(newPoint);
