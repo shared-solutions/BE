@@ -1,7 +1,17 @@
 package friend.spring.converter;
 
-import friend.spring.domain.*;
-import friend.spring.web.dto.AlarmResponseDTO;
+import friend.spring.domain.Comment;
+import friend.spring.domain.Level;
+import friend.spring.domain.Post;
+import friend.spring.domain.User;
+import friend.spring.domain.enums.Gender;
+import friend.spring.web.dto.UserRequestDTO;
+import friend.spring.web.dto.UserResponseDTO;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import friend.spring.web.dto.CommentResponseDTO;
 import friend.spring.web.dto.PostResponseDTO;
 import friend.spring.web.dto.UserResponseDTO;
@@ -11,6 +21,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserConverter {
+
+
     public static UserResponseDTO.MyPageResDTO toMypageResDTO(User user){
         return UserResponseDTO.MyPageResDTO.builder()
                 .userPhoto(user.getImage())
@@ -28,6 +40,46 @@ public class UserConverter {
                 .code(code)
                 .build();
     }
+
+    public static UserResponseDTO.JoinResultDTO joinResultDTO(User user){
+        return UserResponseDTO.JoinResultDTO.builder()
+                .email(user.getEmail())
+                .createAt(LocalDate.from(LocalDateTime.now()))
+                .build();
+
+    }
+    public static User toUser(UserRequestDTO.UserJoinRequest userJoinRequest){
+
+        Gender gender = null;
+
+        switch (userJoinRequest.getGender()){
+            case 1:
+                gender = Gender.MALE;
+                break;
+            case 2:
+                gender = Gender.FEMALE;
+                break;
+            case 3:
+                gender = Gender.NONE;
+                break;
+        }
+        return User.builder()
+                .email(userJoinRequest.getEmail())
+                .password(userJoinRequest.getPassword())
+                .nickname(userJoinRequest.getNickname())
+                .gender(gender)
+                .phone(userJoinRequest.getPhone())
+                .agree_info(userJoinRequest.isAgree_info())
+                .agree_marketing(userJoinRequest.isAgree_marketing())
+                .birth(userJoinRequest.getBirth())
+                .kakao(userJoinRequest.getKakao())
+                .image(userJoinRequest.getImage())
+                .is_deleted(userJoinRequest.is_deleted())
+                .point(userJoinRequest.getPoint())
+                .like(userJoinRequest.getLike())
+                .build();
+    }
+
     //나의 프로필(Q&A질문)
     public static UserResponseDTO.QuestionResDTO toQuestionResDTO(User user, Level nxtLevel, Page<Post> postList, Page<Comment> commentList){
         //질문 목록
@@ -84,7 +136,7 @@ public class UserConverter {
         //남은 다음 등급
         double nxtGrade = ((double)user.getLike()/(double)(nxtLevel.getLike() - user.getLevel().getLike())) * 100.0;
         return UserResponseDTO.AnswerResDTO.builder()
-                .userPhoto(user.getName())
+                .userPhoto(user.getImage())
                 .nickName(user.getNickname())
                 .recommend(user.getLike())
                 .grade(user.getLevel().getName())
@@ -95,5 +147,4 @@ public class UserConverter {
                 .commentList(myCommentDTOList)
                 .build();
     }
-
 }

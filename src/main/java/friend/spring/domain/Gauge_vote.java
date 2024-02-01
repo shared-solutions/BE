@@ -15,7 +15,6 @@ public class Gauge_vote extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Builder.Default
     @Column(nullable = false)
     private Integer value;
 
