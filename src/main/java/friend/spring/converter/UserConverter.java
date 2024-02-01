@@ -86,7 +86,7 @@ public class UserConverter {
         //남은 다음 등급
         double nxtGrade = ((double)user.getLike()/(double)(nxtLevel.getLike() - user.getLevel().getLike())) * 100.0;
         return UserResponseDTO.AnswerResDTO.builder()
-                .userPhoto(user.getName())
+                .userPhoto(user.getImage())
                 .nickName(user.getNickname())
                 .recommend(user.getLike())
                 .grade(user.getLevel().getName())

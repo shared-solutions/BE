@@ -30,4 +30,5 @@ public interface CommentService {
 
     Page<Comment> getMyCommentList(Long userId, Integer page);
 
+    void deleteComment(Long postId, Long commentId, Long userId);
 }
