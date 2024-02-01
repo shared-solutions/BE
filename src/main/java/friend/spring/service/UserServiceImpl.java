@@ -44,12 +44,12 @@ public class UserServiceImpl implements UserService {
         }
     }
   
-    public User joinUser(UserRequestDTO.UserJoinRequest userJoinRequest){
+    public User joinUser(UserRequestDTO.UserJoinRequest userJoinRequest) {
 
         User newUser = UserConverter.toUser(userJoinRequest);
 
         return userRepository.saveAndFlush(newUser);
-
+    }
     @Override
     public Level nextLevel(Long id) {
         Optional<User> user = userRepository.findById(id);
