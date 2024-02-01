@@ -18,7 +18,7 @@ public class Level extends BaseEntity {
     private Long id;
 
     @Column(nullable = false, length = 10)
-    private String nickname;
+    private String name;
 
     @Column(nullable = false)
     private Integer like;
