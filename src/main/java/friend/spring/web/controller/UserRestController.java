@@ -6,10 +6,12 @@ import friend.spring.domain.Comment;
 import friend.spring.domain.Level;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
+import friend.spring.repository.UserRepository;
 import friend.spring.service.CommentService;
 import friend.spring.service.EmailService;
 import friend.spring.service.PostService;
 import friend.spring.service.UserService;
+import friend.spring.service.UserServiceImpl;
 import friend.spring.web.dto.UserRequestDTO;
 import friend.spring.web.dto.UserResponseDTO;
 import io.swagger.annotations.Api;
@@ -26,6 +28,7 @@ import javax.validation.Valid;
 public class UserRestController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
     private final EmailService mailService;
     private final PostService postService;
     private final CommentService commentService;
@@ -69,6 +72,13 @@ public class UserRestController {
         Level nxtLevel = userService.nextLevel(userId);
         Page<Comment> myCommentList = commentService.getMyCommentList(userId, page);
         return ApiResponse.onSuccess(UserConverter.toAnswerResDTO(myPage, nxtLevel, myCommentList));
+    }
+    @PostMapping("/join")//회원가입
+    public ApiResponse<UserResponseDTO.JoinResultDTO> join(@RequestBody @Valid UserRequestDTO.UserJoinRequest userJoinRequest) {
+
+       User user = userService.joinUser(userJoinRequest);
+       return ApiResponse.onSuccess(UserConverter.joinResultDTO(user));
+
     }
 }
 
