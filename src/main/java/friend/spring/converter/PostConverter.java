@@ -87,6 +87,17 @@ public class PostConverter {
                 .state(PostState.POSTING)
                 .build();
     }
+
+    public static PostResponseDTO.MyPostDTO toMyPostResDTO(Post post){
+        return PostResponseDTO.MyPostDTO.builder()
+                .nickName(post.getUser().getNickname())
+                .createdAt(post.getCreatedAt())
+                .title(post.getTitle())
+                .postLike(post.getPostLikeList().size())
+                .comment(post.getCommentList().size())
+                .build();
+    }
+
 }
 
 
