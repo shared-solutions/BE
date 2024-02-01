@@ -51,4 +51,15 @@ public class CommentResponseDTO {
         Long commentChoiceId;
         Integer point;
     }
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class myCommentRes {
+        String nickName;
+        LocalDateTime createdAt;
+        String content;
+        Integer commentLike;
+        Integer reComment;
+    }
 }

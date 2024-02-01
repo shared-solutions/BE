@@ -7,6 +7,7 @@ import lombok.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
+import java.util.List;
 
 public class UserResponseDTO {
 
@@ -53,5 +54,40 @@ public class UserResponseDTO {
     public static class EmailSendRes {
         private String code;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class QuestionResDTO {
+        String userPhoto;
+        String nickName;
+        Integer recommend;
+        String grade;
+        Double nextGrade;
+        String nextGradeName;
+        Integer adoptComments;
+        Double adoptCommentPercent;
+        Integer postNum;
+        Double adoptPostPercent;
+        List<PostResponseDTO.MyPostDTO> postList;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AnswerResDTO {
+        String userPhoto;
+        String nickName;
+        Integer recommend;
+        String grade;
+        Double nextGrade;
+        String nextGradeName;
+        Integer adoptComments;
+        Double adoptCommentPercent;
+        List<CommentResponseDTO.myCommentRes> commentList;
+    }
+
 
 }

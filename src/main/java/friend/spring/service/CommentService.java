@@ -27,4 +27,7 @@ public interface CommentService {
     Comment_choice selectComment(Long postId, Long commentId, Long userId);
 
     void editComment(Long postId, Long commentId, CommentRequestDTO.commentEditReq request, Long userId);
+
+    Page<Comment> getMyCommentList(Long userId, Integer page);
+
 }
