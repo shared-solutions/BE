@@ -111,6 +111,10 @@ public class Post extends BaseEntity {
         parent.getReviewPostList().add(this);
     }
 
+    public void setView(Integer view) {
+        this.view = view;
+    }
+
     public void setGeneralPoll(General_poll generalPoll) {
         this.generalPoll = generalPoll;
         if (generalPoll != null && generalPoll.getPost() != this) {

@@ -2,6 +2,8 @@ package friend.spring.web.controller;
 import friend.spring.apiPayload.ApiResponse;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.Post;
+import friend.spring.repository.PostRepository;
+import friend.spring.service.PostQueryService;
 import friend.spring.service.PostService;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
@@ -9,16 +11,21 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
+
 @RestController
 @RequiredArgsConstructor
 @Validated
 @RequestMapping("/posts")
 public class PostRestController {
     private final PostService postService;
+    private final PostQueryService postQueryService;
+    private final PostRepository postRepository;
     @PostMapping("/{user-id}")
     @Operation(summary = "글 작성 API", description = "글을 추가 합니다.")
     @Parameters({
@@ -40,5 +47,15 @@ public class PostRestController {
                                                               @PathVariable(name="user-id")Long UserId){
         Post post= postService.joinPost(request,UserId);
         return ApiResponse.onSuccess(PostConverter.toAddPostResultDTO(post));
+    }
+
+    @GetMapping("/{post-id}")
+    @Operation(summary = "글 상세 보기 API", description = "글 상세 보기합니다.")
+    public ApiResponse<PostResponseDTO.PostDetailResponse> getPostDetail(@PathVariable(name="post-id")Long PostId){
+        Optional<Post> postOptional =postQueryService.getPostDetail(PostId);
+//        Optional<Post> postOptional =postRepository.findById(PostId);
+        Post post = postOptional.get();
+        return ApiResponse.onSuccess(PostConverter.postDetailResponse(post));
+
     }
 }
