@@ -1,19 +1,13 @@
 package friend.spring.converter;
 
-import friend.spring.domain.Comment;
-import friend.spring.domain.Level;
-import friend.spring.domain.Post;
-import friend.spring.domain.User;
+import friend.spring.domain.*;
 import friend.spring.domain.enums.Gender;
-import friend.spring.web.dto.UserRequestDTO;
-import friend.spring.web.dto.UserResponseDTO;
+import friend.spring.web.dto.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import friend.spring.web.dto.CommentResponseDTO;
-import friend.spring.web.dto.PostResponseDTO;
 import friend.spring.web.dto.UserResponseDTO;
 import org.springframework.data.domain.Page;
 

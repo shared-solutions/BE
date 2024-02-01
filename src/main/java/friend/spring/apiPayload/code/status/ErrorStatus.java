@@ -39,6 +39,9 @@ public enum ErrorStatus implements BaseErrorCode {
     COMMENT_SELECT_MYSELF(HttpStatus.BAD_REQUEST, "COMMENT4004", "자기 자신은 채택할 수 없습니다."),
     COMMENT_NOT_CORRECT_USER(HttpStatus.BAD_REQUEST, "COMMENT4005", "올바른 사용자(댓글 작성자)가 아닙니다."),
 
+    // 알림 관련 응답
+    ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "ALARM4001", "알림이 없습니다")
+
     ;
 
     private final HttpStatus httpStatus;

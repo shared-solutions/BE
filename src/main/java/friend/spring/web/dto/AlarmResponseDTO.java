@@ -7,9 +7,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class AlarmResponseDTO {
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AlarmListResDTO{
+        List<AlarmResDTO> alarmList;
+    }
     @Builder
     @Getter
     @NoArgsConstructor
@@ -18,6 +26,6 @@ public class AlarmResponseDTO {
         String nickName;
         AlarmType type;
         String content;
-        LocalDateTime dateTime;
+        LocalDateTime createdAt;
     }
 }
