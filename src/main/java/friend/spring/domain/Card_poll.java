@@ -18,6 +18,13 @@ public class Card_poll extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 30)
+    private String pollTitle;
+
+    @Column(nullable = true)
+    @Builder.Default
+    private Boolean multipleChoice=true;
+
     @Column(nullable = true)
     private Timestamp deadline= Timestamp.valueOf(LocalDateTime.now().plusHours(1)); // 디폴트 시간 1시간 설정.
 
@@ -25,6 +32,7 @@ public class Card_poll extends BaseEntity {
     private List<Card_vote> cardVoteList = new ArrayList<>();
 
     @OneToOne(mappedBy = "cardPoll", cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id")
     private Post post;
 
     @OneToMany(mappedBy = "cardPoll",cascade = CascadeType.ALL)
@@ -32,5 +40,8 @@ public class Card_poll extends BaseEntity {
 
     public void setPost(Post post) {
         this.post = post;
+    }
+    public void setMultipleChoice(Boolean multipleChoice){
+        this.multipleChoice=multipleChoice;
     }
 }

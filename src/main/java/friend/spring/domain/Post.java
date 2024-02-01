@@ -41,15 +41,11 @@ public class Post extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private PostCategory category;
 
-
-    @ElementCollection
-    @Column(nullable = true, length = 100)
-    private List<String> tag=new ArrayList<>();
-
     @Enumerated(EnumType.STRING)
     @Column
     private PostState state;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer view=0;
 
@@ -114,13 +110,7 @@ public class Post extends BaseEntity {
         this.parentPost=parent;
         parent.getReviewPostList().add(this);
     }
-    public void setTags(List<String> tags) {
-        if (tags != null) {
-            this.tag = new ArrayList<>(tags);
-        } else {
-            this.tag.clear();
-        }
-    }
+
     public void setGeneralPoll(General_poll generalPoll) {
         this.generalPoll = generalPoll;
         if (generalPoll != null && generalPoll.getPost() != this) {

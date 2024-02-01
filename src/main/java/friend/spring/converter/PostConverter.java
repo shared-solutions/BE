@@ -27,12 +27,9 @@ public class PostConverter {
 
         switch (request.getPostType()){
             case 1:
-                postType=PostType.NOT_VOTE;
-                break;
-            case 2:
                 postType=PostType.VOTE;
                 break;
-            case 3:
+            case 2:
                 postType=PostType.REVIEW;
                 break;
             default:

@@ -111,4 +111,8 @@ public class User extends BaseEntity {
     @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Card_vote> cardVoteList = new ArrayList<>();
+
+    public void setPoint(Integer point) {
+        this.point = point;
+    }
 }

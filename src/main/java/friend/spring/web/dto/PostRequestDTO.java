@@ -16,13 +16,15 @@ public class PostRequestDTO {
         String title;
         @NotBlank
         String content;
-        @NotBlank
-        Integer postType; // 1: not vote, 2: vote, 3: review
         Integer category; //미정
+        @NotBlank
+        Integer postType; // 1: vote, 2: review
         Integer postVoteType;// 1: general, 2: gauge
-        Long parent_id;
+        String pollTitle;
+        Boolean multipleChoice;
         List<PollOptionDTO> pollOption;
-        List<String> tag;
+        Long parent_id;
+        @NotBlank
         Timestamp deadline;
         Integer point;
     }

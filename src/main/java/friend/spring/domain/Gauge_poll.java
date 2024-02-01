@@ -19,12 +19,10 @@ public class Gauge_poll extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Integer min=0;
+    @Column(nullable = false, length = 30)
+    private String pollTitle;
 
-    @Column(nullable = false)
-    private Integer max=100;
-
+    @Builder.Default
     @Column(nullable = false)
     private Integer gauge =0;
 

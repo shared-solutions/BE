@@ -24,4 +24,11 @@ public class Point extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void setUser(User user){
+        if(this.user != null)
+            user.getPointList().remove(this);
+        this.user = user;
+        user.getPointList().add(this);
+    }
 }
