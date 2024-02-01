@@ -72,7 +72,6 @@ public class UserConverter {
                 .agree_info(userJoinRequest.isAgree_info())
                 .agree_marketing(userJoinRequest.isAgree_marketing())
                 .birth(userJoinRequest.getBirth())
-                .name(userJoinRequest.getName())
                 .kakao(userJoinRequest.getKakao())
                 .image(userJoinRequest.getImage())
                 .is_deleted(userJoinRequest.is_deleted())
@@ -137,7 +136,7 @@ public class UserConverter {
         //남은 다음 등급
         double nxtGrade = ((double)user.getLike()/(double)(nxtLevel.getLike() - user.getLevel().getLike())) * 100.0;
         return UserResponseDTO.AnswerResDTO.builder()
-                .userPhoto(user.getName())
+                .userPhoto(user.getImage())
                 .nickName(user.getNickname())
                 .recommend(user.getLike())
                 .grade(user.getLevel().getName())

@@ -36,9 +36,6 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false, length = 50)
     private String email;
 
-    @Column(nullable = false, length = 15) //name 넣고 돌리면 name칸 비어잇어서 안되고, 없애면 오류 확인
-    private String name;
-
     @Pattern(regexp = "^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$", message = "전화번호 형식이 맞지 않습니다.")
     @Column(nullable = false, length = 15)
     private String phone;
