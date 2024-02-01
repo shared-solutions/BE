@@ -1,16 +1,19 @@
 package friend.spring.service;
 
-
+import friend.spring.converter.UserConverter;
 import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.domain.Level;
 import friend.spring.domain.User;
 import friend.spring.repository.LevelRepository;
 import friend.spring.repository.UserRepository;
 import friend.spring.apiPayload.handler.UserHandler;
+import friend.spring.web.dto.UserRequestDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Optional;
 
 import static friend.spring.apiPayload.code.status.ErrorStatus.*;
@@ -22,12 +25,13 @@ import static friend.spring.apiPayload.code.status.ErrorStatus.*;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    //private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final LevelRepository levelRepository;
 
     @Override
     public User findMyPage(Long id) {
         Optional<User> user = userRepository.findById(id);
-        if(user.isEmpty()){
+        if (user.isEmpty()) {
             throw new UserHandler(USER_NOT_FOUND);
         }
         return user.get();
@@ -38,6 +42,13 @@ public class UserServiceImpl implements UserService {
         if (!flag) {
             throw new UserHandler(USER_NOT_FOUND);
         }
+    }
+  
+    public User joinUser(UserRequestDTO.UserJoinRequest userJoinRequest) {
+
+        User newUser = UserConverter.toUser(userJoinRequest);
+
+        return userRepository.saveAndFlush(newUser);
     }
     @Override
     public Level nextLevel(Long id) {
@@ -52,3 +63,5 @@ public class UserServiceImpl implements UserService {
     }
 
 }
+
+
