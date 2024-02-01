@@ -1,7 +1,10 @@
 package friend.spring.service;
 
 
+import friend.spring.apiPayload.code.status.ErrorStatus;
+import friend.spring.domain.Level;
 import friend.spring.domain.User;
+import friend.spring.repository.LevelRepository;
 import friend.spring.repository.UserRepository;
 import friend.spring.apiPayload.handler.UserHandler;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import static friend.spring.apiPayload.code.status.ErrorStatus.*;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final LevelRepository levelRepository;
 
     @Override
     public User findMyPage(Long id) {
@@ -34,6 +38,17 @@ public class UserServiceImpl implements UserService {
         if (!flag) {
             throw new UserHandler(USER_NOT_FOUND);
         }
+    }
+    @Override
+    public Level nextLevel(Long id) {
+        Optional<User> user = userRepository.findById(id);
+        if(user.isEmpty()) {
+            throw new UserHandler(USER_NOT_FOUND);
+        }
+        Long curId = user.get().getLevel().getId();
+        Long nxtId = curId + 1;
+        Level nxtLevel = levelRepository.findById(nxtId).get();
+        return nxtLevel;
     }
 
 }

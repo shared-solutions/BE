@@ -230,4 +230,17 @@ public class CommentServiceImpl implements CommentService {
         }
         comment.update(request.getContent());
     }
+
+    //한 유저의 모든 댓글
+    @Override
+    public Page<Comment> getMyCommentList(Long userId, Integer page) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()){
+            userService.checkUser(false);
+        }
+        User user = optionalUser.get();
+        Page<Comment> userPage = commentRepository.findAllByUser(user, PageRequest.of(page, 5));
+        return userPage;
+    }
 }
+

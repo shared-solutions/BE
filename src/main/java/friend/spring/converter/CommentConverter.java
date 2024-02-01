@@ -81,4 +81,14 @@ public class CommentConverter {
                 .point(comment_choice.getPoint())
                 .build();
     }
+    public static CommentResponseDTO.myCommentRes toMyCommentResDTO(Comment comment){
+        return CommentResponseDTO.myCommentRes.builder()
+                .nickName(comment.getUser().getNickname())
+                .createdAt(comment.getCreatedAt())
+                .content(comment.getContent())
+                .commentLike(comment.getCommentLikeList().size())
+                .reComment(comment.getSubCommentList().size())
+                .build();
+    }
+
 }
