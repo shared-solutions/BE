@@ -1,9 +1,7 @@
 package friend.spring.converter;
 
-import friend.spring.domain.Comment;
-import friend.spring.domain.Level;
-import friend.spring.domain.Post;
-import friend.spring.domain.User;
+import friend.spring.domain.*;
+import friend.spring.web.dto.AlarmResponseDTO;
 import friend.spring.web.dto.CommentResponseDTO;
 import friend.spring.web.dto.PostResponseDTO;
 import friend.spring.web.dto.UserResponseDTO;
@@ -97,6 +95,5 @@ public class UserConverter {
                 .commentList(myCommentDTOList)
                 .build();
     }
-
 
 }
