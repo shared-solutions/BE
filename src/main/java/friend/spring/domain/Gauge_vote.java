@@ -17,7 +17,7 @@ public class Gauge_vote extends BaseEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Integer value=0;
+    private Integer value;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

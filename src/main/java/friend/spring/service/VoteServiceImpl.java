@@ -19,6 +19,7 @@ public class VoteServiceImpl implements VoteService{
     private final Gauge_VoteRepository gaugeVoteRepository;
     private final Card_VoteRepository cardVoteRepository;
     private final PostRepository postRepository;
+    private final PointRepository pointRepository;
     @Override
     @Transactional
     public General_vote castGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request, Long userId) {
@@ -46,6 +47,15 @@ public class VoteServiceImpl implements VoteService{
         if (request.getSelectList() != null) {
             newGeneralVote.setSelect_list(request.getSelectList());
         }
+
+        user.setPoint(user.getPoint() + 5);
+        Point newPoint=Point.builder()
+                .amount(user.getPoint())
+                .content("일반 투표에 대한 "+5+" 포인트 획득")
+                .build();
+        newPoint.setUser(user);
+        pointRepository.save(newPoint);
+
         return generalVoteRepository.save(newGeneralVote);
     }
 
@@ -62,6 +72,14 @@ public class VoteServiceImpl implements VoteService{
 
         Gauge_poll gaugePoll=post.getGaugePoll();
         newGaugeVote.setGaugePoll(gaugePoll);
+
+        user.setPoint(user.getPoint() + 5);
+        Point newPoint=Point.builder()
+                .amount(user.getPoint())
+                .content("게이지 투표에 대한 "+5+" 포인트 획득")
+                .build();
+        newPoint.setUser(user);
+        pointRepository.save(newPoint);
 
         return gaugeVoteRepository.save(newGaugeVote);
     }
@@ -92,6 +110,14 @@ public class VoteServiceImpl implements VoteService{
         if (request.getSelectList() != null) {
             newCardVote.setSelect_list(request.getSelectList());
         }
+        user.setPoint(user.getPoint() + 5);
+        Point newPoint=Point.builder()
+                .amount(user.getPoint())
+                .content("카드 투표에 대한 "+5+" 포인트 획득")
+                .build();
+        newPoint.setUser(user);
+        pointRepository.save(newPoint);
+
         return cardVoteRepository.save(newCardVote);
     }
 

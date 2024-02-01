@@ -154,5 +154,9 @@ public class User extends BaseEntity implements UserDetails {
     @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Card_vote> cardVoteList = new ArrayList<>();
+
+    public void setPoint(Integer point) {
+        this.point = point;
+    }
 }
 

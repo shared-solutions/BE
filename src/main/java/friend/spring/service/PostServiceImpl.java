@@ -31,6 +31,7 @@ public class PostServiceImpl implements PostService{
     private final CandidateRepository candidateRepository;
     private final Gauge_PollRepository gaugePollRepository;
     private final Card_PollRepository cardPollRepository;
+    private final PointRepository pointRepository;
     @Override
     public void checkPost(Boolean flag) {
         if (!flag) {
@@ -44,6 +45,14 @@ public class PostServiceImpl implements PostService{
             throw new PostHandler(ErrorStatus.POST_NOT_CORRECT_USER);
         }
     }
+
+    @Override
+    public Boolean checkPoint(PostRequestDTO.AddPostDTO request, User user) {
+        if(request.getPoint()>user.getPoint()){
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
     
     @Override
     @Transactional
@@ -54,20 +63,33 @@ public class PostServiceImpl implements PostService{
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new RuntimeException("\""+userId+"\"해당 유저가 없습니다"));
         newPost.setUser(user);
-        if(request.getTag()!=null){
-            newPost.setTags(request.getTag());
-        }
 
-//        if(newPost.getPostType()==NOT_VOTE){
-//
-//        }
-
+//일반 투표 api
         if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GENERAL&&request.getPollOption()!=null){
+            //포인트 차감 관련 코드
+            if(request.getPoint()!=null) {
+                if (!checkPoint(request, user)) {
+                    throw new RuntimeException("\""+userId+"\"해당 유저의 포인트가 부족 합니다");
+                }
+                user.setPoint(user.getPoint() - request.getPoint());
+                Point newPoint=Point.builder()
+                        .amount(user.getPoint())
+                        .content("일반 투표 작성에 대한 "+request.getPoint()+" 포인트 차감")
+                        .build();
+                newPoint.setUser(user);
+                pointRepository.save(newPoint);
+            }
+
             General_poll generalPoll = General_poll.builder()
+                    .pollTitle(request.getPollTitle())
                     .deadline(request.getDeadline())
                     .build();
+            if(request.getMultipleChoice()!=null){
+                generalPoll.setMultipleChoice(request.getMultipleChoice());
+            }
             newPost.setGeneralPoll(generalPoll);
             generalPollRepository.save(generalPoll);
+
 
             for (PollOptionDTO option : request.getPollOption()) {
                 Candidate candidate = Candidate.builder()
@@ -79,11 +101,33 @@ public class PostServiceImpl implements PostService{
                 candidateRepository.save(candidate);
             }
         }
-
+//카드 투표 api
         if(newPost.getPostType()==VOTE&&newPost.getVoteType()==CARD&&request.getPollOption()!=null){
+            //포인트 차감 관련 코드
+            if(request.getPoint()!=null) {
+                if (!checkPoint(request, user)) {
+                    throw new RuntimeException("\""+userId+"\"해당 유저의 포인트가 부족 합니다");
+                }
+                user.setPoint(user.getPoint() - request.getPoint());
+                Point newPoint=Point.builder()
+                        .amount(user.getPoint())
+                        .content("게이지 투표 등록에 대한 "+request.getPoint()+" 포인트 차감")
+                        .build();
+                newPoint.setUser(user);
+                pointRepository.save(newPoint);
+            }
+
+            if(!checkPoint(request, user)&&request.getPoint()!=null){
+                throw new RuntimeException("\""+userId+"\"해당 유저의 포인트가 부족 합니다");
+            }
+
             Card_poll cardPoll = Card_poll.builder()
+                    .pollTitle(request.getPollTitle())
                     .deadline(request.getDeadline())
                     .build();
+            if(request.getMultipleChoice()!=null){
+                cardPoll.setMultipleChoice(request.getMultipleChoice());
+            }
             newPost.setCardPoll(cardPoll);
             cardPollRepository.save(cardPoll);
 
@@ -97,11 +141,28 @@ public class PostServiceImpl implements PostService{
                 candidateRepository.save(candidate);
             }
         }
+//게이지 투표 api
+        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GAUGE){
+            //포인트 차감 관련 코드
+            if(request.getPoint()!=null) {
+                if (!checkPoint(request, user)) {
+                    throw new RuntimeException("\""+userId+"\"해당 유저의 포인트가 부족 합니다");
+                }
+                user.setPoint(user.getPoint() - request.getPoint());
+                Point newPoint=Point.builder()
+                        .amount(user.getPoint())
+                        .content("카드 투표 등록에 대한 "+request.getPoint()+" 포인트 차감")
+                        .build();
+                newPoint.setUser(user);
+                pointRepository.save(newPoint);
+            }
 
-        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GAUGE&&request.getPollOption()!=null){
+            if(!checkPoint(request, user)&&request.getPoint()!=null){
+                throw new RuntimeException("\""+userId+"\"해당 유저의 포인트가 부족 합니다");
+            }
+
             Gauge_poll gaugePoll = Gauge_poll.builder()
-                    .max(100)
-                    .min(0)
+                    .pollTitle(request.getPollTitle())
                     .gauge(0)
                     .deadline(request.getDeadline())
                     .build();
