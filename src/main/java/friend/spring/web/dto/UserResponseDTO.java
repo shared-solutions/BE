@@ -20,4 +20,13 @@ public class UserResponseDTO {
         Integer userRecommend;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PointViewDTO {
+        Integer point;
+    }
+
+
 }

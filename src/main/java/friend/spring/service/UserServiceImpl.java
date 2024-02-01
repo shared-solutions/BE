@@ -33,4 +33,11 @@ public class UserServiceImpl implements UserService {
             throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
         }
     }
+
+    @Override
+    public Integer pointCheck(Long id) {
+        User user=userRepository.findById(id)
+                .orElseThrow(()->new RuntimeException("\""+id+"\"해당 유저가 없습니다"));
+        return user.getPoint();
+    }
 }
