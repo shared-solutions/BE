@@ -18,7 +18,7 @@ public class UserConverter {
                 .userPhoto(user.getImage())
                 .userName(user.getNickname())
                 .userPoint(user.getPoint())
-                .userLevelInt(user.getLevel().getLike())
+                .userLevelInt(user.getLevel().getLike()+1)
                 .userLevelName(user.getLevel().getName())
                 .userRecommend(user.getLike())
                 .build();
@@ -36,8 +36,11 @@ public class UserConverter {
         List<PostResponseDTO.MyPostDTO> myPostDTOList = postList.stream()
                 .map(PostConverter::toMyPostResDTO).collect(Collectors.toList());
 
+        //답변 목록
+        List<CommentResponseDTO.myCommentRes> myCommentDTOList = commentList.stream()
+                .map(CommentConverter::toMyCommentResDTO).collect(Collectors.toList());
         //총 답변수
-        int all = commentList.getSize();
+        int all = myCommentDTOList.size();
         //채택 답변수
         List<Comment> myCommentList = commentList.stream()
                 .filter(comment -> comment.getCommentChoiceList().isEmpty()).collect(Collectors.toList());
