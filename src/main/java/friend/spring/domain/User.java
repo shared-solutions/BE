@@ -36,7 +36,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = false, length = 50)
     private String email;
 
-    @Column(nullable = false, length = 15)
+    @Column(nullable = false, length = 15) //name 넣고 돌리면 name칸 비어잇어서 안되고, 없애면 오류 확인
     private String name;
 
     @Pattern(regexp = "^01([0|1|6|7|8|9]?)-?([0-9]{3,4})-?([0-9]{4})$", message = "전화번호 형식이 맞지 않습니다.")
@@ -44,7 +44,7 @@ public class User extends BaseEntity implements UserDetails {
     private String phone;
 
     @Enumerated(EnumType.STRING)
-    @Column
+    @Column(columnDefinition = "VARCHAR(10)")
     private Gender gender;
 
     @Column(nullable = false, length = 30)
@@ -63,7 +63,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = true)
     private String image;
 
-    @Column(nullable = false)
+    @Column(nullable = true)//잠시 true로 수정
     private Boolean is_deleted;
 
     @Column(nullable = true)
@@ -72,7 +72,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = true)
     private String kakao;
 
-    @Column(nullable = false)
+    @Column(nullable = true)//잠시 true
     private Integer like;
 
 

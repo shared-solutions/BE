@@ -1,6 +1,7 @@
 package friend.spring.web.dto;
 
 import friend.spring.domain.enums.Gender;
+import io.swagger.models.auth.In;
 import lombok.Getter;
 
 import lombok.AllArgsConstructor;
@@ -17,15 +18,22 @@ public class UserRequestDTO {
     @AllArgsConstructor
     @Getter
     @Setter
-    public static class UserJoinRequest{//
-        private String email;
-        private String password;
-        private String nickname;
+    public static class UserJoinRequest {
 
-        private Gender gender;
-        private boolean agree_info;
-        private boolean agree_marketing;
-        private LocalDate birth;
+        String email;
+        String password;
+        String nickname;
+        String phone;
+        Integer gender;
+        boolean agree_info;
+        boolean agree_marketing;
+        LocalDate birth;
+        String name;
+        boolean is_deleted;
+        String image;
+        Integer point;
+        String kakao;
+        Integer like;
 
     }
 
@@ -33,7 +41,7 @@ public class UserRequestDTO {
     @AllArgsConstructor
     @Getter
     @Setter
-    public static class UserLoginRequest{//로그인 요청
+    public static class UserLoginRequest {//로그인 요청
         String email;
         String password;
     }
@@ -57,7 +65,7 @@ public class UserRequestDTO {
     @AllArgsConstructor
     @Getter
     @Setter
-    public static class NicknameCheckReq{
+    public static class NicknameCheckReq {
         private String nickname;
     }
 
@@ -79,6 +87,7 @@ public class UserRequestDTO {
         @NotEmpty(message = "이메일을 입력해 주세요")
         private String email;
     }
+
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
