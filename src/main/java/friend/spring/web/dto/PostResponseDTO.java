@@ -34,9 +34,9 @@ public class PostResponseDTO {
         Integer point; // 투표글에서만 사용, 후기글에서는 null
         Long parentId; // 후기글에서만 사용, 일반글에서는 null
         Timestamp deadline; // 투표글에서만 사용, 후기글에서는 null
-        List<Long> userVote; // 투표글에서 사용자가 투표완료시 투표한 후보
-        Integer percent; // 투표글에서 사용자가 투표 완료시 투표한 후보 선택 퍼센트
-        String voteResult; // 투표글에서 사용자가 투표 완료시 투표인원/총인원
+        List<PollOptionDTO> userVote; // 투표글에서 사용자가 투표완료시 투표한 후보
+        List<Integer> percent; // 투표글에서 사용자가 투표 완료시 투표한 후보 선택 퍼센트
+        List<String> voteResult; // 투표글에서 사용자가 투표 완료시 투표인원/총인원
         Integer view;
         Integer like;
         Integer comment;

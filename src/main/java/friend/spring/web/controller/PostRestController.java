@@ -55,9 +55,9 @@ public class PostRestController {
                                                                          @PathVariable(name="user-id")Long userId){
         Optional<Post> postOptional =postQueryService.getPostDetail(PostId);
 //        Optional<Post> postOptional =postRepository.findById(PostId);
-        Boolean engage=postQueryService.
+        Boolean engage=postQueryService.checkEngage(PostId,userId);
         Post post = postOptional.get();
-        return ApiResponse.onSuccess(PostConverter.postDetailResponse(post,engage));
+        return ApiResponse.onSuccess(PostConverter.postDetailResponse(post,engage,userId));
 
     }
 }
