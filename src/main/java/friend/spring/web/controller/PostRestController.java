@@ -49,13 +49,15 @@ public class PostRestController {
         return ApiResponse.onSuccess(PostConverter.toAddPostResultDTO(post));
     }
 
-    @GetMapping("/{post-id}")
+    @GetMapping("/{post-id}/{user-id}")
     @Operation(summary = "글 상세 보기 API", description = "글 상세 보기합니다.")
-    public ApiResponse<PostResponseDTO.PostDetailResponse> getPostDetail(@PathVariable(name="post-id")Long PostId){
+    public ApiResponse<PostResponseDTO.PostDetailResponse> getPostDetail(@PathVariable(name="post-id")Long PostId,
+                                                                         @PathVariable(name="user-id")Long userId){
         Optional<Post> postOptional =postQueryService.getPostDetail(PostId);
 //        Optional<Post> postOptional =postRepository.findById(PostId);
+        Boolean engage=postQueryService.
         Post post = postOptional.get();
-        return ApiResponse.onSuccess(PostConverter.postDetailResponse(post));
+        return ApiResponse.onSuccess(PostConverter.postDetailResponse(post,engage));
 
     }
 }

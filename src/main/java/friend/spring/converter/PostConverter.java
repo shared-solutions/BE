@@ -2,6 +2,7 @@ package friend.spring.converter;
 import friend.spring.domain.Candidate;
 import friend.spring.domain.General_poll;
 import friend.spring.domain.Post;
+import friend.spring.domain.User;
 import friend.spring.domain.enums.PostCategory;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
@@ -99,9 +100,11 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostResponseDTO.PostDetailResponse postDetailResponse(Post post){
+    public static PostResponseDTO.PostDetailResponse postDetailResponse(Post post, Boolean engage){
         Integer likeCount = post.getPostLikeList().size();
         Integer commentCount = post.getCommentList().size();
+
+
 
 
         if(post.getPostType()==REVIEW){
@@ -129,7 +132,7 @@ public class PostConverter {
                     .comment(commentCount)
                     .build();
         }
-        List<PollOptionDTO> pollOptionDTOList=post.getGeneralPoll().getCandidateList().stream()
+        List<PollOptionDTO> pollOptionDTOList=post.getCardPoll().getCandidateList().stream()
                 .map(PostConverter::toPollOptionDTO).collect(Collectors.toList());
         if(post.getVoteType()==PostVoteType.GENERAL){
             return PostResponseDTO.PostDetailResponse.builder()
