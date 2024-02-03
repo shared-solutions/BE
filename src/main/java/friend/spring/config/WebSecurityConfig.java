@@ -45,6 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 //.antMatchers("/users/test").hasRole("USER")
                 .antMatchers("/**").permitAll()
+//                .antMatchers("/health").authenticated()
                 .anyRequest().permitAll();
 
         http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisTemplate), UsernamePasswordAuthenticationFilter.class)

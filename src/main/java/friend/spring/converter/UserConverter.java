@@ -5,22 +5,25 @@ import friend.spring.domain.Level;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.enums.Gender;
-import friend.spring.web.dto.UserRequestDTO;
-import friend.spring.web.dto.UserResponseDTO;
+import friend.spring.domain.enums.RoleType;
+import friend.spring.security.JwtTokenProvider;
+import friend.spring.service.UserService;
+import friend.spring.web.dto.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import friend.spring.web.dto.CommentResponseDTO;
-import friend.spring.web.dto.PostResponseDTO;
 import friend.spring.web.dto.UserResponseDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 public class UserConverter {
+
 
 
     public static UserResponseDTO.MyPageResDTO toMypageResDTO(User user){
@@ -48,7 +51,9 @@ public class UserConverter {
                 .build();
 
     }
-    public static User toUser(UserRequestDTO.UserJoinRequest userJoinRequest){
+
+
+    public static User toUser(UserRequestDTO.UserJoinRequest userJoinRequest, String pw){
 
         Gender gender = null;
 
@@ -63,9 +68,11 @@ public class UserConverter {
                 gender = Gender.NONE;
                 break;
         }
+
+
         return User.builder()
                 .email(userJoinRequest.getEmail())
-                .password(userJoinRequest.getPassword())
+                .password(pw)
                 .nickname(userJoinRequest.getNickname())
                 .gender(gender)
                 .phone(userJoinRequest.getPhone())
@@ -77,6 +84,7 @@ public class UserConverter {
                 .is_deleted(userJoinRequest.is_deleted())
                 .point(userJoinRequest.getPoint())
                 .like(userJoinRequest.getLike())
+                .role(RoleType.USER)
                 .build();
     }
 
