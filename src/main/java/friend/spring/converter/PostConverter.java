@@ -1,9 +1,11 @@
 package friend.spring.converter;
 import friend.spring.domain.Post;
+import friend.spring.domain.User;
 import friend.spring.domain.enums.PostCategory;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
+import friend.spring.domain.mapping.Post_like;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
 
@@ -98,6 +100,18 @@ public class PostConverter {
                 .build();
     }
 
+    public static Post_like toPostLike(Post post, User user) {
+        return Post_like.builder()
+                .post(post)
+                .user(user)
+                .build();
+    }
+
+    public static PostResponseDTO.PostLikeRes toPostLikeRes(Post_like post_like) {
+        return PostResponseDTO.PostLikeRes.builder()
+                .post_like_id(post_like.getId())
+                .build();
+    }
 }
 
 

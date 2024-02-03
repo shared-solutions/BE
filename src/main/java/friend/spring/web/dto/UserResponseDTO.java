@@ -88,4 +88,29 @@ public class UserResponseDTO {
         Double adoptCommentPercent;
         List<CommentResponseDTO.myCommentRes> commentList;
     }
+  
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LoginResDTO {
+
+        String type;
+        String accessToken;
+        String refreshToken;
+        String tokenExpiresTime;
+
+
+    }
+
+//    @Getter
+//    @Builder
+//    @AllArgsConstructor(access = AccessLevel.PROTECTED)
+//    @NoArgsConstructor(access = AccessLevel.PROTECTED)
+//    public static class TokenRefreshResponse {
+//
+//        String accessToken;
+//        String refreshToken;
+//    }
+
 }

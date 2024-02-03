@@ -27,10 +27,11 @@ public enum ErrorStatus implements BaseErrorCode {
     EMPTY_JWT(HttpStatus.BAD_REQUEST, "USER4006", "JWT를 입력해주세요."),
     INVALID_JWT(HttpStatus.UNAUTHORIZED, "USER4007", "유효하지 않은 JWT입니다."),
     PASSWORD_INCORRECT(HttpStatus.NOT_FOUND, "USER4008", "비밀번호가 틀렸습니다."),
-
+    RTK_INCORREXT(HttpStatus.UNAUTHORIZED,"USER4100","RefreshToken값을 확인해주세요."),
     // 글 관련 응답
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4001", "글을 찾을 수 없습니다."),
     POST_NOT_CORRECT_USER(HttpStatus.BAD_REQUEST, "POST4002", "올바른 사용자(글 작성자)가 아닙니다."),
+    POST_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4003", "글에 대한 좋아요 데이터를 찾을 수 없습니다."),
 
     // 댓글 관련 응답
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT4001", "댓글을 찾을 수 없습니다."),

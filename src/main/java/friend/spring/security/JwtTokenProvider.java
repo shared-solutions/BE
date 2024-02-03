@@ -2,6 +2,7 @@ package friend.spring.security;
 
 import ch.qos.logback.core.status.ErrorStatus;
 import friend.spring.apiPayload.GeneralException;
+import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.domain.User;
 import friend.spring.repository.UserRepository;
 import friend.spring.web.dto.TokenDTO;
@@ -26,7 +27,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 
-import static friend.spring.apiPayload.code.status.ErrorStatus.INVALID_JWT;
+import static friend.spring.apiPayload.code.status.ErrorStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -59,10 +60,8 @@ public class JwtTokenProvider {
 
         Claims claims = Jwts.claims().setSubject(email); // JWT payload에 저장되는 정보단위
 
-        if(user.isPresent()) {
+        user.ifPresent(value -> claims.put("id", value.getId()));
 
-            claims.put("email", user.get().getEmail());
-        }
 
         Date now = new Date();
         Date expiresTime = new Date(now.getTime() + tokenValidTime);
@@ -75,15 +74,19 @@ public class JwtTokenProvider {
                 //.claim("userIdx",user.get().getUserIdx())
                 //.claim("role", user.get().getRole())
                 .compact();
+
         return new TokenDTO(String.valueOf(TokenType.atk), token, expiresTime);
     }
 
     // JWT Refresh 토큰 생성
     public TokenDTO createRefreshToken(String email) {
         // Refresh 토큰 유효시간 2주
-        long tokenValidTime = 60 * 60 * 24 * 14 * 1000L;
+        long tokenValidTime = 30 * 60 * 1000L;
+        Optional<User> user = userRepository.findByEmail(email);
 
         Claims claims = Jwts.claims().setSubject(email); // JWT payload에 저장되는 정보단위
+
+        user.ifPresent(value -> claims.put("id", value.getId()));
 
         Date now = new Date();
         Date expiresTime = new Date(now.getTime() + tokenValidTime); // 토큰 만료 시간
@@ -148,18 +151,19 @@ public class JwtTokenProvider {
         Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
         return claims.getBody().getExpiration();
     }
+    // 토큰에서 회원정보 추출 - userIdx 추출
+    public Long getCurrentUser(HttpServletRequest request) throws GeneralException { // userIdx 가져오기
+        String jwtToken = resolveAccessToken(request); // Request의 header에서 Access 토큰 추출
+        if(!validateToken(jwtToken)) {
+            throw new GeneralException(INVALID_JWT);
+        }
 
-//    // 토큰에서 회원정보 추출 - userIdx 추출
-//    public Long getCurrentUser(HttpServletRequest request) throws GeneralException { // userIdx 가져오기
-//        String jwtToken = resolveAccessToken(request); // Request의 header에서 Access 토큰 추출
-//        if(!validateToken(jwtToken)) {
-//            throw new  (INVALID_JWT);
-//        }
-//        Long userIdx = Long.valueOf(String.valueOf(Jwts.parser()
-//                .setSigningKey(secretKey)
-//                .parseClaimsJws(jwtToken)
-//                .getBody()
-//                .get("userIdx")));
-//        return userIdx;
-//    }
+        Long userIdx = Long.valueOf(String.valueOf(Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(jwtToken)
+                .getBody()
+                .get("id")));
+
+        return userIdx;
+    }
 }
