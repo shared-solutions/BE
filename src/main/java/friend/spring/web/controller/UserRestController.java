@@ -14,6 +14,7 @@ import friend.spring.service.EmailService;
 import friend.spring.service.PostService;
 import friend.spring.service.UserService;
 import friend.spring.service.UserServiceImpl;
+import friend.spring.web.dto.AlarmResponseDTO;
 import friend.spring.web.dto.TokenDTO;
 import friend.spring.web.dto.UserRequestDTO;
 import friend.spring.web.dto.UserResponseDTO;
@@ -37,6 +38,8 @@ public class UserRestController {
     private final EmailService mailService;
     private final PostService postService;
     private final CommentService commentService;
+
+    //마이 페이지 조회
     @GetMapping("/my-page")
     public ApiResponse<UserResponseDTO.MyPageResDTO> getMyPage(
             @RequestHeader(name = "id") Long userId) {
@@ -58,6 +61,8 @@ public class UserRestController {
     mailService.CheckAuthNum(emailSendCheckReq.getEmail(), emailSendCheckReq.getAuthNum());
     return ApiResponse.onSuccess(null);
     }
+
+    //나의 Q&A 질문 조회
     @GetMapping("/my-page/profile/question")
     public ApiResponse<UserResponseDTO.QuestionResDTO> getQuestion(
             @RequestHeader(name = "id") Long userId,
@@ -69,6 +74,7 @@ public class UserRestController {
         return ApiResponse.onSuccess(UserConverter.toQuestionResDTO(myPage, nxtLevel, myPostList, myCommentList));
     }
 
+    //나의 Q&A 답변 조회
     @GetMapping("/my-page/profile/answer")
     public ApiResponse<UserResponseDTO.AnswerResDTO> getAnswer(
             @RequestHeader(name = "id") Long userId,

@@ -1,10 +1,8 @@
 package friend.spring.converter;
 
-import friend.spring.domain.Comment;
-import friend.spring.domain.Level;
-import friend.spring.domain.Post;
-import friend.spring.domain.User;
+import friend.spring.domain.*;
 import friend.spring.domain.enums.Gender;
+import friend.spring.web.dto.*;
 import friend.spring.domain.enums.RoleType;
 import friend.spring.security.JwtTokenProvider;
 import friend.spring.service.UserService;

@@ -88,6 +88,7 @@ public class UserResponseDTO {
         Double adoptCommentPercent;
         List<CommentResponseDTO.myCommentRes> commentList;
     }
+  
     @Builder
     @Getter
     @NoArgsConstructor

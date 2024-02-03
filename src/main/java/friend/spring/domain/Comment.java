@@ -61,5 +61,4 @@ public class Comment extends BaseEntity {
     public void updateStateToDeleted() {
         this.state = CommentState.DELETED;
     }
-
 }
