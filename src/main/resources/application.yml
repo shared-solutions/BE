@@ -1,0 +1,61 @@
+spring:
+  redis:
+    host: localhost
+    port: 6379
+  jwt:
+    secret: c4lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQtc2lsdmVybmluZS10ZWNoLXNwcmluZy1ib290LWp3dC10dXRvcmlhbC1zZWNyZXQK
+  datasource:
+    url: ${aws.db.url}
+    username: ${aws.db.username}
+    password: ${aws.db.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: never
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+        hbm2ddl:
+          auto: update
+        default_batch_fetch_size: 1000
+        globally_quoted_identifiers: true
+cloud:
+  aws:
+    s3:
+      bucket: solution-friend-bucket
+      path:
+        user: users
+        post: posts
+        report: reports
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+    credentials:
+      accessKey: ${AWS_ACCESS_KEY_ID}
+      secretKey: ${AWS_SECRET_ACCESS_KEY}
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils: error
+mail:
+  smtp:
+    host: smtp.gmail.com
+    auth: true
+    starttls:
+      required: true
+      enable: true
+    socketFactory:
+      fallback: false
+    port: 587
+    socketFactoryPort: 587
+  AdminMail:
+    id: ${gmail.username}
+    password: ${gmail.password}
+
