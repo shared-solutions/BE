@@ -1,6 +1,8 @@
 package friend.spring.web.controller;
 
 import friend.spring.apiPayload.ApiResponse;
+import friend.spring.apiPayload.GeneralException;
+import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.converter.UserConverter;
 import friend.spring.domain.Comment;
 import friend.spring.domain.Level;
@@ -13,6 +15,7 @@ import friend.spring.service.PostService;
 import friend.spring.service.UserService;
 import friend.spring.service.UserServiceImpl;
 import friend.spring.web.dto.AlarmResponseDTO;
+import friend.spring.web.dto.TokenDTO;
 import friend.spring.web.dto.UserRequestDTO;
 import friend.spring.web.dto.UserResponseDTO;
 import io.swagger.annotations.Api;
@@ -20,7 +23,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -87,5 +92,24 @@ public class UserRestController {
 
     }
 
+    //로그인
+    @PostMapping("/login")
+    public ApiResponse<List<TokenDTO>> login(@RequestBody UserRequestDTO.UserLoginRequest userLoginRequest)throws GeneralException{
+        List<TokenDTO> tokenDTOList = userService.login(userLoginRequest);
+        return ApiResponse.onSuccess(tokenDTOList);
+    }
+
+    // 토큰 재발급
+    @PostMapping("/reissue")
+    public ApiResponse<List<TokenDTO>> reissue(HttpServletRequest request) {
+        System.out.println("controller: reissue 함수 실행");
+        return ApiResponse.onSuccess(userService.reissue(request));
+    }
+
+    // 로그아웃
+    @PostMapping("/logout")
+    public ApiResponse<String> logout(HttpServletRequest request)  {
+        return ApiResponse.onSuccess(userService.logout(request));
+    }
 }
 

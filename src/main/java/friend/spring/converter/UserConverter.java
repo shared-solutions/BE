@@ -3,6 +3,11 @@ package friend.spring.converter;
 import friend.spring.domain.*;
 import friend.spring.domain.enums.Gender;
 import friend.spring.web.dto.*;
+import friend.spring.domain.enums.RoleType;
+import friend.spring.security.JwtTokenProvider;
+import friend.spring.service.UserService;
+import friend.spring.web.dto.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
@@ -14,7 +19,9 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 public class UserConverter {
+
 
 
     public static UserResponseDTO.MyPageResDTO toMypageResDTO(User user){
@@ -22,7 +29,7 @@ public class UserConverter {
                 .userPhoto(user.getImage())
                 .userName(user.getNickname())
                 .userPoint(user.getPoint())
-                .userLevelInt(user.getLevel().getLike())
+                .userLevelInt(user.getLevel().getLike()+1)
                 .userLevelName(user.getLevel().getName())
                 .userRecommend(user.getLike())
                 .build();
@@ -42,7 +49,9 @@ public class UserConverter {
                 .build();
 
     }
-    public static User toUser(UserRequestDTO.UserJoinRequest userJoinRequest){
+
+
+    public static User toUser(UserRequestDTO.UserJoinRequest userJoinRequest, String pw){
 
         Gender gender = null;
 
@@ -57,9 +66,11 @@ public class UserConverter {
                 gender = Gender.NONE;
                 break;
         }
+
+
         return User.builder()
                 .email(userJoinRequest.getEmail())
-                .password(userJoinRequest.getPassword())
+                .password(pw)
                 .nickname(userJoinRequest.getNickname())
                 .gender(gender)
                 .phone(userJoinRequest.getPhone())
@@ -71,6 +82,7 @@ public class UserConverter {
                 .is_deleted(userJoinRequest.is_deleted())
                 .point(userJoinRequest.getPoint())
                 .like(userJoinRequest.getLike())
+                .role(RoleType.USER)
                 .build();
     }
 
@@ -80,8 +92,11 @@ public class UserConverter {
         List<PostResponseDTO.MyPostDTO> myPostDTOList = postList.stream()
                 .map(PostConverter::toMyPostResDTO).collect(Collectors.toList());
 
+        //답변 목록
+        List<CommentResponseDTO.myCommentRes> myCommentDTOList = commentList.stream()
+                .map(CommentConverter::toMyCommentResDTO).collect(Collectors.toList());
         //총 답변수
-        int all = commentList.getSize();
+        int all = myCommentDTOList.size();
         //채택 답변수
         List<Comment> myCommentList = commentList.stream()
                 .filter(comment -> comment.getCommentChoiceList().isEmpty()).collect(Collectors.toList());
