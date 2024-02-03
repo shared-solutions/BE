@@ -57,6 +57,9 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category postCategory;
     // 부모 글 정의
     // 고민후기 원글 아이디
     @ManyToOne(fetch = FetchType.LAZY)
