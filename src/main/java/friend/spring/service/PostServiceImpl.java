@@ -1,11 +1,15 @@
 package friend.spring.service;
 
 import friend.spring.apiPayload.code.status.ErrorStatus;
+import friend.spring.apiPayload.handler.CommentHandler;
 import friend.spring.apiPayload.handler.PostHandler;
 import friend.spring.apiPayload.handler.UserHandler;
+import friend.spring.converter.CommentConverter;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.*;
 import friend.spring.domain.enums.PostVoteType;
+import friend.spring.domain.mapping.Comment_like;
+import friend.spring.domain.mapping.Post_like;
 import friend.spring.repository.*;
 import friend.spring.web.dto.PollOptionDTO;
 import friend.spring.web.dto.PostRequestDTO;
@@ -32,6 +36,8 @@ public class PostServiceImpl implements PostService{
     private final Gauge_PollRepository gaugePollRepository;
     private final Card_PollRepository cardPollRepository;
     private final PointRepository pointRepository;
+    private final PostLikeRepository postLikeRepository;
+    private final UserService userService;
     @Override
     public void checkPost(Boolean flag) {
         if (!flag) {
@@ -53,7 +59,14 @@ public class PostServiceImpl implements PostService{
         }
         return Boolean.TRUE;
     }
-    
+
+    @Override
+    public void checkPostLike(Boolean flag) {
+        if (!flag) {
+            throw new PostHandler(ErrorStatus.POST_LIKE_NOT_FOUND);
+        }
+    }
+
     @Override
     @Transactional
     public Post joinPost(PostRequestDTO.AddPostDTO request, Long userId) {
@@ -193,5 +206,45 @@ public class PostServiceImpl implements PostService{
 
         Page<Post> userPage = postRepository.findAllByUser(myUser, PageRequest.of(page, 5));
         return userPage;
+    }
+
+    @Override
+    public Post_like likePost(Long postId, Long userId) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            this.checkPost(false);
+        }
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
+        Post post = optionalPost.get();
+        User user = optionalUser.get();
+
+        Post_like post_like = PostConverter.toPostLike(post, user);
+        return postLikeRepository.save(post_like);
+    }
+
+    @Override
+    public void dislikePost(Long postId, Long userId) {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            this.checkPost(false);
+        }
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
+        Optional<Post_like> optionalPost_like = postLikeRepository.findByPostIdAndUserId(postId, userId);
+        if (optionalPost_like.isEmpty()) {
+            this.checkPostLike(false);
+        }
+
+        Post_like post_like = optionalPost_like.get();
+        postLikeRepository.delete(post_like);
     }
 }

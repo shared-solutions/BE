@@ -23,4 +23,12 @@ public class PostResponseDTO {
         Integer postLike;
         Integer comment;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostLikeRes {
+        Long post_like_id;
+    }
 }
