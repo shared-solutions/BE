@@ -4,14 +4,12 @@ import friend.spring.domain.enums.PostCategory;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
-import friend.spring.web.dto.PollOptionDTO;
-import friend.spring.web.dto.PostRequestDTO;
-import friend.spring.web.dto.PostResponseDTO;
+import friend.spring.service.PostQueryService;
+import friend.spring.service.PostQueryServiceImpl;
+import friend.spring.web.dto.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -19,6 +17,7 @@ import static friend.spring.domain.enums.PostType.*;
 
 public class PostConverter {
 
+    private static PostQueryService postQueryService;
     public static PostResponseDTO.AddPostResultDTO toAddPostResultDTO(Post post) {
         return PostResponseDTO.AddPostResultDTO.builder()
                 .postId(post.getId())
@@ -32,7 +31,107 @@ public class PostConverter {
                 .optionImg(candidate.getImage()).build();
     }
 
+    public static ParentPostDTO toParentPostDTO(Post parentPost){
+        ParentPollDTO parentPollDTO=null;
+        Integer parentLikes =parentPost.getPostLikeList().size();
+        Integer parentComments= parentPost.getCommentList().size();
 
+        if(parentPost.getVoteType()==PostVoteType.GAUGE) {
+            return ParentPostDTO.builder()
+                    .nickname(parentPost.getUser().getNickname())
+                    .title(parentPost.getTitle())
+                    .content(parentPost.getContent())
+                    .gauge(parentPost.getGaugePoll().getGauge())
+                    .like(parentLikes)
+                    .comment(parentComments)
+                    .build();
+        }
+
+        if(parentPost.getVoteType()==PostVoteType.GENERAL) {
+            List<PollOptionDTO> pollOptionDTOList = parentPost.getGeneralPoll().getCandidateList().stream()
+                    .map(PostConverter::toPollOptionDTO).collect(Collectors.toList());
+
+            // 총 투표수 계산
+            long totalVotes = parentPost.getGeneralPoll().getGeneralVoteList().stream()
+                    .flatMap(vote -> vote.getSelect_list().stream())
+                    .count();
+
+            // 각 후보별 선택된 횟수 계산
+            Map<Long, Long> candidateSelectionCounts = parentPost.getGeneralPoll().getGeneralVoteList().stream()
+                    .flatMap(vote -> vote.getSelect_list().stream())
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+            // 선택률 -> ParentPollDTO 객체 리스트로 변환
+            List<ParentPollDTO> candidateInfos = candidateSelectionCounts.entrySet().stream()
+                    .map(entry -> ParentPollDTO.builder()
+                            .candidateId(entry.getKey())
+                            .rate((int) ((double) entry.getValue() / totalVotes * 100))
+                            .selection(entry.getValue())
+                            .build())
+                    .collect(Collectors.toList());
+
+            // 선택률이 가장 높은 후보 찾기
+            Optional<ParentPollDTO> highestSelectionCandidate = candidateInfos.stream()
+                    .max(Comparator.comparingInt(ParentPollDTO::getRate));
+
+            // 1등 후보의 정보를 ParentPollDTO 객체로 반환
+            if(highestSelectionCandidate.isPresent()) {
+                parentPollDTO = highestSelectionCandidate.get();
+            }
+
+
+            return ParentPostDTO.builder()
+                    .nickname(parentPost.getUser().getNickname())
+                    .title(parentPost.getTitle())
+                    .content(parentPost.getContent())
+                    .pollOption(pollOptionDTOList)
+                    .pollContent(parentPollDTO)
+                    .like(parentLikes)
+                    .comment(parentComments)
+                    .build();
+        }
+
+            List<PollOptionDTO> pollOptionDTOList = parentPost.getCardPoll().getCandidateList().stream()
+                    .map(PostConverter::toPollOptionDTO).collect(Collectors.toList());
+
+            // 총 투표수 계산
+            long totalVotes = parentPost.getCardPoll().getCardVoteList().stream()
+                    .flatMap(vote -> vote.getSelect_list().stream())
+                    .count();
+
+            // 각 후보별 선택된 횟수 계산
+            Map<Long, Long> candidateSelectionCounts = parentPost.getCardPoll().getCardVoteList().stream()
+                    .flatMap(vote -> vote.getSelect_list().stream())
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+            // 선택률 -> ParentPollDTO 객체 리스트로 변환
+            List<ParentPollDTO> candidateInfos = candidateSelectionCounts.entrySet().stream()
+                    .map(entry -> ParentPollDTO.builder()
+                            .candidateId(entry.getKey())
+                            .rate((int) ((double) entry.getValue() / totalVotes * 100))
+                            .selection(entry.getValue())
+                            .build())
+                    .collect(Collectors.toList());
+
+            // 선택률이 가장 높은 후보 찾기
+            Optional<ParentPollDTO> highestSelectionCandidate = candidateInfos.stream()
+                    .max(Comparator.comparingInt(ParentPollDTO::getRate));
+
+            // 1등 후보의 정보를 ParentPollDTO 객체로 반환
+            parentPollDTO = highestSelectionCandidate.get();
+
+
+            return ParentPostDTO.builder()
+                    .nickname(parentPost.getUser().getNickname())
+                    .title(parentPost.getTitle())
+                    .content(parentPost.getContent())
+                    .pollOption(pollOptionDTOList)
+                    .pollContent(parentPollDTO)
+                    .like(parentLikes)
+                    .comment(parentComments)
+                    .build();
+
+    }
 
     public static Post toPost(PostRequestDTO.AddPostDTO request) {
         PostType postType=null;
@@ -102,7 +201,7 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostResponseDTO.PostDetailResponse postDetailResponse(Post post, Boolean engage,Long userId){
+    public static PostResponseDTO.PostDetailResponse postDetailResponse(Post post, Boolean engage,Long userId, Post parentPost){
         Integer likeCount = post.getPostLikeList().size();
         Integer commentCount = post.getCommentList().size();
         List<PollOptionDTO> userChoiceList=null;
@@ -117,7 +216,7 @@ public class PostConverter {
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .parentId(post.getParentPost().getId())
+                    .parentPost(toParentPostDTO(parentPost))
                     .view(post.getView())
                     .like(likeCount)
                     .comment(commentCount)

@@ -54,10 +54,11 @@ public class PostRestController {
     public ApiResponse<PostResponseDTO.PostDetailResponse> getPostDetail(@PathVariable(name="post-id")Long PostId,
                                                                          @PathVariable(name="user-id")Long userId){
         Optional<Post> postOptional =postQueryService.getPostDetail(PostId);
+        Post parentPost=postQueryService.ParentPost(PostId);;
 //        Optional<Post> postOptional =postRepository.findById(PostId);
         Boolean engage=postQueryService.checkEngage(PostId,userId);
         Post post = postOptional.get();
-        return ApiResponse.onSuccess(PostConverter.postDetailResponse(post,engage,userId));
+        return ApiResponse.onSuccess(PostConverter.postDetailResponse(post,engage,userId,parentPost));
 
     }
 }

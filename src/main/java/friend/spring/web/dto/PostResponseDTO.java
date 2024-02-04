@@ -32,7 +32,7 @@ public class PostResponseDTO {
         List<PollOptionDTO> pollOption; // 투표글에서만 사용, 후기글에서는 null
         Integer gauge; // 게이지 투표글에서만 사용, 후기글에서는 null
         Integer point; // 투표글에서만 사용, 후기글에서는 null
-        Long parentId; // 후기글에서만 사용, 일반글에서는 null
+        ParentPostDTO parentPost; // 후기글에서만 사용, 일반글에서는 null
         Timestamp deadline; // 투표글에서만 사용, 후기글에서는 null
         List<PollOptionDTO> userVote; // 투표글에서 사용자가 투표완료시 투표한 후보
         List<Integer> percent; // 투표글에서 사용자가 투표 완료시 투표한 후보 선택 퍼센트

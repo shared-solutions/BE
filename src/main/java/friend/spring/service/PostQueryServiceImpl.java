@@ -65,4 +65,11 @@ public class PostQueryServiceImpl implements PostQueryService{
         }
         return false;
     }
+
+    @Override
+    @Transactional
+    public Post ParentPost(Long parentid){
+        Optional<Post> parentPostOptional=postRepository.findById(parentid);
+        return parentPostOptional.get().getParentPost();
+    }
 }
