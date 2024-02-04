@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -87,5 +87,38 @@ public class PostRestController {
     ) {
         postService.dislikePost(postId, userId);
         return ApiResponse.onSuccess(null);
+    }
+
+    // 홈 - 지금 가장 핫한 고민투표
+    @GetMapping("/best")
+    @Operation(summary = "홈 - 지금 가장 핫한 고민투표 API", description = "홈 - 지금 가장 핫한 고민투표 조회 API입니다. ex) /posts/best")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)"),
+            @Parameter(name = "size", description = "query string(RequestParam) - 한 번에 글 몇 개씩 불러올지 개수를 세는 변수 (1 이상 자연수로 설정)")
+    })
+    public ApiResponse<Page<PostResponseDTO.PostSummaryListRes>> getBestPosts(
+            @RequestParam(name = "page") Integer page,
+            @RequestParam(name = "size") Integer size
+    ) {
+        return ApiResponse.onSuccess(postService.getBestPosts(page, size));
+    }
+
+    @GetMapping("/recent")
+    @Operation(summary = "홈 - 답변을 기다리는 고민들 API", description = "홈 - 답변을 기다리는 고민들 조회 API입니다. ex) /posts/recent")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)"),
+            @Parameter(name = "size", description = "query string(RequestParam) - 한 번에 글 몇 개씩 불러올지 개수를 세는 변수 (1 이상 자연수로 설정)")
+    })
+    public ApiResponse<Page<PostResponseDTO.PostSummaryListRes>> getRecentPosts(
+            @RequestParam(name = "page") Integer page,
+            @RequestParam(name = "size") Integer size
+    ) {
+        return ApiResponse.onSuccess(postService.getRecentPosts(page, size));
     }
 }

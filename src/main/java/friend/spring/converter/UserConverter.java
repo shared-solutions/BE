@@ -4,11 +4,6 @@ import friend.spring.domain.*;
 import friend.spring.domain.enums.Gender;
 import friend.spring.web.dto.*;
 import friend.spring.domain.enums.RoleType;
-import friend.spring.security.JwtTokenProvider;
-import friend.spring.service.UserService;
-import friend.spring.web.dto.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -154,6 +149,14 @@ public class UserConverter {
                 .adoptComments(choice)
                 .adoptCommentPercent(percent)
                 .commentList(myCommentDTOList)
+                .build();
+    }
+
+    public static UserResponseDTO.UserSummaryInfo toUserSummaryInfo(User user) {
+        return UserResponseDTO.UserSummaryInfo.builder()
+                .user_id(user.getId())
+                .nickname(user.getNickname())
+                .image(user.getImage())
                 .build();
     }
 }
