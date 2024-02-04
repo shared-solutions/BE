@@ -1,25 +1,25 @@
 package friend.spring.service;
 
 import friend.spring.apiPayload.code.status.ErrorStatus;
-import friend.spring.apiPayload.handler.CommentHandler;
 import friend.spring.apiPayload.handler.PostHandler;
 import friend.spring.apiPayload.handler.UserHandler;
-import friend.spring.converter.CommentConverter;
+import friend.spring.converter.CandidateConverter;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.*;
-import friend.spring.domain.enums.PostVoteType;
-import friend.spring.domain.mapping.Comment_like;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.repository.*;
-import friend.spring.web.dto.PollOptionDTO;
-import friend.spring.web.dto.PostRequestDTO;
+import friend.spring.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static friend.spring.domain.enums.PostType.*;
 import static friend.spring.domain.enums.PostVoteType.*;
@@ -37,6 +37,7 @@ public class PostServiceImpl implements PostService{
     private final Card_PollRepository cardPollRepository;
     private final PointRepository pointRepository;
     private final PostLikeRepository postLikeRepository;
+    private final CommentRepository commentRepository;
     private final UserService userService;
     @Override
     public void checkPost(Boolean flag) {
@@ -246,5 +247,76 @@ public class PostServiceImpl implements PostService{
 
         Post_like post_like = optionalPost_like.get();
         postLikeRepository.delete(post_like);
+    }
+
+    @Override
+    public Page<PostResponseDTO.PostSummaryListRes> getBestPosts(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> bestPostPage = postRepository.findBestPosts(pageable);
+        List<PostResponseDTO.PostSummaryListRes> postResList = bestPostPage
+                .map(post -> {
+                    Integer like_cnt = postLikeRepository.countByPostId(post.getId());
+                    Integer comment_cnt = commentRepository.countByPostId(post.getId());
+                    String postVoteType = null;
+                    Long general_poll_id = null;
+                    Long gauge_poll_id = null;
+                    Long card_poll_id = null;
+                    List<Candidate> candidateList = null;
+                    List<CandidateResponseDTO.CandidateSummaryRes> candidateSummaryResList = null;
+                    if (post.getVoteType().equals(GENERAL)) { // 일반 투표인 경우
+                        postVoteType = "GENERAL";
+                        general_poll_id = post.getGeneralPoll().getId();
+                        candidateList = candidateRepository.findAllByGeneralPollId(general_poll_id);
+                        candidateSummaryResList = new ArrayList<>();
+
+                        // 총 투표수 계산
+                        Double totalVotes = (double) post.getGeneralPoll().getGeneralVoteList().stream()
+                                .flatMap(vote -> vote.getSelect_list().stream())
+                                .count();
+
+                        // 각 후보별 선택된 횟수 계산
+                        Map<Long, Long> candidateSelectionCounts = post.getGeneralPoll().getGeneralVoteList().stream()
+                                .flatMap(vote -> vote.getSelect_list().stream())
+                                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+                        for (Candidate candidate : candidateList) {
+                            long selectionCount = candidateSelectionCounts.getOrDefault(candidate.getId(), 0L);
+                            Double percent = (double) selectionCount / totalVotes * 100;
+                            candidateSummaryResList.add(CandidateConverter.toCandidateSummaryRes(candidate, percent));
+                        }
+                    } else if (post.getVoteType().equals(GAUGE)) {
+                        postVoteType = "GAUGE";
+                        gauge_poll_id = post.getGaugePoll().getId();
+                    } else {
+                        postVoteType = "CARD";
+                        card_poll_id = post.getCardPoll().getId();
+                        candidateList = candidateRepository.findAllByCardPollId(card_poll_id);
+                        candidateSummaryResList = new ArrayList<>();
+
+                        // 총 투표수 계산
+                        Double totalVotes = (double) post.getCardPoll().getCardVoteList().stream()
+                                .flatMap(vote -> vote.getSelect_list().stream())
+                                .count();
+
+                        // 각 후보별 선택된 횟수 계산
+                        Map<Long, Long> candidateSelectionCounts = post.getCardPoll().getCardVoteList().stream()
+                                .flatMap(vote -> vote.getSelect_list().stream())
+                                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+                        for (Candidate candidate : candidateList) {
+                            long selectionCount = candidateSelectionCounts.getOrDefault(candidate.getId(), 0L);
+                            Double percent = (double) selectionCount / totalVotes * 100;
+                            candidateSummaryResList.add(CandidateConverter.toCandidateSummaryRes(candidate, percent));
+                        }
+                    }
+
+                    PostResponseDTO.PostSummaryListRes postGetRes = PostConverter.toPostSummaryRes(post, like_cnt, comment_cnt, postVoteType, candidateSummaryResList);
+                    return postGetRes;
+                })
+                .filter(Objects::nonNull) // null인 요소는 필터링
+                .get()
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(postResList, pageable, bestPostPage.getTotalElements());
     }
 }

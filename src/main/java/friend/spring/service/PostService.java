@@ -5,6 +5,7 @@ import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.web.dto.PostRequestDTO;
+import friend.spring.web.dto.PostResponseDTO;
 import org.springframework.data.domain.Page;
 
 public interface PostService {
@@ -23,5 +24,7 @@ public interface PostService {
     Post_like likePost(Long postId, Long userId);
 
     void dislikePost(Long postId, Long userId);
+
+    Page<PostResponseDTO.PostSummaryListRes> getBestPosts(Integer page, Integer size);
 }
 

@@ -6,10 +6,12 @@ import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
 import friend.spring.domain.mapping.Post_like;
+import friend.spring.web.dto.CandidateResponseDTO;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static friend.spring.domain.enums.PostType.*;
 
@@ -110,6 +112,37 @@ public class PostConverter {
     public static PostResponseDTO.PostLikeRes toPostLikeRes(Post_like post_like) {
         return PostResponseDTO.PostLikeRes.builder()
                 .post_like_id(post_like.getId())
+                .build();
+    }
+
+    public static PostResponseDTO.PostSummaryListRes toPostSummaryRes(Post post, Integer like_cnt, Integer comment_cnt, String postVoteType, List<CandidateResponseDTO.CandidateSummaryRes> candidateSummaryResList) {
+        Long general_poll_id = null;
+        Long gauge_poll_id = null;
+        Long card_poll_id = null;
+        if (post.getGeneralPoll() != null) {
+            general_poll_id = post.getGeneralPoll().getId();
+        }
+        if (post.getGaugePoll() != null) {
+            gauge_poll_id = post.getGaugePoll().getId();
+        }
+        if (post.getCardPoll() != null) {
+            card_poll_id = post.getCardPoll().getId();
+        }
+
+        return PostResponseDTO.PostSummaryListRes.builder()
+                .title(post.getTitle())
+                .content(post.getContent())
+                .post_id(post.getId())
+                .file(post.getFile())
+                .like(like_cnt)
+                .comment_cnt(comment_cnt)
+                .created_at(post.getCreatedAt())
+                .user(UserConverter.toUserSummaryInfo(post.getUser()))
+                .postVoteType(postVoteType)
+                .general_poll_id(general_poll_id)
+                .gauge_poll_id(gauge_poll_id)
+                .card_poll_id(card_poll_id)
+                .candidateList(candidateSummaryResList)
                 .build();
     }
 }
