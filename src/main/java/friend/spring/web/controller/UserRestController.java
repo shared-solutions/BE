@@ -101,14 +101,14 @@ public class UserRestController {
 
     // 토큰 재발급
     @PostMapping("/reissue")
-    public ApiResponse<List<TokenDTO>> reissue(HttpServletRequest request) {
+    public ApiResponse<List<TokenDTO>> reissue(@RequestHeader(name = "rtk") String rtk, HttpServletRequest request) {
         System.out.println("controller: reissue 함수 실행");
         return ApiResponse.onSuccess(userService.reissue(request));
     }
 
     // 로그아웃
     @PostMapping("/logout")
-    public ApiResponse<String> logout(HttpServletRequest request)  {
+    public ApiResponse<String> logout(@RequestHeader(name = "atk") String atk, HttpServletRequest request)  {
         return ApiResponse.onSuccess(userService.logout(request));
     }
 }
