@@ -106,6 +106,7 @@ public class PostRestController {
         return ApiResponse.onSuccess(postService.getBestPosts(page, size));
     }
 
+    // 홈 - 답변을 기다리는 고민들
     @GetMapping("/recent")
     @Operation(summary = "홈 - 답변을 기다리는 고민들 API", description = "홈 - 답변을 기다리는 고민들 조회 API입니다. ex) /posts/recent")
     @ApiResponses({
@@ -121,4 +122,45 @@ public class PostRestController {
     ) {
         return ApiResponse.onSuccess(postService.getRecentPosts(page, size));
     }
+
+//    // 스크랩 추가
+//    @PostMapping("/{post-id}/scrap")
+//    @Operation(summary = "스크랩 추가 API", description = "스크랩 추가하는 API입니다. ex) /posts/1/like")
+//    @ApiResponses({
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+//    })
+//    @Parameters({
+//            @Parameter(name = "post-id", description = "path variable - 글 아이디"),
+//            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+//    })
+//    public ApiResponse<PostResponseDTO.PostLikeRes> createScrapPost(
+//            @PathVariable("post-id") Long postId,
+//            @RequestHeader("userId") Long userId
+//    ) {
+//        Post_like post_like = postService.likePost(postId, userId);
+//        return ApiResponse.onSuccess(PostConverter.toPostLikeRes(post_like));
+//    }
+//
+//    // 스크랩 해제
+//    @PostMapping("/{post-id}/like/del")
+//    @Operation(summary = "글 추천(좋아요) 해제 API", description = "글 추천(좋아요) 해제하는 API입니다. ex) /posts/1/like/del")
+//    @ApiResponses({
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+//            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4003",description = "글에 대한 좋아요 데이터를 찾을 수 없습니다."),
+//    })
+//    @Parameters({
+//            @Parameter(name = "post-id", description = "path variable - 글 아이디"),
+//            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+//    })
+//    public ApiResponse<Void> deleteScrapPost(
+//            @PathVariable("post-id") Long postId,
+//            @RequestHeader("userId") Long userId
+//    ) {
+//        postService.dislikePost(postId, userId);
+//        return ApiResponse.onSuccess(null);
+//    }
 }
