@@ -7,7 +7,9 @@ import friend.spring.converter.CandidateConverter;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.*;
 import friend.spring.domain.mapping.Post_like;
+import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.repository.*;
+import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -38,7 +41,9 @@ public class PostServiceImpl implements PostService{
     private final PointRepository pointRepository;
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
+    private final PostScrapRepository postScrapRepository;
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
     @Override
     public void checkPost(Boolean flag) {
         if (!flag) {
@@ -65,6 +70,13 @@ public class PostServiceImpl implements PostService{
     public void checkPostLike(Boolean flag) {
         if (!flag) {
             throw new PostHandler(ErrorStatus.POST_LIKE_NOT_FOUND);
+        }
+    }
+
+    @Override
+    public void checkPostScrap(Boolean flag) {
+        if (!flag) {
+            throw new PostHandler(ErrorStatus.POST_SCRAP_NOT_FOUND);
         }
     }
 
@@ -330,5 +342,49 @@ public class PostServiceImpl implements PostService{
                 .filter(Objects::nonNull) // null인 요소는 필터링
                 .get()
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Post_scrap createScrapPost(Long postId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            this.checkPost(false);
+        }
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
+        Post post = optionalPost.get();
+        User user = optionalUser.get();
+
+        Post_scrap post_scrap = PostConverter.toPostScrap(post, user);
+        return postScrapRepository.save(post_scrap);
+    }
+
+    @Override
+    public void deleteScrapPost(Long postId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            this.checkPost(false);
+        }
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
+        Optional<Post_scrap> optionalPost_scrap = postScrapRepository.findByPostIdAndUserId(postId, userId);
+        if (optionalPost_scrap.isEmpty()) {
+            this.checkPostScrap(false);
+        }
+
+        Post_scrap post_scrap = optionalPost_scrap.get();
+        postScrapRepository.delete(post_scrap);
     }
 }

@@ -4,10 +4,12 @@ package friend.spring.service;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.mapping.Post_like;
+import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
 import org.springframework.data.domain.Page;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface PostService {
@@ -27,10 +29,16 @@ public interface PostService {
 
     void dislikePost(Long postId, Long userId);
 
+    void checkPostScrap(Boolean flag);
+
     Page<PostResponseDTO.PostSummaryListRes> getBestPosts(Integer page, Integer size);
 
     Page<PostResponseDTO.PostSummaryListRes> getRecentPosts(Integer page, Integer size);
 
     List<PostResponseDTO.PostSummaryListRes> getPostRes(Page<Post> postPage);
+
+    Post_scrap createScrapPost(Long postId, HttpServletRequest request);
+
+    void deleteScrapPost(Long postId, HttpServletRequest request);
 }
 

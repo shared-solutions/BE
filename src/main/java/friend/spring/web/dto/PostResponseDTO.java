@@ -54,4 +54,11 @@ public class PostResponseDTO {
         List<CandidateResponseDTO.CandidateSummaryRes> candidateList;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ScrapCreateRes {
+        Long post_scrap_id;
+    }
 }
