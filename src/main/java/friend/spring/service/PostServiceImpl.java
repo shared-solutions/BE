@@ -253,7 +253,21 @@ public class PostServiceImpl implements PostService{
     public Page<PostResponseDTO.PostSummaryListRes> getBestPosts(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Post> bestPostPage = postRepository.findBestPosts(pageable);
-        List<PostResponseDTO.PostSummaryListRes> postResList = bestPostPage
+        List<PostResponseDTO.PostSummaryListRes> postResList = getPostRes(bestPostPage);
+        return new PageImpl<>(postResList, pageable, bestPostPage.getTotalElements());
+    }
+
+    @Override
+    public Page<PostResponseDTO.PostSummaryListRes> getRecentPosts(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> recentPostPage = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+        List<PostResponseDTO.PostSummaryListRes> postResList = getPostRes(recentPostPage);
+        return new PageImpl<>(postResList, pageable, recentPostPage.getTotalElements());
+    }
+
+    @Override
+    public List<PostResponseDTO.PostSummaryListRes> getPostRes(Page<Post> postPage) {
+        return postPage
                 .map(post -> {
                     Integer like_cnt = postLikeRepository.countByPostId(post.getId());
                     Integer comment_cnt = commentRepository.countByPostId(post.getId());
@@ -316,7 +330,5 @@ public class PostServiceImpl implements PostService{
                 .filter(Objects::nonNull) // null인 요소는 필터링
                 .get()
                 .collect(Collectors.toList());
-
-        return new PageImpl<>(postResList, pageable, bestPostPage.getTotalElements());
     }
 }

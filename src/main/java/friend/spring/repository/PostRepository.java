@@ -13,4 +13,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(value = "SELECT * FROM post WHERE post.created_at >= DATE_ADD(now(), INTERVAL -24 HOUR) ORDER BY post.point DESC", nativeQuery = true)
     Page<Post> findBestPosts(Pageable pageable);
+
+    Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }

@@ -8,6 +8,8 @@ import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
 import org.springframework.data.domain.Page;
 
+import java.util.List;
+
 public interface PostService {
     void checkPost(Boolean flag);
 
@@ -26,5 +28,9 @@ public interface PostService {
     void dislikePost(Long postId, Long userId);
 
     Page<PostResponseDTO.PostSummaryListRes> getBestPosts(Integer page, Integer size);
+
+    Page<PostResponseDTO.PostSummaryListRes> getRecentPosts(Integer page, Integer size);
+
+    List<PostResponseDTO.PostSummaryListRes> getPostRes(Page<Post> postPage);
 }
 

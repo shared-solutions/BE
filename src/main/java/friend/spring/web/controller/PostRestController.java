@@ -105,4 +105,20 @@ public class PostRestController {
     ) {
         return ApiResponse.onSuccess(postService.getBestPosts(page, size));
     }
+
+    @GetMapping("/recent")
+    @Operation(summary = "홈 - 답변을 기다리는 고민들 API", description = "홈 - 답변을 기다리는 고민들 조회 API입니다. ex) /posts/recent")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)"),
+            @Parameter(name = "size", description = "query string(RequestParam) - 한 번에 글 몇 개씩 불러올지 개수를 세는 변수 (1 이상 자연수로 설정)")
+    })
+    public ApiResponse<Page<PostResponseDTO.PostSummaryListRes>> getRecentPosts(
+            @RequestParam(name = "page") Integer page,
+            @RequestParam(name = "size") Integer size
+    ) {
+        return ApiResponse.onSuccess(postService.getRecentPosts(page, size));
+    }
 }
