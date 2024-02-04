@@ -115,20 +115,10 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostResponseDTO.PostSummaryListRes toPostSummaryRes(Post post, Integer like_cnt, Integer comment_cnt, String postVoteType, List<CandidateResponseDTO.CandidateSummaryRes> candidateSummaryResList) {
-        Long general_poll_id = null;
-        Long gauge_poll_id = null;
-        Long card_poll_id = null;
-        if (post.getGeneralPoll() != null) {
-            general_poll_id = post.getGeneralPoll().getId();
-        }
-        if (post.getGaugePoll() != null) {
-            gauge_poll_id = post.getGaugePoll().getId();
-        }
-        if (post.getCardPoll() != null) {
-            card_poll_id = post.getCardPoll().getId();
-        }
-
+    public static PostResponseDTO.PostSummaryListRes toPostSummaryRes(Post post, Integer like_cnt, Integer comment_cnt, String postVoteType,
+                                                                      List<CandidateResponseDTO.CandidateSummaryRes> candidateSummaryResList,
+                                                                      Long general_poll_id, Long gauge_poll_id, Long card_poll_id
+    ) {
         return PostResponseDTO.PostSummaryListRes.builder()
                 .title(post.getTitle())
                 .content(post.getContent())

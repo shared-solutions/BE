@@ -310,7 +310,7 @@ public class PostServiceImpl implements PostService{
                         }
                     }
 
-                    PostResponseDTO.PostSummaryListRes postGetRes = PostConverter.toPostSummaryRes(post, like_cnt, comment_cnt, postVoteType, candidateSummaryResList);
+                    PostResponseDTO.PostSummaryListRes postGetRes = PostConverter.toPostSummaryRes(post, like_cnt, comment_cnt, postVoteType, candidateSummaryResList, general_poll_id, gauge_poll_id, card_poll_id);
                     return postGetRes;
                 })
                 .filter(Objects::nonNull) // null인 요소는 필터링
