@@ -204,6 +204,7 @@ public class PostConverter {
     }
 
 
+    //글 상세 보기
     public static PostResponseDTO.PostDetailResponse postDetailResponse(Post post, Boolean engage,Long userId, Post parentPost){
         Integer likeCount = post.getPostLikeList().size();
         Integer commentCount = post.getCommentList().size();
@@ -211,6 +212,8 @@ public class PostConverter {
         List<Integer> percent=null;
         List<String> voteResult=null;
         Integer value=null;
+        Boolean isLike=!post.getPostLikeList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        Boolean isComment=!post.getCommentList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
 
 
         if(post.getPostType()==REVIEW){
@@ -224,6 +227,8 @@ public class PostConverter {
                     .view(post.getView())
                     .like(likeCount)
                     .comment(commentCount)
+                    .isLike(isLike)
+                    .isComment(isComment)
                     .build();
         }
         if(post.getVoteType()==PostVoteType.GAUGE){
@@ -242,6 +247,8 @@ public class PostConverter {
                     .view(post.getView())
                     .like(likeCount)
                     .comment(commentCount)
+                    .isLike(isLike)
+                    .isComment(isComment)
                     .build();
         }
         if(post.getVoteType()==PostVoteType.GENERAL){
@@ -307,6 +314,8 @@ public class PostConverter {
                     .view(post.getView())
                     .like(likeCount)
                     .comment(commentCount)
+                    .isLike(isLike)
+                    .isComment(isComment)
                     .build();
         }
         List<PollOptionDTO> pollOptionDTOList=post.getCardPoll().getCandidateList().stream()
@@ -371,6 +380,8 @@ public class PostConverter {
                 .view(post.getView())
                 .like(likeCount)
                 .comment(commentCount)
+                .isLike(isLike)
+                .isComment(isComment)
                 .build();
     }
 
