@@ -193,6 +193,7 @@ public class PostConverter {
         return Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
+                .file(request.getFile())
                 .postType(postType)
                 .category(category)
                 .voteType(postVoteType)
@@ -217,6 +218,7 @@ public class PostConverter {
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
+                    .file(post.getFile())
                     .parentPost(toParentPostDTO(parentPost))
                     .view(post.getView())
                     .like(likeCount)
@@ -232,6 +234,7 @@ public class PostConverter {
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
+                    .file(post.getFile())
                     .gauge(value)
                     .point(post.getPoint())
                     .deadline(post.getGaugePoll().getDeadline())
@@ -292,6 +295,7 @@ public class PostConverter {
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
+                    .file(post.getFile())
                     .pollTitle(post.getGeneralPoll().getPollTitle())
                     .pollOption(pollOptionDTOList)
                     .point(post.getPoint())
@@ -355,6 +359,7 @@ public class PostConverter {
                 .createdAt(post.getCreatedAt())
                 .title(post.getTitle())
                 .content(post.getContent())
+                .file(post.getFile())
                 .pollTitle(post.getCardPoll().getPollTitle())
                 .pollOption(pollOptionDTOList)
                 .point(post.getPoint())
@@ -369,23 +374,12 @@ public class PostConverter {
     }
 
     public static PostResponseDTO.PollPostGetResponse pollPostGetResponse(Post post, Long userId){
-        if(post.getPostType()==REVIEW){
-            return PostResponseDTO.PollPostGetResponse.builder()
-                    .nickname(post.getUser().getNickname())
-                    .content(Long.toString(post.getId()))
-                    .build();
-        }
+        //로컬 db test
         if(post.getPostType()==VOTE&&post.getVoteType()==null){
             return PostResponseDTO.PollPostGetResponse.builder()
                     .nickname(post.getUser().getNickname())
                     .content(Long.toString(post.getId()))
                     .build();
-        }
-
-        System.out.println("Post: " + post.getId() + ", UserId: " + userId);
-
-        if (post == null || userId == null) {
-            throw new IllegalArgumentException("Post or userId cannot be null");
         }
 
         Integer likeCount = post.getPostLikeList().size();
@@ -515,6 +509,36 @@ public class PostConverter {
                 .map(post->pollPostGetResponse(post,userId)).collect(Collectors.toList());
         return PostResponseDTO.PollPostGetListDTO.builder()
                 .pollPostList(pollPostGetListDTO)
+                .isEnd(postList.isLast())
+                .build();
+    }
+
+    public static PostResponseDTO.ReviewPostGetResponse reviewPostGetResponse(Post post, Long userId){
+        Integer likeCount = post.getPostLikeList().size();
+        Integer commentCount = post.getCommentList().size();
+        Boolean isLike=!post.getPostLikeList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        Boolean isComment=!post.getCommentList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        return PostResponseDTO.ReviewPostGetResponse.builder()
+                .nickname(post.getUser().getNickname())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .ReviewPic(post.getFile())
+                .uploadDate(post.getCreatedAt())
+                .like(likeCount)
+                .comment(commentCount)
+                .isLike(isLike)
+                .isComment(isComment)
+                .build();
+
+
+
+    }
+
+    public static PostResponseDTO.ReviewPostGetListDTO reviewPostGetListDTO(Page<Post> postList,Long userId){
+        List<PostResponseDTO.ReviewPostGetResponse> reviewPostGetListDTO = postList.stream()
+                .map(post->reviewPostGetResponse(post,userId)).collect(Collectors.toList());
+        return PostResponseDTO.ReviewPostGetListDTO.builder()
+                .reviewPostList(reviewPostGetListDTO)
                 .isEnd(postList.isLast())
                 .build();
     }

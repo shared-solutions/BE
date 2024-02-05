@@ -29,6 +29,7 @@ public class PostResponseDTO {
         LocalDateTime createdAt;
         String title;
         String content;
+        String file;
         String pollTitle; // 투표글에서만 사용, 후기글에서는 null
         List<PollOptionDTO> pollOption; // 투표글에서만 사용, 후기글에서는 null
         Integer gauge; // 게이지 투표글에서만 사용, 후기글에서는 null
@@ -74,13 +75,20 @@ public class PostResponseDTO {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class ReviewPostGetListDTO{
+        List<ReviewPostGetResponse> reviewPostList;
+        private Boolean isEnd;
+    }
+    @Builder
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class ReviewPostGetResponse{
         String nickname;
         String title;
         String content;
-        Timestamp uploadDate;
-        String pollOption;
-        Integer gauge;
+        LocalDateTime uploadDate;
+        String ReviewPic;
         Integer like;
         Integer comment;
         Boolean isLike;

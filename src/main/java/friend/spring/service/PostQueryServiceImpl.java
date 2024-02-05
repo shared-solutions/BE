@@ -5,11 +5,14 @@ import friend.spring.domain.*;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
 import friend.spring.repository.*;
+import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,7 +87,19 @@ public class PostQueryServiceImpl implements PostQueryService{
     @Override
     @Transactional
     public Page<Post> getPostList(Integer page,Integer size){
-        return postRepository.findAll(PageRequest.of(page,size, Sort.by(Sort.Direction.ASC,"createdAt")));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
+        return postRepository.findByPostType(PostType.VOTE, pageable);
+    }
+
+    @Override
+    @Transactional
+    public Page<Post> getReviewList(Integer page, Integer size, Integer arrange){
+        if(arrange==1){
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
+            return postRepository.findByPostType(PostType.REVIEW, pageable);
+        }
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "view"));
+        return postRepository.findByPostType(PostType.REVIEW, pageable);
     }
 
 }

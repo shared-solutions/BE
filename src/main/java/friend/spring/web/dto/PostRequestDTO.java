@@ -27,7 +27,11 @@ public class PostRequestDTO {
         @NotBlank
         Timestamp deadline;
         Integer point;
+        String file;
     }
-
+    @Getter
+    public static class ReviewPostGetDTO{
+        Integer arrange; //조회순 :0, 최신순:1
+    }
 
 }

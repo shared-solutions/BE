@@ -1,6 +1,8 @@
 package friend.spring.service;
 
 import friend.spring.domain.Post;
+import friend.spring.web.dto.PostRequestDTO;
+import friend.spring.web.dto.PostResponseDTO;
 import org.springframework.data.domain.Page;
 
 import java.util.Optional;
@@ -14,4 +16,6 @@ public interface PostQueryService {
     Optional<Post> findPost(Long postId);
 
     Page<Post> getPostList(Integer page,Integer size);
+
+    Page<Post> getReviewList(Integer page, Integer size, Integer arrange);
 }
