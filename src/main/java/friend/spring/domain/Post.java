@@ -147,4 +147,8 @@ public class Post extends BaseEntity {
     public void setContent(String content){
         this.content=content;
     }
+
+    public void setStateDel(){
+        this.state=PostState.DELETED;
+    }
 }

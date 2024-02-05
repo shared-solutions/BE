@@ -105,7 +105,7 @@ public class PostRestController {
         return ApiResponse.onSuccess(PostConverter.reviewPostGetListDTO(postPage,userId));
     }
 
-    @PatchMapping("{post-id}/post/{user-id}/edit")
+    @PatchMapping("/{post-id}/post/{user-id}/edit")
     @Operation(summary = "글 수정 API", description = "댓글 수정하는 API입니다. ex) /posts/1/comment/1/edit")
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
@@ -116,6 +116,20 @@ public class PostRestController {
                                       @RequestHeader("userId") Long userId
     ) {
         postService.editPost(postId, request, userId);
+        return ApiResponse.onSuccess(null);
+    }
+
+    @PatchMapping("/{post-id}/post/{user-id}/del")
+    @Operation(summary = "댓글 삭제 API", description = "댓글 삭제하는 API입니다. ex) /posts/1/comment/1/del")
+    @Parameters({
+            @Parameter(name = "post-id", description = "path variable - 글 아이디"),
+            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)")
+    })
+    public ApiResponse<Void> deleteComment(
+            @PathVariable("post-id") Long postId,
+            @RequestHeader("userId") Long userId
+    ) {
+        postService.deletePost(postId, userId);
         return ApiResponse.onSuccess(null);
     }
 }

@@ -185,4 +185,16 @@ public class PostServiceImpl implements PostService{
 
     }
 
+    @Override
+    @Transactional
+    public void deletePost(Long postId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        if(!user.getId().equals(post.getUser().getId())){
+            throw new RuntimeException("삭제 권환이 없습니다 글이 없습니다");
+        }
+        post.setStateDel();
+    }
+
+
 }
