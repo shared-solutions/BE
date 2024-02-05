@@ -59,7 +59,7 @@ public class Post extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private Category postCategory;
+    private Category category;
     // 부모 글 정의
     // 고민후기 원글 아이디
     @ManyToOne(fetch = FetchType.LAZY)
@@ -115,9 +115,9 @@ public class Post extends BaseEntity {
     }
 
     public void setCategory(Category category){
-        if(this.postCategory != null)
+        if(this.category != null)
             category.getPostList().remove(this);
-        this.postCategory=category;
+        this.category =category;
         category.getPostList().add(this);
     }
 

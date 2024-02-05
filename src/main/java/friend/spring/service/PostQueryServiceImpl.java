@@ -94,7 +94,7 @@ public class PostQueryServiceImpl implements PostQueryService{
         return postRepository.findByPostTypeAndState(PostType.VOTE, PostState.POSTING, pageable);}
         Category category1 = categoryRepository.findByName(category);
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        return postRepository.findByPostTypeAndStateAndPostCategory(PostType.VOTE, PostState.POSTING,category1, pageable);
+        return postRepository.findByPostTypeAndStateAndCategory(PostType.VOTE, PostState.POSTING,category1, pageable);
     }
 
     @Override

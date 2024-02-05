@@ -22,6 +22,6 @@ public class Category extends BaseEntity {
     private String name;
 
     @Builder.Default
-    @OneToMany(mappedBy = "postCategory")
+    @OneToMany(mappedBy = "category")
     private List<Post> postList = new ArrayList<>();
 }

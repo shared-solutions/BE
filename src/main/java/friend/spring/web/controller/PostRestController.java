@@ -34,7 +34,7 @@ public class PostRestController {
             @Parameter(name="title", description="<String> 글 제목"),
             @Parameter(name="content", description="<String> 글 내용"),
             @Parameter(name="category", description="카테고리. 대문자(ex EDUCATION)" ),
-            @Parameter(name="postType", description="<Integer> 글 종류<br>1 : NOT_VOTE <br>2 : VOTE <br>3 : REVIEW"),
+            @Parameter(name="postType", description="<Integer> 글 종류<br>1 : VOTE <br>2 : REVIEW"),
             @Parameter(name="postVoteType", description="<Integer> 투표 종류<br>1 : GENERAL <br>2 : GAUGE <br>3 : CARD<br>해당 사항 없을시 null"),
             @Parameter(name="pollTitle", description="<String> 투표 제목"),
             @Parameter(name="multipleChoice", description="<Boolean> 복수 선택 여부"),
