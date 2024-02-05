@@ -2,7 +2,10 @@ package friend.spring.web.dto;
 
 
 import friend.spring.domain.Post;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.tomcat.jni.Poll;
 
 import javax.validation.constraints.NotBlank;
@@ -32,6 +35,17 @@ public class PostRequestDTO {
     @Getter
     public static class ReviewPostGetDTO{
         Integer arrange; //조회순 :0, 최신순:1
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostEditReq {
+        @NotBlank
+        String title;
+        @NotBlank
+        String content;
     }
 
 }

@@ -10,5 +10,7 @@ public interface PostService {
     Post joinPost(PostRequestDTO.AddPostDTO request, Long userId);
 
     Boolean checkPoint(PostRequestDTO.AddPostDTO request, User user);
+
+    void editPost(Long postId,PostRequestDTO.PostEditReq request, Long userId);
 }
 

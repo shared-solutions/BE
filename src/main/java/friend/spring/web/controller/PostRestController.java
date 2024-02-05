@@ -104,4 +104,18 @@ public class PostRestController {
         Page<Post> postPage=postQueryService.getReviewList(page,size,arrange);
         return ApiResponse.onSuccess(PostConverter.reviewPostGetListDTO(postPage,userId));
     }
+
+    @PatchMapping("{post-id}/post/{user-id}/edit")
+    @Operation(summary = "글 수정 API", description = "댓글 수정하는 API입니다. ex) /posts/1/comment/1/edit")
+    @Parameters({
+            @Parameter(name = "post-id", description = "path variable - 글 아이디"),
+            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+    })
+    public ApiResponse<Void> editPost(@PathVariable("post-id") Long postId,
+                                      @RequestBody PostRequestDTO.PostEditReq request,
+                                      @RequestHeader("userId") Long userId
+    ) {
+        postService.editPost(postId, request, userId);
+        return ApiResponse.onSuccess(null);
+    }
 }

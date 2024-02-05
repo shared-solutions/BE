@@ -203,6 +203,7 @@ public class PostConverter {
                 .build();
     }
 
+
     public static PostResponseDTO.PostDetailResponse postDetailResponse(Post post, Boolean engage,Long userId, Post parentPost){
         Integer likeCount = post.getPostLikeList().size();
         Integer commentCount = post.getCommentList().size();

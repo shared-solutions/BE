@@ -1,5 +1,6 @@
 package friend.spring.service;
 
+import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.converter.PostConverter;
@@ -11,6 +12,8 @@ import friend.spring.web.dto.PostRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Objects;
 
 import static friend.spring.domain.enums.PostType.*;
 import static friend.spring.domain.enums.PostVoteType.*;
@@ -168,4 +171,18 @@ public class PostServiceImpl implements PostService{
         return postRepository.save(newPost);
 
     }
+
+    @Override
+    @Transactional
+    public void editPost(Long postId,PostRequestDTO.PostEditReq request, Long userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        if(!user.getId().equals(post.getUser().getId())){
+            throw new RuntimeException("수정 권환이 없습니다 글이 없습니다");
+        }
+        post.setTitle(request.getTitle());
+        post.setContent(request.getContent());
+
+    }
+
 }
