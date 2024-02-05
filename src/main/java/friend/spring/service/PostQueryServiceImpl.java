@@ -6,6 +6,7 @@ import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
 import friend.spring.repository.*;
+import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +32,7 @@ public class PostQueryServiceImpl implements PostQueryService{
     private final Gauge_VoteRepository gaugeVoteRepository;
     private final Card_VoteRepository cardVoteRepository;
     private final CategoryRepository categoryRepository;
+    private final JwtTokenProvider jwtTokenProvider;
     @Override
     @Transactional
     public Optional<Post> getPostDetail(Long postId){
@@ -110,7 +113,8 @@ public class PostQueryServiceImpl implements PostQueryService{
 
     @Override
     @Transactional
-    public Page<Post> getParentPostList(Integer page,Integer size,Long userId){
+    public Page<Post> getParentPostList(Integer page, Integer size, HttpServletRequest request){
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 //        List<Post> userPost = postRepository.findByUserId(userId);
         return postRepository.findByUserIdAndPostTypeAndState(userId, PostType.VOTE, PostState.POSTING, pageable);
