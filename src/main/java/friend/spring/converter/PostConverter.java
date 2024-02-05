@@ -7,6 +7,7 @@ import friend.spring.domain.enums.PostVoteType;
 import friend.spring.service.PostQueryService;
 import friend.spring.service.PostQueryServiceImpl;
 import friend.spring.web.dto.*;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -364,6 +365,157 @@ public class PostConverter {
                 .view(post.getView())
                 .like(likeCount)
                 .comment(commentCount)
+                .build();
+    }
+
+    public static PostResponseDTO.PollPostGetResponse pollPostGetResponse(Post post, Long userId){
+        if(post.getPostType()==REVIEW){
+            return PostResponseDTO.PollPostGetResponse.builder()
+                    .nickname(post.getUser().getNickname())
+                    .content(Long.toString(post.getId()))
+                    .build();
+        }
+        if(post.getPostType()==VOTE&&post.getVoteType()==null){
+            return PostResponseDTO.PollPostGetResponse.builder()
+                    .nickname(post.getUser().getNickname())
+                    .content(Long.toString(post.getId()))
+                    .build();
+        }
+
+        System.out.println("Post: " + post.getId() + ", UserId: " + userId);
+
+        if (post == null || userId == null) {
+            throw new IllegalArgumentException("Post or userId cannot be null");
+        }
+
+        Integer likeCount = post.getPostLikeList().size();
+        Integer commentCount = post.getCommentList().size();
+        List<PollOptionDTO> userChoiceList=null;
+        Boolean isLike=!post.getPostLikeList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        Boolean isComment=!post.getCommentList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        Boolean engage=false;
+
+        if(post.getVoteType()==PostVoteType.GENERAL) {
+            List<PollOptionDTO> pollOptionDTOList=post.getGeneralPoll().getCandidateList().stream()
+                    .map(PostConverter::toPollOptionDTO).collect(Collectors.toList());
+            if(!post.getGeneralPoll().getGeneralVoteList().stream().filter(cardVote -> cardVote.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty()){
+                engage=true;
+            }
+            if(engage) {
+                //투표한 후보에 대한 정보
+                Set<Long> selectedOptionIds = post.getGeneralPoll().getGeneralVoteList().stream()
+                        .filter(cardVote -> cardVote.getUser().getId().equals(userId))
+                        .flatMap(cardVote -> cardVote.getSelect_list().stream())
+                        .collect(Collectors.toSet());
+                userChoiceList = post.getGeneralPoll().getCandidateList().stream()
+                        .filter(candidate -> selectedOptionIds.contains(candidate.getId()))
+                        .map(PostConverter::toPollOptionDTO)
+                        .collect(Collectors.toList());
+
+                return PostResponseDTO.PollPostGetResponse.builder()
+                        .nickname(post.getUser().getNickname())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .uploadDate(post.getCreatedAt())
+                        .pollOption(pollOptionDTOList)
+                        .userVote(userChoiceList)
+                        .like(likeCount)
+                        .comment(commentCount)
+                        .isLike(isLike)
+                        .isComment(isComment)
+                        .build();
+
+            }
+            return PostResponseDTO.PollPostGetResponse.builder()
+                    .nickname(post.getUser().getNickname())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .uploadDate(post.getCreatedAt())
+                    .pollOption(pollOptionDTOList)
+                    .like(likeCount)
+                    .comment(commentCount)
+                    .isLike(isLike)
+                    .isComment(isComment)
+                    .build();
+        }
+        if(post.getVoteType()==PostVoteType.GAUGE){
+            if(!post.getGaugePoll().getGaugeVoteList().stream().filter(cardVote -> cardVote.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty()){
+                engage=true;
+            }
+            if(engage) {
+                return PostResponseDTO.PollPostGetResponse.builder()
+                        .nickname(post.getUser().getNickname())
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .uploadDate(post.getCreatedAt())
+                        .gauge(post.getGaugePoll().getGauge())
+                        .like(likeCount)
+                        .comment(commentCount)
+                        .isLike(isLike)
+                        .isComment(isComment)
+                        .build();
+            }
+            return PostResponseDTO.PollPostGetResponse.builder()
+                    .nickname(post.getUser().getNickname())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .uploadDate(post.getCreatedAt())
+                    .like(likeCount)
+                    .comment(commentCount)
+                    .isLike(isLike)
+                    .isComment(isComment)
+                    .build();
+        }
+        List<PollOptionDTO> pollOptionDTOList=post.getCardPoll().getCandidateList().stream()
+                .map(PostConverter::toPollOptionDTO).collect(Collectors.toList());
+        System.out.println("fuck");
+        if(!post.getCardPoll().getCardVoteList().stream().filter(cardVote -> cardVote.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty()){
+            engage=true;
+        }
+        if(engage) {
+            //투표한 후보에 대한 정보
+            Set<Long> selectedOptionIds = post.getCardPoll().getCardVoteList().stream()
+                    .filter(cardVote -> cardVote.getUser().getId().equals(userId))
+                    .flatMap(cardVote -> cardVote.getSelect_list().stream())
+                    .collect(Collectors.toSet());
+            userChoiceList = post.getCardPoll().getCandidateList().stream()
+                    .filter(candidate -> selectedOptionIds.contains(candidate.getId()))
+                    .map(PostConverter::toPollOptionDTO)
+                    .collect(Collectors.toList());
+
+            return PostResponseDTO.PollPostGetResponse.builder()
+                    .nickname(post.getUser().getNickname())
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .uploadDate(post.getCreatedAt())
+                    .pollOption(pollOptionDTOList)
+                    .userVote(userChoiceList)
+                    .like(likeCount)
+                    .comment(commentCount)
+                    .isLike(isLike)
+                    .isComment(isComment)
+                    .build();
+
+        }
+        return PostResponseDTO.PollPostGetResponse.builder()
+                .nickname(post.getUser().getNickname())
+                .title(post.getTitle())
+                .content(post.getContent())
+                .uploadDate(post.getCreatedAt())
+                .pollOption(pollOptionDTOList)
+                .like(likeCount)
+                .comment(commentCount)
+                .isLike(isLike)
+                .isComment(isComment)
+                .build();
+    }
+
+    public static PostResponseDTO.PollPostGetListDTO pollPostGetListDTO(Page<Post> postList,Long userId){
+        List<PostResponseDTO.PollPostGetResponse> pollPostGetListDTO = postList.stream()
+                .map(post->pollPostGetResponse(post,userId)).collect(Collectors.toList());
+        return PostResponseDTO.PollPostGetListDTO.builder()
+                .pollPostList(pollPostGetListDTO)
+                .isEnd(postList.isLast())
                 .build();
     }
 }

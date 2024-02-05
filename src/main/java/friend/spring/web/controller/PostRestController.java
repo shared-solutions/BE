@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -59,6 +60,20 @@ public class PostRestController {
         Boolean engage=postQueryService.checkEngage(PostId,userId);
         Post post = postOptional.get();
         return ApiResponse.onSuccess(PostConverter.postDetailResponse(post,engage,userId,parentPost));
+
+    }
+    @GetMapping("/{user-id}")
+    @Operation(summary = "글 전체 보기 API", description = "글 전체 보기합니다")
+    @Parameters({
+            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
+            @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)")
+    })
+    public ApiResponse<PostResponseDTO.PollPostGetListDTO> getPostDetail(
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            @RequestParam(name = "size",defaultValue = "15") Integer size,
+            @RequestParam(name = "user-id") Long userId){
+        Page<Post> postPage=postQueryService.getPostList(page,size);
+        return ApiResponse.onSuccess(PostConverter.pollPostGetListDTO(postPage,userId));
 
     }
 }

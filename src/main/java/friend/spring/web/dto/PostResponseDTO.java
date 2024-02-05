@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -41,5 +42,48 @@ public class PostResponseDTO {
         Integer like;
         Integer comment;
 
+    }
+
+    @Builder
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PollPostGetListDTO{
+        List<PollPostGetResponse> pollPostList;
+        private Boolean isEnd;
+    }
+    @Builder
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PollPostGetResponse{
+        String nickname;
+        String title;
+        String content;
+        LocalDateTime uploadDate;
+        List<PollOptionDTO> pollOption;
+        List<PollOptionDTO> userVote;
+        Integer gauge;
+        Integer like;
+        Integer comment;
+        Boolean isLike;
+        Boolean isComment;
+    }
+
+    @Builder
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReviewPostGetResponse{
+        String nickname;
+        String title;
+        String content;
+        Timestamp uploadDate;
+        String pollOption;
+        Integer gauge;
+        Integer like;
+        Integer comment;
+        Boolean isLike;
+        Boolean isComment;
     }
 }

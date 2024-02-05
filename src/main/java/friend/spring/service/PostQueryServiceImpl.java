@@ -7,6 +7,9 @@ import friend.spring.domain.enums.PostVoteType;
 import friend.spring.repository.*;
 import friend.spring.web.dto.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,4 +75,16 @@ public class PostQueryServiceImpl implements PostQueryService{
         Optional<Post> parentPostOptional=postRepository.findById(parentid);
         return parentPostOptional.get().getParentPost();
     }
+
+    @Override
+    public Optional<Post> findPost(Long postId) {
+        return Optional.empty();
+    }
+
+    @Override
+    @Transactional
+    public Page<Post> getPostList(Integer page,Integer size){
+        return postRepository.findAll(PageRequest.of(page,size, Sort.by(Sort.Direction.ASC,"createdAt")));
+    }
+
 }
