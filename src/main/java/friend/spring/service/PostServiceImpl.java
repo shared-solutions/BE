@@ -88,9 +88,9 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public Post joinPost(PostRequestDTO.AddPostDTO request, Long userId) {
+    public Post joinPost(PostRequestDTO.AddPostDTO request, HttpServletRequest request2) {
 
-        
+        Long userId = jwtTokenProvider.getCurrentUser(request2);
         Post newPost= PostConverter.toPost(request);
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new RuntimeException("\""+userId+"\"해당 유저가 없습니다"));
