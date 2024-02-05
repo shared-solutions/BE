@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -95,5 +96,53 @@ public class PostResponseDTO {
         Integer comment;
         Boolean isLike;
         Boolean isComment;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyPostDTO {
+        String nickName;
+        LocalDateTime createdAt;
+        String title;
+        Integer postLike;
+        Integer comment;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostLikeRes {
+        Long post_like_id;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostSummaryListRes {
+        String title;
+        String content;
+        Long post_id;
+        String file;
+        Integer like;
+        Integer comment_cnt;
+        LocalDateTime created_at;
+        UserResponseDTO.UserSummaryInfo user;
+        String postVoteType;
+        Long general_poll_id;
+        Long gauge_poll_id;
+        Long card_poll_id;
+        List<CandidateResponseDTO.CandidateSummaryRes> candidateList;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ScrapCreateRes {
+        Long post_scrap_id;
     }
 }

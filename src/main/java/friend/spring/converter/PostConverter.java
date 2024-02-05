@@ -11,6 +11,20 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import friend.spring.domain.Post;
+import friend.spring.domain.User;
+import friend.spring.domain.enums.PostCategory;
+import friend.spring.domain.enums.PostState;
+import friend.spring.domain.enums.PostType;
+import friend.spring.domain.enums.PostVoteType;
+import friend.spring.domain.mapping.Post_like;
+import friend.spring.domain.mapping.Post_scrap;
+import friend.spring.web.dto.CandidateResponseDTO;
+import friend.spring.web.dto.PostRequestDTO;
+import friend.spring.web.dto.PostResponseDTO;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 import static friend.spring.domain.enums.PostType.*;
 
@@ -174,6 +188,7 @@ public class PostConverter {
                 .state(PostState.POSTING)
                 .build();
     }
+
 
 
     //글 상세 보기
@@ -546,6 +561,63 @@ public class PostConverter {
         return ParentPostDTO.ParentPostGetListDTO.builder()
                 .candidatePostDTOList(parentPostGetListDTO)
                 .isEnd(postList.isLast())
+                .build();
+    }
+
+    public static PostResponseDTO.MyPostDTO toMyPostResDTO(Post post){
+        return PostResponseDTO.MyPostDTO.builder()
+                .nickName(post.getUser().getNickname())
+                .createdAt(post.getCreatedAt())
+                .title(post.getTitle())
+                .postLike(post.getPostLikeList().size())
+                .comment(post.getCommentList().size())
+                .build();
+    }
+
+    public static Post_like toPostLike(Post post, User user) {
+        return Post_like.builder()
+                .post(post)
+                .user(user)
+                .build();
+    }
+
+    public static PostResponseDTO.PostLikeRes toPostLikeRes(Post_like post_like) {
+        return PostResponseDTO.PostLikeRes.builder()
+                .post_like_id(post_like.getId())
+                .build();
+    }
+
+    public static PostResponseDTO.PostSummaryListRes toPostSummaryRes(Post post, Integer like_cnt, Integer comment_cnt, String postVoteType,
+                                                                      List<CandidateResponseDTO.CandidateSummaryRes> candidateSummaryResList,
+                                                                      Long general_poll_id, Long gauge_poll_id, Long card_poll_id
+    ) {
+        return PostResponseDTO.PostSummaryListRes.builder()
+                .title(post.getTitle())
+                .content(post.getContent())
+                .post_id(post.getId())
+                .file(post.getFile())
+                .like(like_cnt)
+                .comment_cnt(comment_cnt)
+                .created_at(post.getCreatedAt())
+                .user(UserConverter.toUserSummaryInfo(post.getUser()))
+                .postVoteType(postVoteType)
+                .general_poll_id(general_poll_id)
+                .gauge_poll_id(gauge_poll_id)
+                .card_poll_id(card_poll_id)
+                .candidateList(candidateSummaryResList)
+                .build();
+    }
+
+    public static Post_scrap toPostScrap(Post post, User user) {
+        return Post_scrap.builder()
+                .post(post)
+                .user(user)
+                .build();
+    }
+
+    public static PostResponseDTO.ScrapCreateRes toScrapCreateRes(Post_scrap post_scrap) {
+        return PostResponseDTO.ScrapCreateRes.builder()
+                .post_scrap_id(post_scrap.getId())
                 .build();
     }
 }

@@ -27,8 +27,10 @@ public class General_poll extends BaseEntity {
     private Boolean multipleChoice=true;
 
     @Column(nullable = true)
+    @Builder.Default
     private Timestamp deadline= Timestamp.valueOf(LocalDateTime.now().plusHours(1)); // 디폴트 시간 1시간 설정.
 
+    @Builder.Default
     @OneToMany(mappedBy = "generalPoll", cascade = CascadeType.ALL)
     private List<General_vote> generalVoteList = new ArrayList<>();
 
@@ -36,6 +38,7 @@ public class General_poll extends BaseEntity {
     @JoinColumn(name = "post_id")
     private Post post;
 
+    @Builder.Default
     @OneToMany(mappedBy = "generalPoll",cascade = CascadeType.ALL)
     private List<Candidate> candidateList=new ArrayList<>();
 

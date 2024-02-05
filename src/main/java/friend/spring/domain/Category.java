@@ -18,10 +18,13 @@ public class Category extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @Column(nullable = false)
     private String name;
 
     @Builder.Default
     @OneToMany(mappedBy = "category")
     private List<Post> postList = new ArrayList<>();
+
 }
+
