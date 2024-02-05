@@ -374,6 +374,7 @@ public class PostConverter {
                 .build();
     }
 
+    //전체 보기
     public static PostResponseDTO.PollPostGetResponse pollPostGetResponse(Post post, Long userId){
         //로컬 db test
         if(post.getPostType()==VOTE&&post.getVoteType()==null){

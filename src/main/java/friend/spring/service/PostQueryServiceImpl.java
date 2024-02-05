@@ -2,6 +2,7 @@ package friend.spring.service;
 
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.*;
+import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
 import friend.spring.repository.*;
@@ -88,7 +89,7 @@ public class PostQueryServiceImpl implements PostQueryService{
     @Transactional
     public Page<Post> getPostList(Integer page,Integer size){
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
-        return postRepository.findByPostType(PostType.VOTE, pageable);
+        return postRepository.findByPostTypeAndState(PostType.VOTE, PostState.POSTING, pageable);
     }
 
     @Override
@@ -96,10 +97,10 @@ public class PostQueryServiceImpl implements PostQueryService{
     public Page<Post> getReviewList(Integer page, Integer size, Integer arrange){
         if(arrange==1){
             Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
-            return postRepository.findByPostType(PostType.REVIEW, pageable);
+            return postRepository.findByPostTypeAndState(PostType.REVIEW, PostState.POSTING, pageable);
         }
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "view"));
-        return postRepository.findByPostType(PostType.REVIEW, pageable);
+        return postRepository.findByPostTypeAndState(PostType.REVIEW, PostState.POSTING, pageable);
     }
 
     @Override
@@ -107,7 +108,7 @@ public class PostQueryServiceImpl implements PostQueryService{
     public Page<Post> getParentPostList(Integer page,Integer size,Long userId){
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
 //        List<Post> userPost = postRepository.findByUserId(userId);
-        return postRepository.findByUserIdAndPostType(userId, PostType.VOTE, pageable);
+        return postRepository.findByUserIdAndPostTypeAndState(userId, PostType.VOTE, PostState.POSTING, pageable);
     }
 
 }
