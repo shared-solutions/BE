@@ -4,6 +4,7 @@ import friend.spring.converter.CommentConverter;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.Post;
 import friend.spring.repository.PostRepository;
+import friend.spring.service.JwtTokenService;
 import friend.spring.service.PostQueryService;
 import friend.spring.service.PostService;
 import friend.spring.web.dto.ParentPostDTO;
@@ -36,9 +37,11 @@ public class PostRestController {
     private final PostService postService;
     private final PostQueryService postQueryService;
     private final PostRepository postRepository;
-    @PostMapping("/{user-id}")
+    private final JwtTokenService jwtTokenService;
+    @PostMapping("/")
     @Operation(summary = "글 작성 API", description = "글을 추가 합니다.")
     @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
             @Parameter(name="title", description="<String> 글 제목"),
             @Parameter(name="content", description="<String> 글 내용"),
             @Parameter(name="category", description="카테고리. 대문자(ex EDUCATION)" ),
@@ -53,29 +56,38 @@ public class PostRestController {
 
     })
     public ApiResponse<PostResponseDTO.AddPostResultDTO> join(@RequestBody @Valid PostRequestDTO.AddPostDTO request,
-                                                              @PathVariable(name="user-id")Long UserId){
-        Post post= postService.joinPost(request,UserId);
+                                                              @RequestHeader("atk") String atk,
+                                                              HttpServletRequest request2){
+        Post post= postService.joinPost(request,request2);
         return ApiResponse.onSuccess(PostConverter.toAddPostResultDTO(post));
     }
 
 
-    @GetMapping("/{user-id}/voteList")
+    @GetMapping("/voteList")
     @Operation(summary = "후기글 작성시 내투표 보기 API", description = "후기글 작성시 내투표 보기합니다.")
     @Parameters({
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
-            @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)")
+            @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
     })
     public ApiResponse<ParentPostDTO.ParentPostGetListDTO> getParentPosts(@RequestParam(name = "page", defaultValue = "0") Integer page,
-                                                          @RequestParam(name = "size",defaultValue = "15") Integer size,
-                                                          @RequestParam(name = "user-id") Long userId){
-        Page<Post> postPage=postQueryService.getParentPostList(page,size,userId);
+                                                                          @RequestParam(name = "size",defaultValue = "15") Integer size,
+                                                                          @RequestHeader("atk") String atk,
+                                                                          HttpServletRequest request2){
+        Page<Post> postPage=postQueryService.getParentPostList(page,size,request2);
+        Long userId=jwtTokenService.JwtToId(request2);
         return ApiResponse.onSuccess(PostConverter.parentPostGetListDTO(postPage,userId));
 
     }
-    @GetMapping("/{post-id}/{user-id}")
+    @GetMapping("/{post-id}")
     @Operation(summary = "글 상세 보기 API", description = "글 상세 보기합니다.")
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
+    })
     public ApiResponse<PostResponseDTO.PostDetailResponse> getPostDetail(@PathVariable(name="post-id")Long PostId,
-                                                                         @PathVariable(name="user-id")Long userId){
+                                                                         @RequestHeader("atk") String atk,
+                                                                         HttpServletRequest request2){
+        Long userId=jwtTokenService.JwtToId(request2);
         Optional<Post> postOptional =postQueryService.getPostDetail(PostId);
         Post parentPost=postQueryService.ParentPost(PostId);;
 //        Optional<Post> postOptional =postRepository.findById(PostId);
@@ -84,62 +96,70 @@ public class PostRestController {
         return ApiResponse.onSuccess(PostConverter.postDetailResponse(post,engage,userId,parentPost));
 
     }
-    @GetMapping("/poll-post/{user-id}/{category}")
+    @GetMapping("/poll-post/{category}")
     @Operation(summary = "고민글 전체 보기 API", description = "글 전체 보기합니다")
     @Parameters({
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
             @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)"),
-            @Parameter(name = "user-id", description = "query string(RequestParam) - user id"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
             @Parameter(name = "category", description = "query string(RequestParam) - category(대문자). 모두 보기는 ALL")
     })
     public ApiResponse<PostResponseDTO.PollPostGetListDTO> getPostDetail(@RequestParam(name = "page", defaultValue = "0") Integer page,
                                                                          @RequestParam(name = "size",defaultValue = "15") Integer size,
-                                                                         @RequestParam(name = "user-id") Long userId,
-                                                                         @RequestParam(name = "category") String category){
+                                                                         @RequestParam(name = "category") String category,
+                                                                         @RequestHeader("atk") String atk,
+                                                                         HttpServletRequest request2){
+        Long userId=jwtTokenService.JwtToId(request2);
         Page<Post> postPage=postQueryService.getPostList(page,size,category);
         return ApiResponse.onSuccess(PostConverter.pollPostGetListDTO(postPage,userId));
 
     }
 
-    @GetMapping("/review-post/{user-id}")
+    @GetMapping("/review-post")
     @Operation(summary = "후기글 전체 보기 API", description = "글 전체 보기합니다")
     @Parameters({
             @Parameter(name = "arrange", description = "query string(RequestParam) - 정렬 기준 변수입니다. (0: 조회순,1: 최신순) 디폴트값 0"),
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작) 디폴트값 0"),
-            @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정) 디폴트값 15")
+            @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정) 디폴트값 15"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<PostResponseDTO.ReviewPostGetListDTO> getReviewDetail(@RequestParam(name="arrange", defaultValue = "0") Integer arrange,
                                                                              @RequestParam(name = "page", defaultValue = "0") Integer page,
                                                                              @RequestParam(name = "size",defaultValue = "15") Integer size,
-                                                                             @RequestParam(name = "user-id") Long userId){
+                                                                             @RequestHeader("atk") String atk,
+                                                                             HttpServletRequest request2){
+        Long userId=jwtTokenService.JwtToId(request2);
         Page<Post> postPage=postQueryService.getReviewList(page,size,arrange);
         return ApiResponse.onSuccess(PostConverter.reviewPostGetListDTO(postPage,userId));
     }
 
-    @PatchMapping("/{post-id}/post/{user-id}/edit")
+    @PatchMapping("/{post-id}/post/edit")
     @Operation(summary = "글 수정 API", description = "댓글 수정하는 API입니다. ex) /posts/1/comment/1/edit")
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
-            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<Void> editPost(@PathVariable("post-id") Long postId,
                                       @RequestBody PostRequestDTO.PostEditReq request,
-                                      @RequestHeader("userId") Long userId
-    ) {
+                                      @RequestHeader("atk") String atk,
+                                      HttpServletRequest request2) {
+        Long userId=jwtTokenService.JwtToId(request2);
         postService.editPost(postId, request, userId);
         return ApiResponse.onSuccess(null);
     }
 
-    @PatchMapping("/{post-id}/post/{user-id}/del")
+    @PatchMapping("/{post-id}/post/del")
     @Operation(summary = "댓글 삭제 API", description = "댓글 삭제하는 API입니다. ex) /posts/1/comment/1/del")
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
-            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)")
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<Void> deleteComment(
             @PathVariable("post-id") Long postId,
-            @RequestHeader("userId") Long userId
+            @RequestHeader("atk") String atk,
+            HttpServletRequest request2
     ) {
+        Long userId=jwtTokenService.JwtToId(request2);
         postService.deletePost(postId, userId);
         return ApiResponse.onSuccess(null);
     }

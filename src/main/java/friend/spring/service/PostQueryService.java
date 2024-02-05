@@ -5,6 +5,7 @@ import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
 import org.springframework.data.domain.Page;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public interface PostQueryService {
@@ -19,5 +20,5 @@ public interface PostQueryService {
 
     Page<Post> getReviewList(Integer page, Integer size, Integer arrange);
 
-    Page<Post> getParentPostList(Integer page,Integer size,Long userId);
+    Page<Post> getParentPostList(Integer page, Integer size, HttpServletRequest request);
 }

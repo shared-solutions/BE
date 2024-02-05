@@ -20,7 +20,7 @@ public interface PostService {
 
     void checkPostLike(Boolean flag);
 
-    Post joinPost(PostRequestDTO.AddPostDTO request, Long userId);
+    Post joinPost(PostRequestDTO.AddPostDTO request, HttpServletRequest request2);
 
     Boolean checkPoint(PostRequestDTO.AddPostDTO request, User user);
 

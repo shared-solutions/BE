@@ -3,6 +3,7 @@ import friend.spring.domain.*;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
+import friend.spring.security.JwtTokenProvider;
 import friend.spring.service.PostQueryService;
 import friend.spring.web.dto.*;
 import org.springframework.data.domain.Page;
@@ -13,6 +14,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
+
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.web.dto.CandidateResponseDTO;
