@@ -6,6 +6,7 @@ import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
 import friend.spring.domain.mapping.Post_like;
+import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.web.dto.CandidateResponseDTO;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
@@ -133,6 +134,19 @@ public class PostConverter {
                 .gauge_poll_id(gauge_poll_id)
                 .card_poll_id(card_poll_id)
                 .candidateList(candidateSummaryResList)
+                .build();
+    }
+
+    public static Post_scrap toPostScrap(Post post, User user) {
+        return Post_scrap.builder()
+                .post(post)
+                .user(user)
+                .build();
+    }
+
+    public static PostResponseDTO.ScrapCreateRes toScrapCreateRes(Post_scrap post_scrap) {
+        return PostResponseDTO.ScrapCreateRes.builder()
+                .post_scrap_id(post_scrap.getId())
                 .build();
     }
 }
