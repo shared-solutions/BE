@@ -68,6 +68,13 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
+    public void checkPostScrap(Boolean flag) {
+        if (!flag){
+            throw new PostHandler(ErrorStatus.POST_CATGORY_NOT_FOUND);
+        }
+    }
+
+    @Override
     @Transactional
     public Post joinPost(PostRequestDTO.AddPostDTO request, Long userId) {
 

@@ -14,6 +14,8 @@ public interface PostService {
 
     void checkPostLike(Boolean flag);
 
+    void checkPostScrap(Boolean flag);
+
     Post joinPost(PostRequestDTO.AddPostDTO request, Long userId);
 
     Boolean checkPoint(PostRequestDTO.AddPostDTO request, User user);
