@@ -12,6 +12,6 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByPostTypeAndState(PostType postType, PostState state, Pageable pageable);
-    Page<Post> findByPostTypeAndStateAndCategory(PostType postType, PostState state,Category postCategory,Pageable pageable);
+    Page<Post> findByPostTypeAndStateAndCategory(PostType postType, PostState state,Category category,Pageable pageable);
     Page<Post> findByUserIdAndPostTypeAndState(Long userId, PostType postType, PostState state, Pageable pageable);
 }
