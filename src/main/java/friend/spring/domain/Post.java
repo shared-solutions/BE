@@ -1,7 +1,6 @@
 package friend.spring.domain;
 
 import friend.spring.domain.common.BaseEntity;
-import friend.spring.domain.enums.PostCategory;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
@@ -38,8 +37,6 @@ public class Post extends BaseEntity {
     @Column
     private PostVoteType voteType;
 
-    @Enumerated(EnumType.STRING)
-    private PostCategory category;
 
     @Enumerated(EnumType.STRING)
     @Column
