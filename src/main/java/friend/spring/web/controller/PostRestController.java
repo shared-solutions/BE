@@ -33,8 +33,7 @@ public class PostRestController {
     @Parameters({
             @Parameter(name="title", description="<String> 글 제목"),
             @Parameter(name="content", description="<String> 글 내용"),
-            @Parameter(name="category", description="<Integer> 카테고리<br>1 : EDUCATION <br>2 : ENTERTAINMENT <br>3 : LIFESTYLE <br>4 : ECONOMY <br>5 : SHOPPING" +
-                    "<br>6 : OTHERS" ),
+            @Parameter(name="category", description="카테고리. 대문자(ex EDUCATION)" ),
             @Parameter(name="postType", description="<Integer> 글 종류<br>1 : NOT_VOTE <br>2 : VOTE <br>3 : REVIEW"),
             @Parameter(name="postVoteType", description="<Integer> 투표 종류<br>1 : GENERAL <br>2 : GAUGE <br>3 : CARD<br>해당 사항 없을시 null"),
             @Parameter(name="pollTitle", description="<String> 투표 제목"),
@@ -76,16 +75,19 @@ public class PostRestController {
         return ApiResponse.onSuccess(PostConverter.postDetailResponse(post,engage,userId,parentPost));
 
     }
-    @GetMapping("/poll-post/{user-id}")
+    @GetMapping("/poll-post/{user-id}/{category}")
     @Operation(summary = "고민글 전체 보기 API", description = "글 전체 보기합니다")
     @Parameters({
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
-            @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)")
+            @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)"),
+            @Parameter(name = "user-id", description = "query string(RequestParam) - user id"),
+            @Parameter(name = "category", description = "query string(RequestParam) - category(대문자). 모두 보기는 ALL")
     })
     public ApiResponse<PostResponseDTO.PollPostGetListDTO> getPostDetail(@RequestParam(name = "page", defaultValue = "0") Integer page,
                                                                          @RequestParam(name = "size",defaultValue = "15") Integer size,
-                                                                         @RequestParam(name = "user-id") Long userId){
-        Page<Post> postPage=postQueryService.getPostList(page,size);
+                                                                         @RequestParam(name = "user-id") Long userId,
+                                                                         @RequestParam(name = "category") String category){
+        Page<Post> postPage=postQueryService.getPostList(page,size,category);
         return ApiResponse.onSuccess(PostConverter.pollPostGetListDTO(postPage,userId));
 
     }

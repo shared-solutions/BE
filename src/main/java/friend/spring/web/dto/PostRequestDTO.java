@@ -1,6 +1,7 @@
 package friend.spring.web.dto;
 
 
+import friend.spring.domain.Category;
 import friend.spring.domain.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ public class PostRequestDTO {
         String title;
         @NotBlank
         String content;
-        Integer category; //미정
+        String category;
         @NotBlank
         Integer postType; // 1: vote, 2: review
         Integer postVoteType;// 1: general, 2: gauge

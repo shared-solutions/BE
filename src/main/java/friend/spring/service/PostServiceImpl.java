@@ -30,6 +30,7 @@ public class PostServiceImpl implements PostService{
     private final Gauge_PollRepository gaugePollRepository;
     private final Card_PollRepository cardPollRepository;
     private final PointRepository pointRepository;
+    private final CategoryRepository categoryRepository;
     @Override
     public void checkPost(Boolean flag) {
         if (!flag) {
@@ -55,7 +56,11 @@ public class PostServiceImpl implements PostService{
                 .orElseThrow(()->new RuntimeException("\""+userId+"\"해당 유저가 없습니다"));
         newPost.setUser(user);
 
-//일반 투표 api
+        //일반 투표 api
+        if(newPost.getPostType()==VOTE){
+            newPost.setCategory(categoryRepository.findByName(request.getCategory()));
+
+        }
         if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GENERAL&&request.getPollOption()!=null){
             //포인트 차감 관련 코드
             if(request.getPoint()!=null) {

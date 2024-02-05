@@ -1,5 +1,6 @@
 package friend.spring.repository;
 
+import friend.spring.domain.Category;
 import friend.spring.domain.Post;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
@@ -11,5 +12,6 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByPostTypeAndState(PostType postType, PostState state, Pageable pageable);
+    Page<Post> findByPostTypeAndStateAndPostCategory(PostType postType, PostState state,Category postCategory,Pageable pageable);
     Page<Post> findByUserIdAndPostTypeAndState(Long userId, PostType postType, PostState state, Pageable pageable);
 }

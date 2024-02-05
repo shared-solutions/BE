@@ -29,6 +29,7 @@ public class PostQueryServiceImpl implements PostQueryService{
     private final General_VoteRepository generalVoteRepository;
     private final Gauge_VoteRepository gaugeVoteRepository;
     private final Card_VoteRepository cardVoteRepository;
+    private final CategoryRepository categoryRepository;
     @Override
     @Transactional
     public Optional<Post> getPostDetail(Long postId){
@@ -87,16 +88,20 @@ public class PostQueryServiceImpl implements PostQueryService{
 
     @Override
     @Transactional
-    public Page<Post> getPostList(Integer page,Integer size){
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
-        return postRepository.findByPostTypeAndState(PostType.VOTE, PostState.POSTING, pageable);
+    public Page<Post> getPostList(Integer page,Integer size,String category){
+        if(category=="ALL"){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return postRepository.findByPostTypeAndState(PostType.VOTE, PostState.POSTING, pageable);}
+        Category category1 = categoryRepository.findByName(category);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return postRepository.findByPostTypeAndStateAndPostCategory(PostType.VOTE, PostState.POSTING,category1, pageable);
     }
 
     @Override
     @Transactional
     public Page<Post> getReviewList(Integer page, Integer size, Integer arrange){
         if(arrange==1){
-            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
+            Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
             return postRepository.findByPostTypeAndState(PostType.REVIEW, PostState.POSTING, pageable);
         }
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "view"));
@@ -106,7 +111,7 @@ public class PostQueryServiceImpl implements PostQueryService{
     @Override
     @Transactional
     public Page<Post> getParentPostList(Integer page,Integer size,Long userId){
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 //        List<Post> userPost = postRepository.findByUserId(userId);
         return postRepository.findByUserIdAndPostTypeAndState(userId, PostType.VOTE, PostState.POSTING, pageable);
     }

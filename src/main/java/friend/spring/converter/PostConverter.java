@@ -1,11 +1,9 @@
 package friend.spring.converter;
 import friend.spring.domain.*;
-import friend.spring.domain.enums.PostCategory;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
 import friend.spring.service.PostQueryService;
-import friend.spring.service.PostQueryServiceImpl;
 import friend.spring.web.dto.*;
 import org.springframework.data.domain.Page;
 
@@ -137,7 +135,6 @@ public class PostConverter {
     public static Post toPost(PostRequestDTO.AddPostDTO request) {
         PostType postType=null;
         PostVoteType postVoteType=null;
-        PostCategory category=null;
 
         switch (request.getPostType()){
             case 1:
@@ -166,36 +163,11 @@ public class PostConverter {
             }
         }
 
-        switch (request.getCategory()){
-            case 1:
-                category=PostCategory.EDUCATION;
-                break;
-            case 2:
-                category=PostCategory.ENTERTAINMENT;
-                break;
-            case 3:
-                category=PostCategory.LIFESTYLE;
-                break;
-            case 4:
-                category=PostCategory.ECONOMY;
-                break;
-            case 5:
-                category=PostCategory.SHOPPING;
-                break;
-            case 6:
-                category=PostCategory.OTHERS;
-                break;
-            default:
-                break;
-        }
-
-
         return Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
                 .file(request.getFile())
                 .postType(postType)
-                .category(category)
                 .voteType(postVoteType)
                 .point(request.getPoint())
                 .view(0)

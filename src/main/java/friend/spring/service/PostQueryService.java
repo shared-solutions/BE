@@ -15,7 +15,7 @@ public interface PostQueryService {
 
     Optional<Post> findPost(Long postId);
 
-    Page<Post> getPostList(Integer page,Integer size);
+    Page<Post> getPostList(Integer page,Integer size, String category);
 
     Page<Post> getReviewList(Integer page, Integer size, Integer arrange);
 
