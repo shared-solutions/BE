@@ -65,7 +65,8 @@ public class User extends BaseEntity implements UserDetails {
     private Boolean is_deleted;
 
     @Column(nullable = true)
-    private Integer point;
+    @Builder.Default
+    private Integer point=0;
 
     @Column(nullable = true)
     private String kakao;

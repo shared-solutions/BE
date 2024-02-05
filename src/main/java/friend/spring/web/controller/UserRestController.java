@@ -18,6 +18,9 @@ import friend.spring.web.dto.AlarmResponseDTO;
 import friend.spring.web.dto.TokenDTO;
 import friend.spring.web.dto.UserRequestDTO;
 import friend.spring.web.dto.UserResponseDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -110,6 +113,13 @@ public class UserRestController {
     @PostMapping("/logout")
     public ApiResponse<String> logout(@RequestHeader(name = "atk") String atk, HttpServletRequest request)  {
         return ApiResponse.onSuccess(userService.logout(request));
+    }
+
+    @GetMapping("/point")
+    @Operation(summary = "포인트 조회 API", description = "임시로 user-id 입력")
+    public ApiResponse<UserResponseDTO.PointViewDTO> myPoint(@RequestHeader(name = "id") Long userId) {
+        Integer point = userService.pointCheck(userId);
+        return ApiResponse.onSuccess(UserConverter.toPointViewResDTO(point));
     }
 }
 

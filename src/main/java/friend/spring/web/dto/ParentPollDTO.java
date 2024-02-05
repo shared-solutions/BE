@@ -7,7 +7,8 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PollOptionDTO {
-    private String optionString;
-    private String optionImg;
+public class ParentPollDTO{
+    Long candidateId;
+    Integer rate;
+    Long selection;
 }

@@ -15,6 +15,7 @@ import java.util.List;
 public interface PostService {
     void checkPost(Boolean flag);
 
+
     void checkPostWriterUser(Boolean flag);
 
     void checkPostLike(Boolean flag);
@@ -22,6 +23,11 @@ public interface PostService {
     Post joinPost(PostRequestDTO.AddPostDTO request, Long userId);
 
     Boolean checkPoint(PostRequestDTO.AddPostDTO request, User user);
+
+
+    void editPost(Long postId,PostRequestDTO.PostEditReq request, Long userId);
+
+    void deletePost(Long postId, Long userId);
 
     Page<Post> getMyPostList(Long userId, Integer page);
 
@@ -40,5 +46,6 @@ public interface PostService {
     Post_scrap createScrapPost(Long postId, HttpServletRequest request);
 
     void deleteScrapPost(Long postId, HttpServletRequest request);
+
 }
 

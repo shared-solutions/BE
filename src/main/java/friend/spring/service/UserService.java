@@ -15,6 +15,7 @@ public interface UserService {
     List<TokenDTO> login(UserRequestDTO.UserLoginRequest userLoginRequest);
     User findMyPage(Long id);
     void checkUser(Boolean flag);
+    Integer pointCheck(Long id);
     Level nextLevel(Long id);
     String logout(HttpServletRequest request);
 

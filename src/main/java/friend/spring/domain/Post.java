@@ -1,7 +1,6 @@
 package friend.spring.domain;
 
 import friend.spring.domain.common.BaseEntity;
-import friend.spring.domain.enums.PostCategory;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
@@ -38,8 +37,6 @@ public class Post extends BaseEntity {
     @Column
     private PostVoteType voteType;
 
-    @Enumerated(EnumType.STRING)
-    private PostCategory category;
 
     @Enumerated(EnumType.STRING)
     @Column
@@ -62,7 +59,8 @@ public class Post extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    private Category postCategory;
+    private Category category;
+
     // 부모 글 정의
     // 고민후기 원글 아이디
     @ManyToOne(fetch = FetchType.LAZY)
@@ -123,6 +121,18 @@ public class Post extends BaseEntity {
         parent.getReviewPostList().add(this);
     }
 
+    public void setCategory(Category category){
+        if(this.category != null)
+            category.getPostList().remove(this);
+        this.category =category;
+        category.getPostList().add(this);
+    }
+
+    public void setView(Integer view) {
+        this.view = view;
+    }
+
+
     public void setGeneralPoll(General_poll generalPoll) {
         this.generalPoll = generalPoll;
         if (generalPoll != null && generalPoll.getPost() != this) {
@@ -142,5 +152,17 @@ public class Post extends BaseEntity {
         if (cardPoll != null && cardPoll.getPost() != this) {
             cardPoll.setPost(this);
         }
+    }
+
+    public void setTitle(String title){
+        this.title=title;
+    }
+
+    public void setContent(String content){
+        this.content=content;
+    }
+
+    public void setStateDel(){
+        this.state=PostState.DELETED;
     }
 }

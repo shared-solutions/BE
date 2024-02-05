@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,6 +21,7 @@ public class VoteServiceImpl implements VoteService{
     private final Card_VoteRepository cardVoteRepository;
     private final PostRepository postRepository;
     private final PointRepository pointRepository;
+    private final Gauge_PollRepository gaugePollRepository;
     @Override
     @Transactional
     public General_vote castGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request, Long userId) {
@@ -80,6 +82,15 @@ public class VoteServiceImpl implements VoteService{
                 .build();
         newPoint.setUser(user);
         pointRepository.save(newPoint);
+
+        Integer value=request.getValue();
+        gaugePollRepository.findById(request.getPostId());
+        Optional<Post> optionalPost=postRepository.findById(request.getPostId());
+        Post gaugePost=optionalPost.get();
+        Integer currentGauge=gaugePost.getGaugePoll().getGauge();
+        Integer engagedUser=gaugePost.getGaugePoll().getGaugeVoteList().size();
+        gaugePost.getGaugePoll().setGauge((currentGauge+request.getValue())/engagedUser);
+
 
         return gaugeVoteRepository.save(newGaugeVote);
     }

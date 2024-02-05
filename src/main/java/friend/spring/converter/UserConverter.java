@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import friend.spring.web.dto.UserResponseDTO;
+import io.swagger.models.auth.In;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -29,6 +30,14 @@ public class UserConverter {
                 .userRecommend(user.getLike())
                 .build();
     }
+
+
+    public static UserResponseDTO.PointViewDTO toPointViewResDTO(Integer point){
+        return UserResponseDTO.PointViewDTO.builder()
+                .point(point)
+                .build();
+    }
+
 
 
     public static UserResponseDTO.EmailSendRes toEmailSendRes(String code) {
@@ -159,4 +168,5 @@ public class UserConverter {
                 .image(user.getImage())
                 .build();
     }
+
 }

@@ -44,6 +44,7 @@ public class UserResponseDTO {
     }
 
 
+
     @Builder
     @Getter
     @NoArgsConstructor
@@ -68,6 +69,15 @@ public class UserResponseDTO {
         Integer postNum;
         Double adoptPostPercent;
         List<PostResponseDTO.MyPostDTO> postList;
+    }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PointViewDTO {
+        Integer point;
     }
 
     @Builder

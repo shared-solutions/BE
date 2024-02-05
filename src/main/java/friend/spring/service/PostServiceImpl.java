@@ -1,5 +1,6 @@
 package friend.spring.service;
 
+import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.PostHandler;
 import friend.spring.apiPayload.handler.UserHandler;
@@ -19,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.function.Function;
@@ -39,11 +42,14 @@ public class PostServiceImpl implements PostService{
     private final Gauge_PollRepository gaugePollRepository;
     private final Card_PollRepository cardPollRepository;
     private final PointRepository pointRepository;
+    private final CategoryRepository categoryRepository;
+
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
     private final PostScrapRepository postScrapRepository;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+
     @Override
     public void checkPost(Boolean flag) {
         if (!flag) {
@@ -90,7 +96,11 @@ public class PostServiceImpl implements PostService{
                 .orElseThrow(()->new RuntimeException("\""+userId+"\"해당 유저가 없습니다"));
         newPost.setUser(user);
 
-//일반 투표 api
+        //일반 투표 api
+        if(newPost.getPostType()==VOTE){
+            newPost.setCategory(categoryRepository.findByName(request.getCategory()));
+
+        }
         if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GENERAL&&request.getPollOption()!=null){
             //포인트 차감 관련 코드
             if(request.getPoint()!=null) {
@@ -206,6 +216,31 @@ public class PostServiceImpl implements PostService{
         return postRepository.save(newPost);
 
     }
+
+    @Override
+    @Transactional
+    public void editPost(Long postId,PostRequestDTO.PostEditReq request, Long userId){
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        if(!user.getId().equals(post.getUser().getId())){
+            throw new RuntimeException("수정 권환이 없습니다 글이 없습니다");
+        }
+        post.setTitle(request.getTitle());
+        post.setContent(request.getContent());
+
+    }
+
+    @Override
+    @Transactional
+    public void deletePost(Long postId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        if(!user.getId().equals(post.getUser().getId())){
+            throw new RuntimeException("삭제 권환이 없습니다 글이 없습니다");
+        }
+        post.setStateDel();
+    }
+
 
     //한 유저의 모든 질문글
     @Override
@@ -387,4 +422,5 @@ public class PostServiceImpl implements PostService{
         Post_scrap post_scrap = optionalPost_scrap.get();
         postScrapRepository.delete(post_scrap);
     }
+
 }
