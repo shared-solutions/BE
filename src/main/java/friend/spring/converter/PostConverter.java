@@ -542,6 +542,27 @@ public class PostConverter {
                 .isEnd(postList.isLast())
                 .build();
     }
+
+    public static ParentPostDTO.CandidatePostDTO candidatePostDTO(Post post){
+        Integer likeCount = post.getPostLikeList().size();
+        Integer commentCount = post.getCommentList().size();
+        return ParentPostDTO.CandidatePostDTO.builder()
+                .title(post.getTitle())
+                .content(post.getContent())
+                .like(likeCount)
+                .comment(commentCount)
+                .createdAt(post.getCreatedAt())
+                .build();
+    }
+
+    public static ParentPostDTO.ParentPostGetListDTO parentPostGetListDTO(Page<Post> postList,Long userId){
+        List<ParentPostDTO.CandidatePostDTO> parentPostGetListDTO = postList.stream()
+                .map(post->candidatePostDTO(post)).collect(Collectors.toList());
+        return ParentPostDTO.ParentPostGetListDTO.builder()
+                .candidatePostDTOList(parentPostGetListDTO)
+                .isEnd(postList.isLast())
+                .build();
+    }
 }
 
 

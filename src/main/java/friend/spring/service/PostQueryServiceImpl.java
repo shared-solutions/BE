@@ -102,4 +102,12 @@ public class PostQueryServiceImpl implements PostQueryService{
         return postRepository.findByPostType(PostType.REVIEW, pageable);
     }
 
+    @Override
+    @Transactional
+    public Page<Post> getParentPostList(Integer page,Integer size,Long userId){
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "createdAt"));
+//        List<Post> userPost = postRepository.findByUserId(userId);
+        return postRepository.findByUserIdAndPostType(userId, PostType.VOTE, pageable);
+    }
+
 }

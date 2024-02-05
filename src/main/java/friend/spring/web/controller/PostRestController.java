@@ -5,6 +5,7 @@ import friend.spring.domain.Post;
 import friend.spring.repository.PostRepository;
 import friend.spring.service.PostQueryService;
 import friend.spring.service.PostService;
+import friend.spring.web.dto.ParentPostDTO;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,6 +51,19 @@ public class PostRestController {
         return ApiResponse.onSuccess(PostConverter.toAddPostResultDTO(post));
     }
 
+    @GetMapping("/{user-id}/voteList")
+    @Operation(summary = "후기글 작성시 내투표 보기 API", description = "후기글 작성시 내투표 보기합니다.")
+    @Parameters({
+            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
+            @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)")
+    })
+    public ApiResponse<ParentPostDTO.ParentPostGetListDTO> getParentPosts(@RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                          @RequestParam(name = "size",defaultValue = "15") Integer size,
+                                                          @RequestParam(name = "user-id") Long userId){
+        Page<Post> postPage=postQueryService.getParentPostList(page,size,userId);
+        return ApiResponse.onSuccess(PostConverter.parentPostGetListDTO(postPage,userId));
+
+    }
     @GetMapping("/{post-id}/{user-id}")
     @Operation(summary = "글 상세 보기 API", description = "글 상세 보기합니다.")
     public ApiResponse<PostResponseDTO.PostDetailResponse> getPostDetail(@PathVariable(name="post-id")Long PostId,
@@ -89,6 +103,5 @@ public class PostRestController {
                                                                              @RequestParam(name = "user-id") Long userId){
         Page<Post> postPage=postQueryService.getReviewList(page,size,arrange);
         return ApiResponse.onSuccess(PostConverter.reviewPostGetListDTO(postPage,userId));
-
     }
 }

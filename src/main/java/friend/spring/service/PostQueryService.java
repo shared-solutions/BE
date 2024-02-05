@@ -18,4 +18,6 @@ public interface PostQueryService {
     Page<Post> getPostList(Integer page,Integer size);
 
     Page<Post> getReviewList(Integer page, Integer size, Integer arrange);
+
+    Page<Post> getParentPostList(Integer page,Integer size,Long userId);
 }
