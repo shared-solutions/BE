@@ -154,13 +154,14 @@ public class PostRestController {
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
-            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<PostResponseDTO.PostLikeRes> likePost(
             @PathVariable("post-id") Long postId,
-            @RequestHeader("userId") Long userId
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
     ) {
-        Post_like post_like = postService.likePost(postId, userId);
+        Post_like post_like = postService.likePost(postId, request);
         return ApiResponse.onSuccess(PostConverter.toPostLikeRes(post_like));
     }
 
@@ -175,13 +176,14 @@ public class PostRestController {
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
-            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<Void> dislikePost(
             @PathVariable("post-id") Long postId,
-            @RequestHeader("userId") Long userId
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
     ) {
-        postService.dislikePost(postId, userId);
+        postService.dislikePost(postId, request);
         return ApiResponse.onSuccess(null);
     }
 

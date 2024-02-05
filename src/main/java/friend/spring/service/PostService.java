@@ -31,9 +31,9 @@ public interface PostService {
 
     Page<Post> getMyPostList(Long userId, Integer page);
 
-    Post_like likePost(Long postId, Long userId);
+    Post_like likePost(Long postId, HttpServletRequest request);
 
-    void dislikePost(Long postId, Long userId);
+    void dislikePost(Long postId, HttpServletRequest request);
 
     void checkPostScrap(Boolean flag);
 

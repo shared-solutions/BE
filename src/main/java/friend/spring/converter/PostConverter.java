@@ -13,17 +13,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
-import friend.spring.domain.enums.PostCategory;
-import friend.spring.domain.enums.PostState;
-import friend.spring.domain.enums.PostType;
-import friend.spring.domain.enums.PostVoteType;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.web.dto.CandidateResponseDTO;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static friend.spring.domain.enums.PostType.*;
