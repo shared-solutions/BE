@@ -45,6 +45,7 @@ public class PostResponseDTO {
         Integer comment;
         Boolean isLike;
         Boolean isComment;
+        Boolean myPost;
 
     }
 

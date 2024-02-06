@@ -44,7 +44,7 @@ public class PostRestController {
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
             @Parameter(name="title", description="<String> 글 제목"),
             @Parameter(name="content", description="<String> 글 내용"),
-            @Parameter(name="category", description="카테고리. 대문자(ex EDUCATION)" ),
+            @Parameter(name="category", description="카테고리. 한글 입력(ex 교육)" ),
             @Parameter(name="postType", description="<Integer> 글 종류<br>1 : VOTE <br>2 : REVIEW"),
             @Parameter(name="postVoteType", description="<Integer> 투표 종류<br>1 : GENERAL <br>2 : GAUGE <br>3 : CARD<br>해당 사항 없을시 null"),
             @Parameter(name="pollTitle", description="<String> 투표 제목"),
@@ -80,7 +80,8 @@ public class PostRestController {
 
     }
     @GetMapping("/{post-id}")
-    @Operation(summary = "글 상세 보기 API", description = "글 상세 보기합니다.")
+    @Operation(summary = "글 상세 보기 API", description = "글 상세 보기합니다<br>response로 나오는 isLike, isComment는 각각 조회하는 사용자의 좋아요 클릭 여부, " +
+            "댓글 작성 여부입니다..")
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
@@ -90,7 +91,6 @@ public class PostRestController {
         Long userId=jwtTokenService.JwtToId(request2);
         Optional<Post> postOptional =postQueryService.getPostDetail(PostId);
         Post parentPost=postQueryService.ParentPost(PostId);;
-//        Optional<Post> postOptional =postRepository.findById(PostId);
         Boolean engage=postQueryService.checkEngage(PostId,userId);
         Post post = postOptional.get();
         return ApiResponse.onSuccess(PostConverter.postDetailResponse(post,engage,userId,parentPost));
@@ -102,7 +102,7 @@ public class PostRestController {
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
             @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)"),
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
-            @Parameter(name = "category", description = "query string(RequestParam) - category(대문자). 모두 보기는 ALL")
+            @Parameter(name = "category", description = "query string(RequestParam) - category(한글). 모두 보기는 '모두'라고 입력 하시면 됩니다.")
     })
     public ApiResponse<PostResponseDTO.PollPostGetListDTO> getPostDetail(@RequestParam(name = "page", defaultValue = "0") Integer page,
                                                                          @RequestParam(name = "size",defaultValue = "15") Integer size,
@@ -133,7 +133,7 @@ public class PostRestController {
         return ApiResponse.onSuccess(PostConverter.reviewPostGetListDTO(postPage,userId));
     }
 
-    @PatchMapping("/{post-id}/post/edit")
+    @PatchMapping("/{post-id}/edit")
     @Operation(summary = "글 수정 API", description = "댓글 수정하는 API입니다. ex) /posts/1/comment/1/edit")
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
@@ -148,8 +148,8 @@ public class PostRestController {
         return ApiResponse.onSuccess(null);
     }
 
-    @PatchMapping("/{post-id}/post/del")
-    @Operation(summary = "댓글 삭제 API", description = "댓글 삭제하는 API입니다. ex) /posts/1/comment/1/del")
+    @PatchMapping("/{post-id}/del")
+    @Operation(summary = "글 삭제 API", description = "글 삭제하는 API입니다. ex) /posts/1/comment/1/del")
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
