@@ -9,11 +9,7 @@ import friend.spring.domain.Level;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.repository.UserRepository;
-import friend.spring.service.CommentService;
-import friend.spring.service.EmailService;
-import friend.spring.service.PostService;
-import friend.spring.service.UserService;
-import friend.spring.service.UserServiceImpl;
+import friend.spring.service.*;
 import friend.spring.web.dto.AlarmResponseDTO;
 import friend.spring.web.dto.TokenDTO;
 import friend.spring.web.dto.UserRequestDTO;
@@ -41,6 +37,8 @@ public class UserRestController {
     private final EmailService mailService;
     private final PostService postService;
     private final CommentService commentService;
+    private final JwtTokenService jwtTokenService;
+
 
     //마이 페이지 조회
     @GetMapping("/my-page")
@@ -117,7 +115,10 @@ public class UserRestController {
 
     @GetMapping("/point")
     @Operation(summary = "포인트 조회 API", description = "임시로 user-id 입력")
-    public ApiResponse<UserResponseDTO.PointViewDTO> myPoint(@RequestHeader(name = "id") Long userId) {
+    public ApiResponse<UserResponseDTO.PointViewDTO> myPoint(@RequestHeader("atk") String atk,
+                                                              HttpServletRequest request2) {
+
+        Long userId=jwtTokenService.JwtToId(request2);
         Integer point = userService.pointCheck(userId);
         return ApiResponse.onSuccess(UserConverter.toPointViewResDTO(point));
     }
