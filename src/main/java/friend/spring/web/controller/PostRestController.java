@@ -149,7 +149,7 @@ public class PostRestController {
     }
 
     @PatchMapping("/{post-id}/post/del")
-    @Operation(summary = "댓글 삭제 API", description = "댓글 삭제하는 API입니다. ex) /posts/1/comment/1/del")
+    @Operation(summary = "글 삭제 API", description = "글 삭제하는 API입니다. ex) /posts/1/del")
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
@@ -186,7 +186,7 @@ public class PostRestController {
     }
 
     // 글 추천(좋아요) 해제
-    @PostMapping("/{post-id}/like/del")
+    @DeleteMapping("/{post-id}/like/del")
     @Operation(summary = "글 추천(좋아요) 해제 API", description = "글 추천(좋아요) 해제하는 API입니다. ex) /posts/1/like/del")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
@@ -263,7 +263,7 @@ public class PostRestController {
     }
 
     // 글 스크랩 해제
-    @PostMapping("/{post-id}/scrap/del")
+    @DeleteMapping("/{post-id}/scrap/del")
     @Operation(summary = "글 스크랩 해제 API", description = "글 스크랩 해제하는 API입니다. ex) /posts/1/scrap/del")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
