@@ -37,6 +37,7 @@ public class AlarmRestController {
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)")
     })
     private ApiResponse<AlarmResponseDTO.AlarmListResDTO> getAlarm(
+            @RequestHeader(name = "atk") String atk,
             HttpServletRequest request,
             @RequestParam(name = "page") Integer page){
         Long userId=jwtTokenService.JwtToId(request);
