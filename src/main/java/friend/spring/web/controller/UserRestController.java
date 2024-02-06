@@ -42,6 +42,7 @@ public class UserRestController {
     //마이 페이지 조회
     @GetMapping("/my-page")
     public ApiResponse<UserResponseDTO.MyPageResDTO> getMyPage(
+            @RequestHeader(name = "atk") String atk,
             HttpServletRequest request) {
         Long userId=jwtTokenService.JwtToId(request);
         User myPage = userService.findMyPage(userId);
