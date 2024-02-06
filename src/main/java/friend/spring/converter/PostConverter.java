@@ -195,12 +195,16 @@ public class PostConverter {
     public static PostResponseDTO.PostDetailResponse postDetailResponse(Post post, Boolean engage,Long userId, Post parentPost){
         Integer likeCount = post.getPostLikeList().size();
         Integer commentCount = post.getCommentList().size();
+        Boolean myPost=false;
         List<PollOptionDTO> userChoiceList=null;
         List<Integer> percent=null;
         List<String> voteResult=null;
         Integer value=null;
         Boolean isLike=!post.getPostLikeList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
         Boolean isComment=!post.getCommentList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        if(post.getUser().getId().equals(userId)){
+            myPost=true;
+        }
 
 
         if(post.getPostType()==REVIEW){
@@ -216,6 +220,7 @@ public class PostConverter {
                     .comment(commentCount)
                     .isLike(isLike)
                     .isComment(isComment)
+                    .myPost(myPost)
                     .build();
         }
         if(post.getVoteType()==PostVoteType.GAUGE){
@@ -236,6 +241,7 @@ public class PostConverter {
                     .comment(commentCount)
                     .isLike(isLike)
                     .isComment(isComment)
+                    .myPost(myPost)
                     .build();
         }
         if(post.getVoteType()==PostVoteType.GENERAL){
@@ -303,6 +309,7 @@ public class PostConverter {
                     .comment(commentCount)
                     .isLike(isLike)
                     .isComment(isComment)
+                    .myPost(myPost)
                     .build();
         }
         List<PollOptionDTO> pollOptionDTOList=post.getCardPoll().getCandidateList().stream()
@@ -369,6 +376,7 @@ public class PostConverter {
                 .comment(commentCount)
                 .isLike(isLike)
                 .isComment(isComment)
+                .myPost(myPost)
                 .build();
     }
 
