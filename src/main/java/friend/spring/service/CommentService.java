@@ -7,6 +7,7 @@ import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
 import org.springframework.data.domain.Page;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 public interface CommentService {
@@ -16,19 +17,19 @@ public interface CommentService {
     void checkSelectCommentAnotherUser(Boolean flag);
 
     void checkCommentWriterUser(Boolean flag);
-    public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq request, Long userId);
+    public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq requestBody, HttpServletRequest request);
 
-    Comment_like likeComment(Long postId, Long commentId, Long userId);
+    Comment_like likeComment(Long postId, Long commentId, HttpServletRequest request);
 
     Page<CommentResponseDTO.commentGetRes> getComments(Long postId, Integer page, Integer size);
 
-    void dislikeComment(Long postId, Long commentId, Long userId);
+    void dislikeComment(Long postId, Long commentId, HttpServletRequest request);
 
-    Comment_choice selectComment(Long postId, Long commentId, Long userId);
+    Comment_choice selectComment(Long postId, Long commentId, HttpServletRequest request);
 
-    void editComment(Long postId, Long commentId, CommentRequestDTO.commentEditReq request, Long userId);
+    void editComment(Long postId, Long commentId, CommentRequestDTO.commentEditReq requestBody, HttpServletRequest request);
 
     Page<Comment> getMyCommentList(Long userId, Integer page);
 
-    void deleteComment(Long postId, Long commentId, Long userId);
+    void deleteComment(Long postId, Long commentId, HttpServletRequest request);
 }

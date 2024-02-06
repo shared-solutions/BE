@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -39,14 +40,15 @@ public class CommentRestController {
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
-            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<CommentResponseDTO.commentCreateRes> createComment(
             @PathVariable("post-id") Long postId,
-            @RequestBody CommentRequestDTO.commentCreateReq request,
-            @RequestHeader("userId") Long userId
+            @RequestBody CommentRequestDTO.commentCreateReq requestBody,
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
     ) {
-        Comment comment = commentService.createComment(postId, request, userId);
+        Comment comment = commentService.createComment(postId, requestBody, request);
         return ApiResponse.onSuccess(CommentConverter.toCommentCreateRes(comment));
     }
 
@@ -62,14 +64,15 @@ public class CommentRestController {
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
             @Parameter(name = "comment-id", description = "path variable - 댓글 아이디"),
-            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<CommentResponseDTO.commentLikeRes> likeComment(
             @PathVariable("post-id") Long postId,
             @PathVariable("comment-id") Long commentId,
-            @RequestHeader("userId") Long userId
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
     ) {
-        Comment_like comment_like = commentService.likeComment(postId, commentId, userId);
+        Comment_like comment_like = commentService.likeComment(postId, commentId, request);
         return ApiResponse.onSuccess(CommentConverter.toCommentLikeRes(comment_like));
     }
 
@@ -86,14 +89,15 @@ public class CommentRestController {
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
             @Parameter(name = "comment-id", description = "path variable - 댓글 아이디"),
-            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<Void> dislikeComment(
             @PathVariable("post-id") Long postId,
             @PathVariable("comment-id") Long commentId,
-            @RequestHeader("userId") Long userId
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
     ) {
-        commentService.dislikeComment(postId, commentId, userId);
+        commentService.dislikeComment(postId, commentId, request);
         return ApiResponse.onSuccess(null);
     }
 
@@ -133,14 +137,15 @@ public class CommentRestController {
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
             @Parameter(name = "comment-id", description = "path variable - 댓글 아이디"),
-            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<CommentResponseDTO.commentSelectRes> selectComment(
             @PathVariable("post-id") Long postId,
             @PathVariable("comment-id") Long commentId,
-            @RequestHeader("userId") Long userId
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
     ) {
-        Comment_choice comment_choice = commentService.selectComment(postId, commentId, userId);
+        Comment_choice comment_choice = commentService.selectComment(postId, commentId, request);
         return ApiResponse.onSuccess(CommentConverter.toCommentSelectRes(comment_choice));
     }
 
@@ -157,15 +162,16 @@ public class CommentRestController {
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
             @Parameter(name = "comment-id", description = "path variable - 댓글 아이디"),
-            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<Void> editComment(
             @PathVariable("post-id") Long postId,
             @PathVariable("comment-id") Long commentId,
-            @RequestBody CommentRequestDTO.commentEditReq request,
-            @RequestHeader("userId") Long userId
+            @RequestBody CommentRequestDTO.commentEditReq requestBody,
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
     ) {
-        commentService.editComment(postId, commentId, request, userId);
+        commentService.editComment(postId, commentId, requestBody, request);
         return ApiResponse.onSuccess(null);
     }
 
@@ -182,14 +188,15 @@ public class CommentRestController {
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
             @Parameter(name = "comment-id", description = "path variable - 댓글 아이디"),
-            @Parameter(name = "userId", description = "RequestHeader - 로그인한 사용자 아이디(accessToken으로 변경 예정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<Void> deleteComment(
             @PathVariable("post-id") Long postId,
             @PathVariable("comment-id") Long commentId,
-            @RequestHeader("userId") Long userId
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
     ) {
-        commentService.deleteComment(postId, commentId, userId);
+        commentService.deleteComment(postId, commentId, request);
         return ApiResponse.onSuccess(null);
     }
 }

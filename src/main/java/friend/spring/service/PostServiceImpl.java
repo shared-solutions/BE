@@ -257,7 +257,9 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public Post_like likePost(Long postId, Long userId) {
+    public Post_like likePost(Long postId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             this.checkPost(false);
@@ -276,7 +278,9 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public void dislikePost(Long postId, Long userId) {
+    public void dislikePost(Long postId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             this.checkPost(false);

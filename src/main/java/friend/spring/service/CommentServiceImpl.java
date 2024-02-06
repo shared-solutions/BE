@@ -10,6 +10,7 @@ import friend.spring.domain.User;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.repository.*;
+import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,7 @@ public class CommentServiceImpl implements CommentService {
     private final CommentChoiceRepository commentChoiceRepository;
     private final UserService userService;
     private final PostService postService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     public void checkComment(Boolean flag) {
@@ -73,7 +76,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq request, Long userId) {
+    public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq requestBody, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
@@ -89,8 +94,8 @@ public class CommentServiceImpl implements CommentService {
         User user = optionalUser.get();
 
         // 대댓글인 경우
-        if (request.getParentId() != null) {
-            Optional<Comment> optionalParentComment = commentRepository.findById(request.getParentId());
+        if (requestBody.getParentId() != null) {
+            Optional<Comment> optionalParentComment = commentRepository.findById(requestBody.getParentId());
             if (optionalParentComment.isEmpty()) {
                 this.checkComment(false);
             }
@@ -98,13 +103,15 @@ public class CommentServiceImpl implements CommentService {
             parentComment = optionalParentComment.get();
         }
 
-        Comment comment = CommentConverter.toComment(request, post, user, parentComment);
+        Comment comment = CommentConverter.toComment(requestBody, post, user, parentComment);
 
         return commentRepository.save(comment);
     }
 
     @Override
-    public Comment_like likeComment(Long postId, Long commentId, Long userId) {
+    public Comment_like likeComment(Long postId, Long commentId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
@@ -150,7 +157,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public void dislikeComment(Long postId, Long commentId, Long userId) {
+    public void dislikeComment(Long postId, Long commentId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
@@ -176,7 +185,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment_choice selectComment(Long postId, Long commentId, Long userId) {
+    public Comment_choice selectComment(Long postId, Long commentId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
@@ -219,7 +230,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void editComment(Long postId, Long commentId, CommentRequestDTO.commentEditReq request, Long userId) {
+    public void editComment(Long postId, Long commentId, CommentRequestDTO.commentEditReq requestBody, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
@@ -228,7 +241,7 @@ public class CommentServiceImpl implements CommentService {
             // 작성자가 아닌 경우 -> 에러 반환
             this.checkCommentWriterUser(false);
         }
-        comment.update(request.getContent());
+        comment.update(requestBody.getContent());
     }
 
     //한 유저의 모든 댓글
@@ -245,7 +258,9 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void deleteComment(Long postId, Long commentId, Long userId) {
+    public void deleteComment(Long postId, Long commentId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
