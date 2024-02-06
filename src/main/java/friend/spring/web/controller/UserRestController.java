@@ -9,11 +9,7 @@ import friend.spring.domain.Level;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.repository.UserRepository;
-import friend.spring.service.CommentService;
-import friend.spring.service.EmailService;
-import friend.spring.service.PostService;
-import friend.spring.service.UserService;
-import friend.spring.service.UserServiceImpl;
+import friend.spring.service.*;
 import friend.spring.web.dto.AlarmResponseDTO;
 import friend.spring.web.dto.TokenDTO;
 import friend.spring.web.dto.UserRequestDTO;
@@ -22,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -41,11 +38,13 @@ public class UserRestController {
     private final EmailService mailService;
     private final PostService postService;
     private final CommentService commentService;
-
+    private final JwtTokenService jwtTokenService;
     //마이 페이지 조회
     @GetMapping("/my-page")
     public ApiResponse<UserResponseDTO.MyPageResDTO> getMyPage(
-            @RequestHeader(name = "id") Long userId) {
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request) {
+        Long userId=jwtTokenService.JwtToId(request);
         User myPage = userService.findMyPage(userId);
         return ApiResponse.onSuccess(UserConverter.toMypageResDTO(myPage));
     }
@@ -67,9 +66,19 @@ public class UserRestController {
 
     //나의 Q&A 질문 조회
     @GetMapping("/my-page/profile/question")
+    @Operation(summary = "나의 Q&A 질문 조회 API",description = "사용자의 나의 Q&A 질문 조회 API 이며, 페이징을 포함합니다. query String 으로 page 번호를 주세요")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+
+    })
+    @Parameters({
+            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)")
+    })
     public ApiResponse<UserResponseDTO.QuestionResDTO> getQuestion(
-            @RequestHeader(name = "id") Long userId,
+            HttpServletRequest request,
             @RequestParam(name = "page") Integer page){
+        Long userId=jwtTokenService.JwtToId(request);
         User myPage = userService.findMyPage(userId);
         Level nxtLevel = userService.nextLevel(userId);
         Page<Post> myPostList = postService.getMyPostList(userId, page);
@@ -79,9 +88,19 @@ public class UserRestController {
 
     //나의 Q&A 답변 조회
     @GetMapping("/my-page/profile/answer")
+    @Operation(summary = "나의 Q&A 답변 조회 API",description = "사용자의 Q&A 답변 조회 API 이며, 페이징을 포함합니다. query String 으로 page 번호를 주세요")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001",description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
+
+    })
+    @Parameters({
+            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)")
+    })
     public ApiResponse<UserResponseDTO.AnswerResDTO> getAnswer(
-            @RequestHeader(name = "id") Long userId,
+           HttpServletRequest request,
             @RequestParam(name = "page") Integer page){
+        Long userId=jwtTokenService.JwtToId(request);
         User myPage = userService.findMyPage(userId);
         Level nxtLevel = userService.nextLevel(userId);
         Page<Comment> myCommentList = commentService.getMyCommentList(userId, page);
