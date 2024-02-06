@@ -89,6 +89,7 @@ public class UserRestController {
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)")
     })
     public ApiResponse<UserResponseDTO.QuestionResDTO> getQuestion(
+            @RequestHeader(name = "atk") String atk,
             HttpServletRequest request,
             @RequestParam(name = "page") Integer page){
         Long userId=jwtTokenService.JwtToId(request);
@@ -111,7 +112,8 @@ public class UserRestController {
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)")
     })
     public ApiResponse<UserResponseDTO.AnswerResDTO> getAnswer(
-           HttpServletRequest request,
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request,
             @RequestParam(name = "page") Integer page){
         Long userId=jwtTokenService.JwtToId(request);
         User myPage = userService.findMyPage(userId);
