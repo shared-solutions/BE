@@ -3,6 +3,7 @@ import friend.spring.domain.*;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
+import friend.spring.repository.CandidateRepository;
 import friend.spring.security.JwtTokenProvider;
 import friend.spring.service.PostQueryService;
 import friend.spring.web.dto.*;
@@ -77,6 +78,7 @@ public class PostConverter {
             // 선택률 -> ParentPollDTO 객체 리스트로 변환
             List<ParentPollDTO> candidateInfos = candidateSelectionCounts.entrySet().stream()
                     .map(entry -> ParentPollDTO.builder()
+//                            .candidateName(candidateRepository.findById(entry.getKey()).orElseThrow(()->new RuntimeException("없으요")).getName())
                             .candidateId(entry.getKey())
                             .rate((int) ((double) entry.getValue() / totalVotes * 100))
                             .selection(entry.getValue())
@@ -91,7 +93,20 @@ public class PostConverter {
             if(highestSelectionCandidate.isPresent()) {
                 parentPollDTO = highestSelectionCandidate.get();
             }
-
+            // 1등 후보 이름, 사진 반환
+            Long id=parentPollDTO.getCandidateId();
+            Optional<String> name = parentPost.getGeneralPoll().getCandidateList().stream()
+                    .filter(candidate -> candidate.getId().equals(id))
+                    .map(Candidate::getName)
+                    .findFirst();
+            String candidateName=name.get();
+            Optional<String> image = parentPost.getGeneralPoll().getCandidateList().stream()
+                    .filter(candidate -> candidate.getId().equals(id))
+                    .map(Candidate::getImage)
+                    .findFirst();
+            String candidateImage=image.get();
+            parentPollDTO.setCandidateName(candidateName);
+            parentPollDTO.setCandidateImage(candidateImage);
 
             return ParentPostDTO.builder()
                     .nickname(parentPost.getUser().getNickname())
@@ -132,6 +147,21 @@ public class PostConverter {
 
             // 1등 후보의 정보를 ParentPollDTO 객체로 반환
             parentPollDTO = highestSelectionCandidate.get();
+
+             // 1등 후보 이름, 사진 반환
+            Long id=parentPollDTO.getCandidateId();
+            Optional<String> name = parentPost.getGeneralPoll().getCandidateList().stream()
+                .filter(candidate -> candidate.getId().equals(id))
+                .map(Candidate::getName)
+                .findFirst();
+            String candidateName=name.get();
+            Optional<String> image = parentPost.getGeneralPoll().getCandidateList().stream()
+                .filter(candidate -> candidate.getId().equals(id))
+                .map(Candidate::getImage)
+                .findFirst();
+            String candidateImage=image.get();
+            parentPollDTO.setCandidateName(candidateName);
+            parentPollDTO.setCandidateImage(candidateImage);
 
 
             return ParentPostDTO.builder()

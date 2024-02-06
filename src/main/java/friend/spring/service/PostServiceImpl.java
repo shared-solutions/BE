@@ -210,6 +210,9 @@ public class PostServiceImpl implements PostService{
         if(newPost.getPostType()==REVIEW&&request.getParent_id()!=null){
             Post parent=postRepository.findById(request.getParent_id())
                             .orElseThrow(()->new RuntimeException("\""+request.getParent_id()+"\"해당 글이 없습니다"));
+            if(!userId.equals(parent.getUser().getId())){
+                throw new RuntimeException("타 유저 글입니다. 후기글 작성 권한이 없습니다.");
+            }
             newPost.setParentPost(parent);
         }
 

@@ -149,7 +149,7 @@ public class PostRestController {
     }
 
     @PatchMapping("/{post-id}/del")
-    @Operation(summary = "댓글 삭제 API", description = "댓글 삭제하는 API입니다. ex) /posts/1/comment/1/del")
+    @Operation(summary = "글 삭제 API", description = "글 삭제하는 API입니다. ex) /posts/1/comment/1/del")
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
