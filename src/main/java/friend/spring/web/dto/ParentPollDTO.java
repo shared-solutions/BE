@@ -8,6 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParentPollDTO{
+    String candidateName;
+    String candidateImage;
     Long candidateId;
     Integer rate;
     Long selection;
