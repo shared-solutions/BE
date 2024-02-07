@@ -63,7 +63,7 @@ public class PostRestController {
     }
 
 
-    @GetMapping("/voteList")
+    @GetMapping("/poll-postList")
     @Operation(summary = "후기글 작성시 내투표 보기 API", description = "후기글 작성시 내투표 보기합니다.")
     @Parameters({
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),

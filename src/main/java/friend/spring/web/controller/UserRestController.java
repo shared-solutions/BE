@@ -42,6 +42,8 @@ public class UserRestController {
     private final PostService postService;
     private final CommentService commentService;
     private final JwtTokenService jwtTokenService;
+
+  
     //마이 페이지 조회
     @GetMapping("/my-page")
     public ApiResponse<UserResponseDTO.MyPageResDTO> getMyPage(
@@ -180,7 +182,10 @@ public class UserRestController {
 
     @GetMapping("/point")
     @Operation(summary = "포인트 조회 API", description = "임시로 user-id 입력")
-    public ApiResponse<UserResponseDTO.PointViewDTO> myPoint(@RequestHeader(name = "id") Long userId) {
+    public ApiResponse<UserResponseDTO.PointViewDTO> myPoint(@RequestHeader("atk") String atk,
+                                                              HttpServletRequest request2) {
+
+        Long userId=jwtTokenService.JwtToId(request2);
         Integer point = userService.pointCheck(userId);
         return ApiResponse.onSuccess(UserConverter.toPointViewResDTO(point));
     }
