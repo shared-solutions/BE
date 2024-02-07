@@ -41,4 +41,8 @@ public class Gauge_poll extends BaseEntity {
     public void setPost(Post post) {
         this.post = post;
     }
+
+    public void setGauge(Integer gauge) {
+        this.gauge = gauge;
+    }
 }

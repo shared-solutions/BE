@@ -1,11 +1,8 @@
 package friend.spring.web.dto;
 
-import friend.spring.domain.User;
 import friend.spring.domain.enums.Gender;
 import lombok.*;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -47,6 +44,7 @@ public class UserResponseDTO {
     }
 
 
+
     @Builder
     @Getter
     @NoArgsConstructor
@@ -71,6 +69,15 @@ public class UserResponseDTO {
         Integer postNum;
         Double adoptPostPercent;
         List<PostResponseDTO.MyPostDTO> postList;
+    }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PointViewDTO {
+        Integer point;
     }
 
     @Builder
@@ -113,4 +120,13 @@ public class UserResponseDTO {
 //        String refreshToken;
 //    }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Builder
+    public static class UserSummaryInfo {
+        Long user_id;
+        String nickname;
+        String image;
+    }
 }

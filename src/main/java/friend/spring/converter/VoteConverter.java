@@ -4,7 +4,6 @@ import friend.spring.domain.Card_vote;
 import friend.spring.domain.Gauge_vote;
 import friend.spring.domain.General_vote;
 import friend.spring.domain.Post;
-import friend.spring.domain.enums.PostCategory;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;

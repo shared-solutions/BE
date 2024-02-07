@@ -1,8 +1,12 @@
 package friend.spring.web.dto;
 
 
+import friend.spring.domain.Category;
 import friend.spring.domain.Post;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.tomcat.jni.Poll;
 
 import javax.validation.constraints.NotBlank;
@@ -16,7 +20,7 @@ public class PostRequestDTO {
         String title;
         @NotBlank
         String content;
-        Integer category; //미정
+        String category;
         @NotBlank
         Integer postType; // 1: vote, 2: review
         Integer postVoteType;// 1: general, 2: gauge
@@ -27,7 +31,22 @@ public class PostRequestDTO {
         @NotBlank
         Timestamp deadline;
         Integer point;
+        String file;
+    }
+    @Getter
+    public static class ReviewPostGetDTO{
+        Integer arrange; //조회순 :0, 최신순:1
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostEditReq {
+        @NotBlank
+        String title;
+        @NotBlank
+        String content;
+    }
 
 }

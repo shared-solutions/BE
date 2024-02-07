@@ -9,19 +9,16 @@ import java.util.List;
 public class VoteRequestDTO {
     @Getter
     public static class GeneralVoteRequestDTO{
-        Long postId;
         List<Long> selectList;
     }
 
     @Getter
     public static class GaugeVoteRequestDTO{
-        Long postId;
         Integer value;
     }
 
     @Getter
     public static class CardVoteRequestDTO{
-        Long postId;
         List<Long> selectList;
     }
 }

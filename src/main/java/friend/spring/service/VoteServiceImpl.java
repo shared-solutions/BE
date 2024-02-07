@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,16 +21,17 @@ public class VoteServiceImpl implements VoteService{
     private final Card_VoteRepository cardVoteRepository;
     private final PostRepository postRepository;
     private final PointRepository pointRepository;
+    private final Gauge_PollRepository gaugePollRepository;
     @Override
     @Transactional
-    public General_vote castGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request, Long userId) {
+    public General_vote castGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request, Long PostId, Long userId) {
         General_vote newGeneralVote = VoteConverter.toGeneralVote(request);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("\"" + userId + "\"해당 유저가 없습니다"));
         newGeneralVote.setUser(user);
 
-        Post post=postRepository.findById(request.getPostId())
-                .orElseThrow(()-> new RuntimeException("\"" + request.getPostId() + "\"해당 글이 없습니다"));
+        Post post=postRepository.findById(PostId)
+                .orElseThrow(()-> new RuntimeException("\"" + PostId + "\"해당 글이 없습니다"));
 
         General_poll generalPoll=post.getGeneralPoll();
         newGeneralVote.setGeneralPoll(generalPoll);
@@ -61,14 +63,14 @@ public class VoteServiceImpl implements VoteService{
 
     @Override
     @Transactional
-    public Gauge_vote castGaugeVote(VoteRequestDTO.GaugeVoteRequestDTO request, Long userId){
+    public Gauge_vote castGaugeVote(VoteRequestDTO.GaugeVoteRequestDTO request, Long PostId, Long userId){
         Gauge_vote newGaugeVote = VoteConverter.toGaugeVote(request);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("\"" + userId + "\"해당 유저가 없습니다"));
         newGaugeVote.setUser(user);
 
-        Post post=postRepository.findById(request.getPostId())
-                .orElseThrow(()-> new RuntimeException("\"" + request.getPostId() + "\"해당 글이 없습니다"));
+        Post post=postRepository.findById(PostId)
+                .orElseThrow(()-> new RuntimeException("\"" + PostId + "\"해당 글이 없습니다"));
 
         Gauge_poll gaugePoll=post.getGaugePoll();
         newGaugeVote.setGaugePoll(gaugePoll);
@@ -81,18 +83,27 @@ public class VoteServiceImpl implements VoteService{
         newPoint.setUser(user);
         pointRepository.save(newPoint);
 
+        Integer value=request.getValue();
+        gaugePollRepository.findById(PostId);
+        Optional<Post> optionalPost=postRepository.findById(PostId);
+        Post gaugePost=optionalPost.get();
+        Integer currentGauge=gaugePost.getGaugePoll().getGauge();
+        Integer engagedUser=gaugePost.getGaugePoll().getGaugeVoteList().size();
+        gaugePost.getGaugePoll().setGauge((currentGauge+request.getValue())/engagedUser);
+
+
         return gaugeVoteRepository.save(newGaugeVote);
     }
     @Override
     @Transactional
-    public Card_vote castCardVote(VoteRequestDTO.CardVoteRequestDTO request, Long userId){
+    public Card_vote castCardVote(VoteRequestDTO.CardVoteRequestDTO request,Long PostId, Long userId){
         Card_vote newCardVote = VoteConverter.toCardVote(request);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("\"" + userId + "\"해당 유저가 없습니다"));
         newCardVote.setUser(user);
 
-        Post post=postRepository.findById(request.getPostId())
-                .orElseThrow(()-> new RuntimeException("\"" + request.getPostId() + "\"해당 글이 없습니다"));
+        Post post=postRepository.findById(PostId)
+                .orElseThrow(()-> new RuntimeException("\"" + PostId + "\"해당 글이 없습니다"));
 
         Card_poll cardPoll=post.getCardPoll();
         newCardVote.setCardPoll(cardPoll);
