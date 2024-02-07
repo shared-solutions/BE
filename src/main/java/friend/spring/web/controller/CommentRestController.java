@@ -77,7 +77,7 @@ public class CommentRestController {
     }
 
     // 댓글 추천(좋아요) 해제
-    @PostMapping("/{post-id}/comment/{comment-id}/like/del")
+    @DeleteMapping("/{post-id}/comment/{comment-id}/like/del")
     @Operation(summary = "댓글 추천(좋아요) 해제 API", description = "댓글 추천(좋아요) 해제하는 API입니다. ex) /posts/1/comment/1/like/del")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),

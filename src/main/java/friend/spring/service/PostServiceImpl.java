@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static friend.spring.apiPayload.code.status.ErrorStatus.*;
 import static friend.spring.domain.enums.PostType.*;
 import static friend.spring.domain.enums.PostVoteType.*;
 
@@ -53,14 +54,14 @@ public class PostServiceImpl implements PostService{
     @Override
     public void checkPost(Boolean flag) {
         if (!flag) {
-            throw new PostHandler(ErrorStatus.POST_NOT_FOUND);
+            throw new PostHandler(POST_NOT_FOUND);
         }
     }
 
     @Override
     public void checkPostWriterUser(Boolean flag) {
         if (!flag) {
-            throw new PostHandler(ErrorStatus.POST_NOT_CORRECT_USER);
+            throw new PostHandler(POST_NOT_CORRECT_USER);
         }
     }
 
@@ -75,14 +76,14 @@ public class PostServiceImpl implements PostService{
     @Override
     public void checkPostLike(Boolean flag) {
         if (!flag) {
-            throw new PostHandler(ErrorStatus.POST_LIKE_NOT_FOUND);
+            throw new PostHandler(POST_LIKE_NOT_FOUND);
         }
     }
 
     @Override
     public void checkPostScrap(Boolean flag) {
         if (!flag) {
-            throw new PostHandler(ErrorStatus.POST_SCRAP_NOT_FOUND);
+            throw new PostHandler(POST_SCRAP_NOT_FOUND);
         }
     }
 
@@ -224,7 +225,7 @@ public class PostServiceImpl implements PostService{
     @Transactional
     public void editPost(Long postId,PostRequestDTO.PostEditReq request, Long userId){
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
         if(!user.getId().equals(post.getUser().getId())){
             throw new RuntimeException("수정 권환이 없습니다 글이 없습니다");
         }
@@ -237,7 +238,7 @@ public class PostServiceImpl implements PostService{
     @Transactional
     public void deletePost(Long postId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
         if(!user.getId().equals(post.getUser().getId())){
             throw new RuntimeException("삭제 권환이 없습니다 글이 없습니다");
         }
