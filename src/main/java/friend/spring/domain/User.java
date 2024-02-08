@@ -58,9 +58,6 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = true)
     private Boolean agree_info;
 
-//    @Column(nullable = true)
-//    private String image;
-
     @Column(nullable = true)//잠시 true로 수정
     private Boolean is_deleted;
 

@@ -27,8 +27,6 @@ public interface PostService {
 
     Post joinPost(PostRequestDTO.AddPostDTO request, HttpServletRequest request2, List<MultipartFile> file);
 
-//    Candidate createCandidate(Long postId, PollOptionDTO.PollOptionReq request, HttpServletRequest request2);
-
     Candidate createCandidate(Long postId, String optionString, MultipartFile optionImg, HttpServletRequest request2);
 
     Boolean checkPoint(PostRequestDTO.AddPostDTO request, User user);

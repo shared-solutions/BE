@@ -27,12 +27,10 @@ public class PostRequestDTO {
         Integer postVoteType;// 1: general, 2: gauge
         String pollTitle;
         Boolean multipleChoice;
-//        List<PollOptionDTO.PollOptionReq> pollOption;
         Long parent_id;
         @NotBlank
         Timestamp deadline;
         Integer point;
-//        List<MultipartFile> file;
     }
     @Getter
     public static class ReviewPostGetDTO{

@@ -50,9 +50,6 @@ public class Post extends BaseEntity {
     @Column(nullable = true)
     private Integer point;
 
-//    @Column(nullable = true)
-//    private String file;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;

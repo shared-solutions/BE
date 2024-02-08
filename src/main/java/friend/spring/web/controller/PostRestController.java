@@ -38,7 +38,6 @@ public class PostRestController {
     private final PostQueryService postQueryService;
     private final PostRepository postRepository;
     private final JwtTokenService jwtTokenService;
-//    @PostMapping(value = "/", consumes = "multipart/form-data")
     @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "글 작성 API", description = "글을 추가 합니다.")
     @Parameters({
@@ -50,7 +49,6 @@ public class PostRestController {
             @Parameter(name="postVoteType", description="<Integer> 투표 종류<br>1 : GENERAL <br>2 : GAUGE <br>3 : CARD<br>해당 사항 없을시 null"),
             @Parameter(name="pollTitle", description="<String> 투표 제목"),
             @Parameter(name="multipleChoice", description="<Boolean> 복수 선택 여부"),
-//            @Parameter(name="pollOption", description="<Class> 투표 후보{optionString : string, optionImg : string}<br>해당 사항 없을시 null"),
             @Parameter(name="parent_id", description="<Long> 원글(후기글 경우) id<br>해당 사항 없을시 null"),
             @Parameter(name="deadline", description="<Timestamp> 투표 마감 시간<br>해당 사항 없을시 null"),
             @Parameter(name="point", description="<Integer> 포인트<br>해당 사항 없을시 null")
@@ -58,10 +56,8 @@ public class PostRestController {
     })
     public ApiResponse<PostResponseDTO.AddPostResultDTO> join(@RequestPart(value = "request") @Valid PostRequestDTO.AddPostDTO request,
                                                               @RequestPart(value = "file", required = false) List<MultipartFile> file,
-//                                                              @RequestPart(value = "pollOptionImages", required = false) List<MultipartFile> pollOptionFiles,
                                                               @RequestHeader("atk") String atk,
                                                               HttpServletRequest request2){
-        System.out.println("테스트000000");
         Post post= postService.joinPost(request,request2, file);
         return ApiResponse.onSuccess(PostConverter.toAddPostResultDTO(post));
     }
@@ -74,12 +70,10 @@ public class PostRestController {
     })
     public ApiResponse<CandidateResponseDTO.AddCandidateResultDTO> createCandidate(
             @PathVariable(name="post-id") Long postId,
-//            @RequestBody PollOptionDTO.PollOptionReq request,
             @RequestParam String optionString,
             @RequestParam(required = false) MultipartFile optionImg,
             @RequestHeader("atk") String atk,
             HttpServletRequest request2) {
-//        Candidate candidate = postService.createCandidate(postId, request,request2);
         Candidate candidate = postService.createCandidate(postId, optionString, optionImg,request2);
         return ApiResponse.onSuccess(CandidateConverter.toAddCandidateResultDTO(candidate));
     }
