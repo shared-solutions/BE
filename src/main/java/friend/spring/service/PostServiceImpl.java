@@ -103,7 +103,11 @@ public class PostServiceImpl implements PostService{
         newPost.setUser(user);
 
         // 글 첨부파일 사진 저장
-        s3Service.uploadPostImages(file, S3ImageType.POST, newPost);
+        if (file != null) {
+            s3Service.uploadPostImages(file, S3ImageType.POST, newPost);
+        }
+
+
 
         //일반 투표 api
         if(newPost.getPostType()==VOTE){
