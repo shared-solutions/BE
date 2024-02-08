@@ -18,8 +18,6 @@ public class Candidate extends BaseEntity {
 
     private String name;
 
-    private String image;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "generalPoll_id")
     private General_poll generalPoll;
@@ -27,6 +25,10 @@ public class Candidate extends BaseEntity {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cardPoll_id")
     private Card_poll cardPoll;
+
+    @OneToOne(mappedBy = "candidate")
+    @JoinColumn(name = "file_id")
+    private File file;
 
     public void setGeneralPoll(General_poll generalPoll) {
     this.generalPoll = generalPoll;
@@ -48,5 +50,7 @@ public class Candidate extends BaseEntity {
         }
     }
 
-
+    public void setFile(File file) {
+        this.file = file;
+    }
 }

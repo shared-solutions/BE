@@ -38,8 +38,9 @@ public class AmazonConfig {
     @Value("${cloud.aws.s3.path.post}")
     private String postPath;
 
-    @Value("${cloud.aws.s3.path.report}")
-    private String reportPath;
+    @Value("${cloud.aws.s3.path.candidate}")
+    private String candidatePath;
+
 
     @PostConstruct
     public void init() {

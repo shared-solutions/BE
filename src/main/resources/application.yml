@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 200MB
   redis:
     host: ${REDIS_HOSTNAME}
     port: ${REDIS_PORT}
@@ -30,7 +34,7 @@ cloud:
       path:
         user: users
         post: posts
-        report: reports
+        candidate: candidates
     region:
       static: ap-northeast-2
     stack:
