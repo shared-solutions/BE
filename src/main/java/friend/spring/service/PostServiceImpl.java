@@ -7,6 +7,7 @@ import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.converter.CandidateConverter;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.*;
+import friend.spring.domain.enums.S3ImageType;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.repository.*;
@@ -19,6 +20,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.Objects;
@@ -50,6 +53,8 @@ public class PostServiceImpl implements PostService{
     private final PostScrapRepository postScrapRepository;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+
+    private final S3Service s3Service;
 
     @Override
     public void checkPost(Boolean flag) {
@@ -89,20 +94,35 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public Post joinPost(PostRequestDTO.AddPostDTO request, HttpServletRequest request2) {
+    public Post joinPost(PostRequestDTO.AddPostDTO request, HttpServletRequest request2, List<MultipartFile> file) {
+        System.out.println("테스트0");
 
         Long userId = jwtTokenProvider.getCurrentUser(request2);
+
+        System.out.println("테스트0.5");
+
         Post newPost= PostConverter.toPost(request);
+        System.out.println("테스트0.7");
         User user=userRepository.findById(userId)
                 .orElseThrow(()->new RuntimeException("\""+userId+"\"해당 유저가 없습니다"));
+        System.out.println("테스트0.9");
         newPost.setUser(user);
+
+        System.out.println("테스트1");
+
+        // 글 첨부파일 사진 저장
+        s3Service.uploadPostImages(file, S3ImageType.POST, newPost);
+
+        System.out.println("테스트2");
 
         //일반 투표 api
         if(newPost.getPostType()==VOTE){
             newPost.setCategory(categoryRepository.findByName(request.getCategory()));
 
         }
-        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GENERAL&&request.getPollOption()!=null){
+        System.out.println("테스트3");
+//        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GENERAL&&pollOption!=null){
+        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GENERAL){
             //포인트 차감 관련 코드
             if(request.getPoint()!=null) {
                 if (!checkPoint(request, user)) {
@@ -116,6 +136,7 @@ public class PostServiceImpl implements PostService{
                 newPoint.setUser(user);
                 pointRepository.save(newPoint);
             }
+            System.out.println("테스트4");
 
             General_poll generalPoll = General_poll.builder()
                     .pollTitle(request.getPollTitle())
@@ -125,21 +146,27 @@ public class PostServiceImpl implements PostService{
                 generalPoll.setMultipleChoice(request.getMultipleChoice());
             }
             newPost.setGeneralPoll(generalPoll);
+            System.out.println("테스트5");
             generalPollRepository.save(generalPoll);
 
+            System.out.println("테스트6");
 
-            for (PollOptionDTO option : request.getPollOption()) {
-                Candidate candidate = Candidate.builder()
-                        .name(option.getOptionString())
-                        .image(option.getOptionImg())
-                        .build();
-
-                candidate.setGeneralPoll(generalPoll);
-                candidateRepository.save(candidate);
-            }
+//            for (PollOptionDTO.PollOptionReq option : pollOption) {
+//                Candidate candidate = Candidate.builder()
+//                        .name(option.getOptionString())
+//                        .build();
+//
+//                File candidateFile = s3Service.uploadSingleImage(option.getOptionImg(), S3ImageType.CANDIDATE, null, candidate);
+//                candidate.setFile(candidateFile);
+//
+//                candidate.setGeneralPoll(generalPoll);
+//                candidateRepository.save(candidate);
+//            }
+            System.out.println("테스트7");
         }
 //카드 투표 api
-        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==CARD&&request.getPollOption()!=null){
+//        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==CARD&&pollOption!=null){
+        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==CARD){
             //포인트 차감 관련 코드
             if(request.getPoint()!=null) {
                 if (!checkPoint(request, user)) {
@@ -153,6 +180,7 @@ public class PostServiceImpl implements PostService{
                 newPoint.setUser(user);
                 pointRepository.save(newPoint);
             }
+            System.out.println("테스트8");
 
             if(!checkPoint(request, user)&&request.getPoint()!=null){
                 throw new RuntimeException("\""+userId+"\"해당 유저의 포인트가 부족 합니다");
@@ -167,16 +195,20 @@ public class PostServiceImpl implements PostService{
             }
             newPost.setCardPoll(cardPoll);
             cardPollRepository.save(cardPoll);
+            System.out.println("테스트9");
 
-            for (PollOptionDTO option : request.getPollOption()) {
-                Candidate candidate = Candidate.builder()
-                        .name(option.getOptionString())
-                        .image(option.getOptionImg())
-                        .build();
-
-                candidate.setCardPoll(cardPoll);
-                candidateRepository.save(candidate);
-            }
+//            for (PollOptionDTO.PollOptionReq option : pollOption) {
+//                Candidate candidate = Candidate.builder()
+//                        .name(option.getOptionString())
+//                        .build();
+//
+//                File candidateFile = s3Service.uploadSingleImage(option.getOptionImg(), S3ImageType.CANDIDATE, null, candidate);
+//                candidate.setFile(candidateFile);
+//
+//                candidate.setCardPoll(cardPoll);
+//                candidateRepository.save(candidate);
+//            }
+            System.out.println("테스트10");
         }
 //게이지 투표 api
         if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GAUGE){
@@ -217,8 +249,76 @@ public class PostServiceImpl implements PostService{
             newPost.setParentPost(parent);
         }
 
+        System.out.println("테스트11");
         return postRepository.save(newPost);
 
+    }
+
+//    @Override
+//    public Candidate createCandidate(Long postId, PollOptionDTO.PollOptionReq request, HttpServletRequest request2) {
+//        Post newPost = postRepository.findById(postId).orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
+//
+//        Long userId = jwtTokenProvider.getCurrentUser(request2);
+//        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
+//        if (!newPost.getUser().equals(user)) { // 이 글을 쓴 사용자인지 검증
+//            this.checkPostWriterUser(false);
+//        }
+//
+//        Candidate candidate = Candidate.builder()
+//                .name(request.getOptionString())
+//                .build();
+//
+//        File candidateFile = s3Service.uploadSingleImage(request.getOptionImg(), S3ImageType.CANDIDATE, null, candidate);
+//        candidate.setFile(candidateFile);
+//
+//        // 일반 투표
+//        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GENERAL) {
+//            General_poll generalPoll = generalPollRepository.findById(newPost.getGeneralPoll().getId()).orElseThrow(() -> new GeneralException(POST_GENERAL_POLL_NOT_FOUND));
+//            candidate.setGeneralPoll(generalPoll);
+//        }
+//        // 카드 투표
+//        else {
+//            Card_poll cardPoll = cardPollRepository.findById(newPost.getCardPoll().getId()).orElseThrow(() -> new GeneralException(POST_CARD_POLL_NOT_FOUND));
+//            candidate.setCardPoll(cardPoll);
+//        }
+//
+//        return candidateRepository.save(candidate);
+//    }
+
+    @Override
+    @Transactional
+    public Candidate createCandidate(Long postId, String optionString, MultipartFile optionImg, HttpServletRequest request2) {
+        Post newPost = postRepository.findById(postId).orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
+
+        Long userId = jwtTokenProvider.getCurrentUser(request2);
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
+        if (!newPost.getUser().equals(user)) { // 이 글을 쓴 사용자인지 검증
+            this.checkPostWriterUser(false);
+        }
+
+        Candidate candidate = Candidate.builder()
+                .name(optionString)
+                .build();
+
+        candidateRepository.save(candidate);
+
+        if (optionImg != null) {
+            File candidateFile = s3Service.uploadSingleImage(optionImg, S3ImageType.CANDIDATE, null, candidate);
+            candidate.setFile(candidateFile);
+        }
+
+        // 일반 투표
+        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GENERAL) {
+            General_poll generalPoll = generalPollRepository.findById(newPost.getGeneralPoll().getId()).orElseThrow(() -> new GeneralException(POST_GENERAL_POLL_NOT_FOUND));
+            candidate.setGeneralPoll(generalPoll);
+        }
+        // 카드 투표
+        else {
+            Card_poll cardPoll = cardPollRepository.findById(newPost.getCardPoll().getId()).orElseThrow(() -> new GeneralException(POST_CARD_POLL_NOT_FOUND));
+            candidate.setCardPoll(cardPoll);
+        }
+
+        return candidate;
     }
 
     @Override
@@ -332,6 +432,9 @@ public class PostServiceImpl implements PostService{
                     Long card_poll_id = null;
                     List<Candidate> candidateList = null;
                     List<CandidateResponseDTO.CandidateSummaryRes> candidateSummaryResList = null;
+
+                    if (post.getVoteType() == null) return null; // 고민 후기 글인 경우 패스
+
                     if (post.getVoteType().equals(GENERAL)) { // 일반 투표인 경우
                         postVoteType = "GENERAL";
                         general_poll_id = post.getGeneralPoll().getId();

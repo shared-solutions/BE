@@ -67,7 +67,8 @@ public class UserServiceImpl implements UserService {
 
         String encodedPw = encoder.encode(userJoinRequest.getPassword());
 
-        User newUser = UserConverter.toUser(userJoinRequest, encodedPw);
+        Level initLevel = levelRepository.findById(Long.valueOf(1)).get();
+        User newUser = UserConverter.toUser(userJoinRequest, encodedPw, initLevel);
 
         return userRepository.saveAndFlush(newUser);
     }

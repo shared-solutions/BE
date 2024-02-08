@@ -29,7 +29,6 @@ public class UserRequestDTO {
         boolean agree_marketing;
         LocalDate birth;
         boolean is_deleted;
-        String image;
         Integer point;
         String kakao;
         Integer like;

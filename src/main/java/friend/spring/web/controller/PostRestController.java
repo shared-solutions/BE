@@ -1,32 +1,32 @@
 package friend.spring.web.controller;
 import friend.spring.apiPayload.ApiResponse;
-import friend.spring.converter.CommentConverter;
+import friend.spring.converter.CandidateConverter;
 import friend.spring.converter.PostConverter;
+import friend.spring.domain.Candidate;
 import friend.spring.domain.Post;
 import friend.spring.repository.PostRepository;
 import friend.spring.service.JwtTokenService;
 import friend.spring.service.PostQueryService;
 import friend.spring.service.PostService;
-import friend.spring.web.dto.ParentPostDTO;
-import friend.spring.domain.mapping.Comment_like;
+import friend.spring.web.dto.*;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
-import friend.spring.service.PostService;
-import friend.spring.web.dto.CommentResponseDTO;
-import friend.spring.web.dto.PostRequestDTO;
-import friend.spring.web.dto.PostResponseDTO;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -38,7 +38,8 @@ public class PostRestController {
     private final PostQueryService postQueryService;
     private final PostRepository postRepository;
     private final JwtTokenService jwtTokenService;
-    @PostMapping("/")
+//    @PostMapping(value = "/", consumes = "multipart/form-data")
+    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "글 작성 API", description = "글을 추가 합니다.")
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
@@ -49,17 +50,38 @@ public class PostRestController {
             @Parameter(name="postVoteType", description="<Integer> 투표 종류<br>1 : GENERAL <br>2 : GAUGE <br>3 : CARD<br>해당 사항 없을시 null"),
             @Parameter(name="pollTitle", description="<String> 투표 제목"),
             @Parameter(name="multipleChoice", description="<Boolean> 복수 선택 여부"),
-            @Parameter(name="pollOption", description="<Class> 투표 후보{optionString : string, optionImg : string}<br>해당 사항 없을시 null"),
+//            @Parameter(name="pollOption", description="<Class> 투표 후보{optionString : string, optionImg : string}<br>해당 사항 없을시 null"),
             @Parameter(name="parent_id", description="<Long> 원글(후기글 경우) id<br>해당 사항 없을시 null"),
             @Parameter(name="deadline", description="<Timestamp> 투표 마감 시간<br>해당 사항 없을시 null"),
             @Parameter(name="point", description="<Integer> 포인트<br>해당 사항 없을시 null")
 
     })
-    public ApiResponse<PostResponseDTO.AddPostResultDTO> join(@RequestBody @Valid PostRequestDTO.AddPostDTO request,
+    public ApiResponse<PostResponseDTO.AddPostResultDTO> join(@RequestPart(value = "request") @Valid PostRequestDTO.AddPostDTO request,
+                                                              @RequestPart(value = "file", required = false) List<MultipartFile> file,
+//                                                              @RequestPart(value = "pollOptionImages", required = false) List<MultipartFile> pollOptionFiles,
                                                               @RequestHeader("atk") String atk,
                                                               HttpServletRequest request2){
-        Post post= postService.joinPost(request,request2);
+        System.out.println("테스트000000");
+        Post post= postService.joinPost(request,request2, file);
         return ApiResponse.onSuccess(PostConverter.toAddPostResultDTO(post));
+    }
+
+    @PostMapping(value = "/{post-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "후보 생성 API", description = "후보를 생성합니다.(글 작성 API 호출 후 postId 응답 받으시면, 후보 개수 만큼 바로 호출해주세요!)")
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
+            @Parameter(name="pollOption", description="<Class> 투표 후보{optionString : string, optionImg : MultipartFile}<br>해당 사항 없을시 null"),
+    })
+    public ApiResponse<CandidateResponseDTO.AddCandidateResultDTO> createCandidate(
+            @PathVariable(name="post-id") Long postId,
+//            @RequestBody PollOptionDTO.PollOptionReq request,
+            @RequestParam String optionString,
+            @RequestParam(required = false) MultipartFile optionImg,
+            @RequestHeader("atk") String atk,
+            HttpServletRequest request2) {
+//        Candidate candidate = postService.createCandidate(postId, request,request2);
+        Candidate candidate = postService.createCandidate(postId, optionString, optionImg,request2);
+        return ApiResponse.onSuccess(CandidateConverter.toAddCandidateResultDTO(candidate));
     }
 
 

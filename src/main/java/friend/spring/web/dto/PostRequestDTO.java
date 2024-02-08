@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.apache.tomcat.jni.Poll;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import java.sql.Timestamp;
@@ -26,12 +27,12 @@ public class PostRequestDTO {
         Integer postVoteType;// 1: general, 2: gauge
         String pollTitle;
         Boolean multipleChoice;
-        List<PollOptionDTO> pollOption;
+//        List<PollOptionDTO.PollOptionReq> pollOption;
         Long parent_id;
         @NotBlank
         Timestamp deadline;
         Integer point;
-        String file;
+//        List<MultipartFile> file;
     }
     @Getter
     public static class ReviewPostGetDTO{

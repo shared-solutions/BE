@@ -55,7 +55,7 @@ public class AmazonS3Manager{
         return amazonConfig.getPostPath() + '/' + uuid.getUuid();
     }
 
-    public String generateReportKeyName(Uuid uuid) {
-        return amazonConfig.getReportPath() + '/' + uuid.getUuid();
+    public String generateCandidateKeyName(Uuid uuid) {
+        return amazonConfig.getCandidatePath() + '/' + uuid.getUuid();
     }
 }

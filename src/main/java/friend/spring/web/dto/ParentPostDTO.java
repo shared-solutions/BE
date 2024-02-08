@@ -14,7 +14,7 @@ public class ParentPostDTO {
     String nickname;
     String title;
     String content;
-    List<PollOptionDTO> pollOption;
+    List<PollOptionDTO.PollOptionRes> pollOption;
     ParentPollDTO pollContent;
     Integer gauge;
     Integer like;
@@ -25,6 +25,7 @@ public class ParentPostDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CandidatePostDTO {
+        Long postId;
         String title;
         String content;
         Integer like;

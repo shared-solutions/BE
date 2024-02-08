@@ -1,12 +1,10 @@
 package friend.spring.web.dto;
-import friend.spring.domain.Candidate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.*;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,14 +28,14 @@ public class PostResponseDTO {
         LocalDateTime createdAt;
         String title;
         String content;
-        String file;
+        List<FileDTO> file; // 첨부파일 이미지 리스트
         String pollTitle; // 투표글에서만 사용, 후기글에서는 null
-        List<PollOptionDTO> pollOption; // 투표글에서만 사용, 후기글에서는 null
+        List<PollOptionDTO.PollOptionRes> pollOption; // 투표글에서만 사용, 후기글에서는 null
         Integer gauge; // 게이지 투표글에서만 사용, 후기글에서는 null
         Integer point; // 투표글에서만 사용, 후기글에서는 null
         ParentPostDTO parentPost; // 후기글에서만 사용, 일반글에서는 null
         Timestamp deadline; // 투표글에서만 사용, 후기글에서는 null
-        List<PollOptionDTO> userVote; // 투표글에서 사용자가 투표완료시 투표한 후보
+        List<PollOptionDTO.PollOptionRes> userVote; // 투표글에서 사용자가 투표완료시 투표한 후보
         List<Integer> percent; // 투표글에서 사용자가 투표 완료시 투표한 후보 선택 퍼센트
         List<String> voteResult; // 투표글에서 사용자가 투표 완료시 투표인원/총인원
         Integer view;
@@ -66,8 +64,8 @@ public class PostResponseDTO {
         String title;
         String content;
         LocalDateTime uploadDate;
-        List<PollOptionDTO> pollOption;
-        List<PollOptionDTO> userVote;
+        List<PollOptionDTO.PollOptionRes> pollOption;
+        List<PollOptionDTO.PollOptionRes> userVote;
         Integer gauge;
         Integer like;
         Integer comment;
@@ -92,7 +90,7 @@ public class PostResponseDTO {
         String title;
         String content;
         LocalDateTime uploadDate;
-        String ReviewPic;
+        List<FileDTO> ReviewPicList;
         Integer like;
         Integer comment;
         Boolean isLike;
@@ -127,7 +125,7 @@ public class PostResponseDTO {
         String title;
         String content;
         Long post_id;
-        String file;
+        List<FileDTO> file;
         Integer like;
         Integer comment_cnt;
         LocalDateTime created_at;
