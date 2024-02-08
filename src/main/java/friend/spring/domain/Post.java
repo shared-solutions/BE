@@ -50,9 +50,6 @@ public class Post extends BaseEntity {
     @Column(nullable = true)
     private Integer point;
 
-    @Column(nullable = true)
-    private String file;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -92,6 +89,9 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<Comment_choice> commentChoiceList = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "post")
+    private List<File> fileList = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cardPoll_id")

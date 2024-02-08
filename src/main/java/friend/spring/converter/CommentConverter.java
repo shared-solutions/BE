@@ -53,12 +53,18 @@ public class CommentConverter {
             }
         }
 
+        // 유저 프로필
+        String userPhoto = null;
+        if (comment.getUser().getFile() != null) {
+            userPhoto = comment.getUser().getFile().getUrl();
+        }
+
         return CommentResponseDTO.commentGetRes.builder()
                 .commentId(comment.getId())
                 .content(comment.getContent())
                 .userId(comment.getUser().getId())
                 .userNickname(comment.getUser().getNickname())
-                .userImage(comment.getUser().getImage())
+                .userImage(userPhoto)
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
                 .parentCommentId(parentCommentId)

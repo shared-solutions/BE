@@ -58,9 +58,6 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = true)
     private Boolean agree_info;
 
-    @Column(nullable = true)
-    private String image;
-
     @Column(nullable = true)//잠시 true로 수정
     private Boolean is_deleted;
 
@@ -121,6 +118,10 @@ public class User extends BaseEntity implements UserDetails {
     @Builder.Default
     @OneToMany(mappedBy = "user")
     private List<Gauge_vote> gaugeVoteList = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    @JoinColumn(name = "file_id")
+    private File file;
 
     // UserDetails 상속
     @Override
