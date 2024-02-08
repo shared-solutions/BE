@@ -24,9 +24,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/user/my-page")
 public class MyPageRestController {
-    private UserService userService;
-    private PostService postService;
-    private MyPageService myPageService;
+    private final UserService userService;
+    private final PostService postService;
+    private final MyPageService myPageService;
 
     private final JwtTokenService jwtTokenService;
 

@@ -55,7 +55,7 @@ public class MyPageServiceImpl implements MyPageService{
         }
         List<Category> categoryList = scrapList.stream()
                 .map(Post_scrap::getPost).filter(Objects::nonNull)
-                .map(Post::getCategory).filter(Objects::nonNull).collect(Collectors.toList());
+                .map(Post::getCategory).filter(Objects::nonNull).distinct().collect(Collectors.toList());
         return categoryList;
         }
 
