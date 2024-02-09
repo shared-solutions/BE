@@ -336,7 +336,7 @@ public class PostConverter {
                             .collect(Collectors.toList());
 
                     // 가장 높은 투표를 받은 후보들을 userChoiceList에 담기
-                    userChoiceList = post.getCardPoll().getCandidateList().stream()
+                    userChoiceList = post.getGeneralPoll().getCandidateList().stream()
                             .filter(candidate -> mostVotedCandidateIds.contains(candidate.getId()))
                             .map(PostConverter::toPollOptionResDTO)
                             .collect(Collectors.toList());
