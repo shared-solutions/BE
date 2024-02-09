@@ -88,6 +88,7 @@ public class UserRestController {
 
     })
     @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)")
     })
     public ApiResponse<UserResponseDTO.QuestionResDTO> getQuestion(
@@ -111,6 +112,7 @@ public class UserRestController {
 
     })
     @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)")
     })
     public ApiResponse<UserResponseDTO.AnswerResDTO> getAnswer(
