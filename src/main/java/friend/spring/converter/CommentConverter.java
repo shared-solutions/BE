@@ -3,6 +3,7 @@ package friend.spring.converter;
 import friend.spring.domain.Comment;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
+import friend.spring.domain.enums.CommentState;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.web.dto.CommentRequestDTO;
@@ -18,6 +19,7 @@ public class CommentConverter {
                 .post(post)
                 .content(request.getContent())
                 .parentComment(parentComment)
+                .state(CommentState.POSTING)
                 .build();
     }
 
@@ -59,6 +61,13 @@ public class CommentConverter {
             userPhoto = comment.getUser().getFile().getUrl();
         }
 
+        boolean isDeleted;
+        if (comment.getState().equals(CommentState.DELETED)) {
+            isDeleted = true;
+        } else {
+            isDeleted = false;
+        }
+
         return CommentResponseDTO.commentGetRes.builder()
                 .commentId(comment.getId())
                 .content(comment.getContent())
@@ -70,6 +79,7 @@ public class CommentConverter {
                 .parentCommentId(parentCommentId)
                 .commentLike(comment.getCommentLikeList().size())
                 .childrenComments(subComments)
+                .isDeleted(isDeleted)
                 .build();
     }
 
