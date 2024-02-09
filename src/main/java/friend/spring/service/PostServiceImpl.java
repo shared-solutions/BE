@@ -121,7 +121,7 @@ public class PostServiceImpl implements PostService{
             //포인트 차감 관련 코드
             if(request.getPoint()!=null) {
                 if (!checkPoint(request, user)) {
-                    throw new RuntimeException("\""+userId+"\"해당 유저의 포인트가 부족 합니다");
+                    throw new GeneralException(NOT_ENOUGH_POINT);
                 }
                 user.setPoint(user.getPoint() - request.getPoint());
                 Point newPoint=Point.builder()
@@ -148,7 +148,7 @@ public class PostServiceImpl implements PostService{
             //포인트 차감 관련 코드
             if(request.getPoint()!=null) {
                 if (!checkPoint(request, user)) {
-                    throw new RuntimeException("\""+userId+"\"해당 유저의 포인트가 부족 합니다");
+                    throw new GeneralException(NOT_ENOUGH_POINT);
                 }
                 user.setPoint(user.getPoint() - request.getPoint());
                 Point newPoint=Point.builder()
@@ -160,7 +160,7 @@ public class PostServiceImpl implements PostService{
             }
 
             if(!checkPoint(request, user)&&request.getPoint()!=null){
-                throw new RuntimeException("\""+userId+"\"해당 유저의 포인트가 부족 합니다");
+                throw new GeneralException(NOT_ENOUGH_POINT);
             }
 
             Card_poll cardPoll = Card_poll.builder()
@@ -178,7 +178,7 @@ public class PostServiceImpl implements PostService{
             //포인트 차감 관련 코드
             if(request.getPoint()!=null) {
                 if (!checkPoint(request, user)) {
-                    throw new RuntimeException("\""+userId+"\"해당 유저의 포인트가 부족 합니다");
+                    throw new GeneralException(NOT_ENOUGH_POINT);
                 }
                 user.setPoint(user.getPoint() - request.getPoint());
                 Point newPoint=Point.builder()
@@ -190,7 +190,7 @@ public class PostServiceImpl implements PostService{
             }
 
             if(!checkPoint(request, user)&&request.getPoint()!=null){
-                throw new RuntimeException("\""+userId+"\"해당 유저의 포인트가 부족 합니다");
+                throw new GeneralException(NOT_ENOUGH_POINT);
             }
 
             Gauge_poll gaugePoll = Gauge_poll.builder()
@@ -205,9 +205,9 @@ public class PostServiceImpl implements PostService{
 
         if(newPost.getPostType()==REVIEW&&request.getParent_id()!=null){
             Post parent=postRepository.findById(request.getParent_id())
-                            .orElseThrow(()->new RuntimeException("\""+request.getParent_id()+"\"해당 글이 없습니다"));
+                            .orElseThrow(()->new GeneralException(POST_NOT_FOUND));
             if(!userId.equals(parent.getUser().getId())){
-                throw new RuntimeException("타 유저 글입니다. 후기글 작성 권한이 없습니다.");
+                throw new GeneralException(POST_NOT_CORRECT_USER);
             }
             newPost.setParentPost(parent);
         }
@@ -325,7 +325,7 @@ public class PostServiceImpl implements PostService{
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
         if(!user.getId().equals(post.getUser().getId())){
-            throw new RuntimeException("삭제 권환이 없습니다 글이 없습니다");
+            throw new GeneralException(POST_NOT_CORRECT_USER);
         }
         post.setStateDel();
     }
