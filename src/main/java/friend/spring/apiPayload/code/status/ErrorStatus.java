@@ -32,6 +32,8 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4001", "글을 찾을 수 없습니다."),
     POST_NOT_CORRECT_USER(HttpStatus.BAD_REQUEST, "POST4002", "올바른 사용자(글 작성자)가 아닙니다."),
     POST_LIKE_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4003", "글에 대한 좋아요 데이터를 찾을 수 없습니다."),
+    POST_CATGORY_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4004", "카테고리를 찾을 수 없습니다."),
+    POST_SAVED_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4005", "저장한 글이 없습니다."),
     POST_SCRAP_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4004", "글에 대한 스크랩 데이터를 찾을 수 없습니다."),
     POST_GENERAL_POLL_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4005", "글에 대한 일반 투표 데이터를 찾을 수 없습니다."),
     POST_CARD_POLL_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4006", "글에 대한 카드 투표 데이터를 찾을 수 없습니다."),
