@@ -181,7 +181,7 @@ public class UserRestController {
     }
 
     @GetMapping("/point")
-    @Operation(summary = "포인트 조회 API", description = "임시로 user-id 입력")
+    @Operation(summary = "포인트 조회 API", description = "유저의 포인트 내역을 조회하는 API입니다")
     public ApiResponse<UserResponseDTO.PointViewDTO> myPoint(@RequestHeader("atk") String atk,
                                                               HttpServletRequest request2) {
 

@@ -1,5 +1,7 @@
 package friend.spring.service;
 
+import friend.spring.apiPayload.GeneralException;
+import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.*;
 import friend.spring.domain.enums.PostState;
@@ -22,6 +24,7 @@ import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,11 +38,10 @@ public class PostQueryServiceImpl implements PostQueryService{
     private final JwtTokenProvider jwtTokenProvider;
     @Override
     @Transactional
-    public Optional<Post> getPostDetail(Long postId){
-        Optional<Post> postOptional=postRepository.findById(postId);
-        Post post = postOptional.get();
+    public Post getPostDetail(Long postId){
+        Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         post.setView(post.getView()+1);
-        return postOptional;
+        return post;
     }
 
     @Override
@@ -53,7 +55,8 @@ public class PostQueryServiceImpl implements PostQueryService{
         if(post.getPostType()== PostType.VOTE){
             if(post.getVoteType()== PostVoteType.GENERAL){
                 List<General_vote> vote=generalVoteRepository.findByUserId(userId);
-                if (!vote.isEmpty()) { // 목록이 비어 있지 않으면 true를 반환
+                Boolean isIn=vote.stream().filter(pollPost->pollPost.getGeneralPoll()==post.getGeneralPoll()).collect(Collectors.toList()).isEmpty();
+                if (!isIn) { // 목록이 비어 있지 않으면 true를 반환
                     return true;
                 }
             }
@@ -61,7 +64,8 @@ public class PostQueryServiceImpl implements PostQueryService{
         if(post.getPostType()== PostType.VOTE){
             if(post.getVoteType()== PostVoteType.CARD){
                 List<Card_vote> vote=cardVoteRepository.findByUserId(userId);
-                if (!vote.isEmpty()) { // 목록이 비어 있지 않으면 true를 반환
+                Boolean isIn=vote.stream().filter(pollPost->pollPost.getCardPoll()==post.getCardPoll()).collect(Collectors.toList()).isEmpty();
+                if (!isIn) { // 목록이 비어 있지 않으면 true를 반환
                     return true;
                 }
             }
@@ -69,7 +73,8 @@ public class PostQueryServiceImpl implements PostQueryService{
         if(post.getPostType()== PostType.VOTE){
             if(post.getVoteType()== PostVoteType.GAUGE){
                 List<Gauge_vote> vote=gaugeVoteRepository.findByUserId(userId);
-                if (!vote.isEmpty()) { // 목록이 비어 있지 않으면 true를 반환
+                Boolean isIn=vote.stream().filter(pollPost->pollPost.getGaugePoll()==post.getGaugePoll()).collect(Collectors.toList()).isEmpty();
+                if (!isIn) { // 목록이 비어 있지 않으면 true를 반환
                     return true;
                 }
             }

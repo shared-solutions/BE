@@ -28,7 +28,11 @@ public class General_poll extends BaseEntity {
 
     @Column(nullable = true)
     @Builder.Default
-    private Timestamp deadline= Timestamp.valueOf(LocalDateTime.now().plusHours(1)); // 디폴트 시간 1시간 설정.
+    private LocalDateTime deadline= LocalDateTime.now().plusHours(1); // 디폴트 시간 1시간 설정.
+
+    @Column(nullable = true)
+    @Builder.Default
+    private Boolean VoteOnGoing=true;
 
     @Builder.Default
     @OneToMany(mappedBy = "generalPoll", cascade = CascadeType.ALL)
@@ -46,6 +50,12 @@ public class General_poll extends BaseEntity {
         this.post = post;
     }
 
+    public void setDeadline(LocalDateTime deadline){
+        this.deadline=deadline;
+    }
+    public void setVoteOnGoing(Boolean voteOnGoing){
+        this.VoteOnGoing=voteOnGoing;
+    }
     public void setMultipleChoice(Boolean multipleChoice){
         this.multipleChoice=multipleChoice;
     }

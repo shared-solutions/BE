@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -99,7 +101,7 @@ public class PostServiceImpl implements PostService{
 
         Post newPost= PostConverter.toPost(request);
         User user=userRepository.findById(userId)
-                .orElseThrow(()->new RuntimeException("\""+userId+"\"해당 유저가 없습니다"));
+                .orElseThrow(()->new GeneralException(USER_NOT_FOUND));
         newPost.setUser(user);
 
         // 글 첨부파일 사진 저장
@@ -225,6 +227,10 @@ public class PostServiceImpl implements PostService{
             this.checkPostWriterUser(false);
         }
 
+        if (!(!optionString.isEmpty() && optionString.length() < 30)) { // 이 글을 쓴 사용자인지 검증
+            throw new GeneralException(CANDIDATE_TEXT_LIMIT);
+        }
+
         Candidate candidate = Candidate.builder()
                 .name(optionString)
                 .build();
@@ -256,11 +262,61 @@ public class PostServiceImpl implements PostService{
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
         if(!user.getId().equals(post.getUser().getId())){
-            throw new RuntimeException("수정 권환이 없습니다 글이 없습니다");
+            throw new GeneralException(POST_NOT_CORRECT_USER);
+        }
+        if(post.getIsFixed()>=2){
+            throw new GeneralException(TOO_MUCH_FIXED);
+        }
+        if(!(request.getDeadline()==null)) {
+            LocalDateTime currentDeadLine;
+            if (post.getVoteType() == GENERAL) {
+                currentDeadLine = post.getGeneralPoll().getDeadline();
+                long daysUntilDeadline = ChronoUnit.DAYS.between(currentDeadLine, request.getDeadline());
+                if (request.getDeadline().isBefore(LocalDateTime.now())) {
+                    throw new GeneralException(DEADLINE_LIMIT);
+                }
+                if (!(daysUntilDeadline <= 30)) {
+                    throw new GeneralException(DEADLINE_LIMIT);
+                }
+                post.getGeneralPoll().setDeadline(request.getDeadline());
+            }
+            if (post.getVoteType() == CARD) {
+                currentDeadLine = post.getCardPoll().getDeadline();
+                long daysUntilDeadline = ChronoUnit.DAYS.between(currentDeadLine, request.getDeadline());
+                if (request.getDeadline().isBefore(LocalDateTime.now())) {
+                    throw new GeneralException(DEADLINE_LIMIT);
+                }
+                if (!(daysUntilDeadline <= 30)){
+                    throw new GeneralException(DEADLINE_LIMIT);
+                }
+                post.getCardPoll().setDeadline(request.getDeadline());
+            }
+            if (post.getVoteType() == GAUGE) {
+                currentDeadLine = post.getGaugePoll().getDeadline();
+                long daysUntilDeadline = ChronoUnit.DAYS.between(currentDeadLine, request.getDeadline());
+                if (request.getDeadline().isBefore(LocalDateTime.now())) {
+                    throw new GeneralException(DEADLINE_LIMIT);
+                }
+                if (!(daysUntilDeadline <= 30)) {
+                    throw new GeneralException(DEADLINE_LIMIT);
+                }
+                post.getGaugePoll().setDeadline(request.getDeadline());
+            }
+        }
+        if(!request.getVoteOnGoing()){
+            if (post.getVoteType() == GENERAL) {
+                post.getGeneralPoll().setVoteOnGoing(false);
+            }
+            if (post.getVoteType() == CARD) {
+                post.getCardPoll().setVoteOnGoing(false);
+            }
+            if (post.getVoteType() == GAUGE) {
+                post.getGaugePoll().setVoteOnGoing(false);
+            }
         }
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
-
+        post.setIsFixed(post.getIsFixed()+1);
     }
 
     @Override
