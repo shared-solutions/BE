@@ -99,11 +99,9 @@ public class PostConverter {
                     .map(Candidate::getName)
                     .findFirst();
             String candidateName=name.get();
-            Optional<File> image = parentPost.getGeneralPoll().getCandidateList().stream()
-                    .filter(candidate -> candidate.getId().equals(id))
-                    .map(Candidate::getFile)
-                    .findFirst();
-            String candidateImage=image.get().getUrl();
+            String candidateImage = parentPollDTO.getCandidateImage();
+
+
             parentPollDTO.setCandidateName(candidateName);
             parentPollDTO.setCandidateImage(candidateImage);
 
