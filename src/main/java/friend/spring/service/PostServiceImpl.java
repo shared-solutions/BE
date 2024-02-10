@@ -7,6 +7,7 @@ import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.converter.CandidateConverter;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.*;
+import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.S3ImageType;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
@@ -362,7 +363,7 @@ public class PostServiceImpl implements PostService{
                     List<Candidate> candidateList = null;
                     List<CandidateResponseDTO.CandidateSummaryRes> candidateSummaryResList = null;
 
-                    if (post.getVoteType() == null) return null; // 고민 후기 글인 경우 패스
+                    if (post.getPostType().equals(REVIEW)) return null; // 고민 후기 글인 경우 패스
 
                     if (post.getVoteType().equals(GENERAL)) { // 일반 투표인 경우
                         postVoteType = "GENERAL";
