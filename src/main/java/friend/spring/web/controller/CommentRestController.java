@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -44,7 +45,7 @@ public class CommentRestController {
     })
     public ApiResponse<CommentResponseDTO.commentCreateRes> createComment(
             @PathVariable("post-id") Long postId,
-            @RequestBody CommentRequestDTO.commentCreateReq requestBody,
+            @RequestBody @Valid CommentRequestDTO.commentCreateReq requestBody,
             @RequestHeader(name = "atk") String atk,
             HttpServletRequest request
     ) {

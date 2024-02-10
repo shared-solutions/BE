@@ -1,5 +1,7 @@
 package friend.spring.service;
 
+import friend.spring.apiPayload.GeneralException;
+import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.converter.VoteConverter;
 import friend.spring.domain.*;
 import friend.spring.repository.*;
@@ -27,11 +29,11 @@ public class VoteServiceImpl implements VoteService{
     public General_vote castGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request, Long PostId, Long userId) {
         General_vote newGeneralVote = VoteConverter.toGeneralVote(request);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("\"" + userId + "\"해당 유저가 없습니다"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         newGeneralVote.setUser(user);
 
         Post post=postRepository.findById(PostId)
-                .orElseThrow(()-> new RuntimeException("\"" + PostId + "\"해당 글이 없습니다"));
+                .orElseThrow(()-> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
         General_poll generalPoll=post.getGeneralPoll();
         newGeneralVote.setGeneralPoll(generalPoll);
@@ -42,7 +44,7 @@ public class VoteServiceImpl implements VoteService{
                 .collect(Collectors.toList());
         for (Long selectedId : selectedCandidateIds) {
             if (!validCandidateIds.contains(selectedId)) {
-                throw new RuntimeException("해당 후보 ID가 존재하지 않습니다: " + selectedId);
+                throw new GeneralException(ErrorStatus.CANDIDATE_NOT_FOUND);
             }
         }
 
@@ -66,11 +68,11 @@ public class VoteServiceImpl implements VoteService{
     public Gauge_vote castGaugeVote(VoteRequestDTO.GaugeVoteRequestDTO request, Long PostId, Long userId){
         Gauge_vote newGaugeVote = VoteConverter.toGaugeVote(request);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("\"" + userId + "\"해당 유저가 없습니다"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         newGaugeVote.setUser(user);
 
         Post post=postRepository.findById(PostId)
-                .orElseThrow(()-> new RuntimeException("\"" + PostId + "\"해당 글이 없습니다"));
+                .orElseThrow(()-> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
         Gauge_poll gaugePoll=post.getGaugePoll();
         newGaugeVote.setGaugePoll(gaugePoll);
@@ -99,11 +101,11 @@ public class VoteServiceImpl implements VoteService{
     public Card_vote castCardVote(VoteRequestDTO.CardVoteRequestDTO request,Long PostId, Long userId){
         Card_vote newCardVote = VoteConverter.toCardVote(request);
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("\"" + userId + "\"해당 유저가 없습니다"));
+                .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         newCardVote.setUser(user);
 
         Post post=postRepository.findById(PostId)
-                .orElseThrow(()-> new RuntimeException("\"" + PostId + "\"해당 글이 없습니다"));
+                .orElseThrow(()-> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
         Card_poll cardPoll=post.getCardPoll();
         newCardVote.setCardPoll(cardPoll);
@@ -114,7 +116,7 @@ public class VoteServiceImpl implements VoteService{
                 .collect(Collectors.toList());
         for (Long selectedId : selectedCandidateIds) {
             if (!validCandidateIds.contains(selectedId)) {
-                throw new RuntimeException("해당 후보 ID가 존재하지 않습니다: " + selectedId);
+                throw new GeneralException(ErrorStatus.CANDIDATE_NOT_FOUND);
             }
         }
 

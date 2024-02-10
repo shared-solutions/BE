@@ -10,6 +10,7 @@ import friend.spring.domain.mapping.Post_scrap;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,10 @@ public class Post extends BaseEntity {
 
     @Column(nullable = true)
     private Integer point;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer isFixed=0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -162,7 +167,12 @@ public class Post extends BaseEntity {
         this.content=content;
     }
 
+    public void setIsFixed(Integer isFixed){
+        this.isFixed=isFixed;
+    }
+
     public void setStateDel(){
         this.state=PostState.DELETED;
     }
+
 }
