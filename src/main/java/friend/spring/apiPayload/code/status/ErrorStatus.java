@@ -28,6 +28,15 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_JWT(HttpStatus.UNAUTHORIZED, "USER4007", "유효하지 않은 JWT입니다."),
     PASSWORD_INCORRECT(HttpStatus.NOT_FOUND, "USER4008", "비밀번호가 틀렸습니다."),
     RTK_INCORREXT(HttpStatus.UNAUTHORIZED,"USER4100","RefreshToken값을 확인해주세요."),
+
+    // Auth 관련
+    AUTH_EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_4101", "토큰이 만료되었습니다."),
+    AUTH_INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_4102", "토큰이 유효하지 않습니다."),
+    INVALID_LOGIN_REQUEST(HttpStatus.UNAUTHORIZED, "AUTH_4103", "올바른 이메일이나 패스워드가 아닙니다."),
+    INVALID_REQUEST_INFO(HttpStatus.UNAUTHORIZED, "AUTH_4106", "카카오 정보 불러오기에 실패하였습니다."),
+    NOT_EQUAL_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_4107", "리프레시 토큰이 다릅니다."),
+    NOT_CONTAIN_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_4108", "해당하는 토큰이 저장되어있지 않습니다."),
+
     // 글 관련 응답
     POST_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4001", "글을 찾을 수 없습니다."),
     POST_NOT_CORRECT_USER(HttpStatus.BAD_REQUEST, "POST4002", "올바른 사용자(글 작성자)가 아닙니다."),
