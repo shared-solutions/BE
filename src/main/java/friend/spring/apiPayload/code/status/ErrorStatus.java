@@ -47,6 +47,7 @@ public enum ErrorStatus implements BaseErrorCode {
     POST_GENERAL_POLL_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4005", "글에 대한 일반 투표 데이터를 찾을 수 없습니다."),
     POST_CARD_POLL_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4006", "글에 대한 카드 투표 데이터를 찾을 수 없습니다."),
     POST_LIKE_DUPLICATE(HttpStatus.BAD_REQUEST, "POST4007", "글에 대한 좋아요 데이터가 이미 존재합니다."),
+    POST_SCRAP_DUPLICATE(HttpStatus.BAD_REQUEST, "POST4008", "글에 대한 스크랩 데이터가 이미 존재합니다."),
 
     // 댓글 관련 응답
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT4001", "댓글을 찾을 수 없습니다."),
