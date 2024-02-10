@@ -1,9 +1,8 @@
 package friend.spring.web.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.time.LocalDateTime;
 
 public class CandidateResponseDTO {
     @Builder
@@ -14,5 +13,14 @@ public class CandidateResponseDTO {
         Long candidate_id; // 후보 아이디
         String candidate_name; // 후보 이름
         Double ratio; // 비율
+    }
+
+    @Builder
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AddCandidateResultDTO {
+        Long candidateId;
+        LocalDateTime createdAt;
     }
 }

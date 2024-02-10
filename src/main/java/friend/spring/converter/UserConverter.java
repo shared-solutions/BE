@@ -21,8 +21,13 @@ public class UserConverter {
 
 
     public static UserResponseDTO.MyPageResDTO toMypageResDTO(User user){
+        String userPhoto = null;
+        if (user.getFile() != null) {
+            userPhoto = user.getFile().getUrl();
+        }
+
         return UserResponseDTO.MyPageResDTO.builder()
-                .userPhoto(user.getImage())
+                .userPhoto(userPhoto)
                 .userName(user.getNickname())
                 .userPoint(user.getPoint())
                 .userLevelInt(user.getLevel().getLike()+1)
@@ -55,7 +60,7 @@ public class UserConverter {
     }
 
 
-    public static User toUser(UserRequestDTO.UserJoinRequest userJoinRequest, String pw){
+    public static User toUser(UserRequestDTO.UserJoinRequest userJoinRequest, String pw, Level initLevel){
 
         Gender gender = null;
 
@@ -82,11 +87,11 @@ public class UserConverter {
                 .agree_marketing(userJoinRequest.isAgree_marketing())
                 .birth(userJoinRequest.getBirth())
                 .kakao(userJoinRequest.getKakao())
-                .image(userJoinRequest.getImage())
                 .is_deleted(userJoinRequest.is_deleted())
                 .point(userJoinRequest.getPoint())
                 .like(userJoinRequest.getLike())
                 .role(RoleType.USER)
+                .level(initLevel)
                 .build();
     }
 
@@ -114,10 +119,16 @@ public class UserConverter {
                 .filter(post -> post.getCommentChoiceList().isEmpty()).collect(Collectors.toList());
         double pChoicePercent = ((double) (Question - myPostList.size()) / (double) Question)*100;
 
+        // 유저 프로필
+        String userPhoto = null;
+        if (user.getFile() != null) {
+            userPhoto = user.getFile().getUrl();
+        }
+
         //남은 다음 등급
         double nxtGrade = ((double)user.getLike()/(double)(nxtLevel.getLike() - user.getLevel().getLike())) * 100.0;
         return UserResponseDTO.QuestionResDTO.builder()
-                .userPhoto(user.getImage())
+                .userPhoto(userPhoto)
                 .nickName(user.getNickname())
                 .recommend(user.getLike())
                 .grade(user.getLevel().getName())
@@ -146,10 +157,16 @@ public class UserConverter {
         //채택 답변률
         double percent = ((double)choice / (double)all) * 100.0;
 
+        // 유저 프로필
+        String userPhoto = null;
+        if (user.getFile() != null) {
+            userPhoto = user.getFile().getUrl();
+        }
+
         //남은 다음 등급
         double nxtGrade = ((double)user.getLike()/(double)(nxtLevel.getLike() - user.getLevel().getLike())) * 100.0;
         return UserResponseDTO.AnswerResDTO.builder()
-                .userPhoto(user.getImage())
+                .userPhoto(userPhoto)
                 .nickName(user.getNickname())
                 .recommend(user.getLike())
                 .grade(user.getLevel().getName())
@@ -162,10 +179,16 @@ public class UserConverter {
     }
 
     public static UserResponseDTO.UserSummaryInfo toUserSummaryInfo(User user) {
+        // 유저 프로필
+        String userPhoto = null;
+        if (user.getFile() != null) {
+            userPhoto = user.getFile().getUrl();
+        }
+
         return UserResponseDTO.UserSummaryInfo.builder()
                 .user_id(user.getId())
                 .nickname(user.getNickname())
-                .image(user.getImage())
+                .image(userPhoto)
                 .build();
     }
 

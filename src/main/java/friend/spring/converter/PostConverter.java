@@ -3,7 +3,6 @@ import friend.spring.domain.*;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
-import friend.spring.security.JwtTokenProvider;
 import friend.spring.service.PostQueryService;
 import friend.spring.web.dto.*;
 import org.springframework.data.domain.Page;
@@ -35,10 +34,14 @@ public class PostConverter {
                 .build();
     }
 
-    public static PollOptionDTO toPollOptionDTO(Candidate candidate){
-        return PollOptionDTO.builder()
+    public static PollOptionDTO.PollOptionRes toPollOptionResDTO(Candidate candidate) {
+        String optionImgUrl = null;
+        if (candidate.getFile() != null) {
+            optionImgUrl = candidate.getFile().getUrl();
+        }
+        return PollOptionDTO.PollOptionRes.builder()
                 .optionString(candidate.getName())
-                .optionImg(candidate.getImage()).build();
+                .optionImgUrl(optionImgUrl).build();
     }
 
     public static ParentPostDTO toParentPostDTO(Post parentPost){
@@ -58,8 +61,8 @@ public class PostConverter {
         }
 
         if(parentPost.getVoteType()==PostVoteType.GENERAL) {
-            List<PollOptionDTO> pollOptionDTOList = parentPost.getGeneralPoll().getCandidateList().stream()
-                    .map(PostConverter::toPollOptionDTO).collect(Collectors.toList());
+            List<PollOptionDTO.PollOptionRes> pollOptionDTOList = parentPost.getGeneralPoll().getCandidateList().stream()
+                    .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
 
             // 총 투표수 계산
             long totalVotes = parentPost.getGeneralPoll().getGeneralVoteList().stream()
@@ -74,6 +77,7 @@ public class PostConverter {
             // 선택률 -> ParentPollDTO 객체 리스트로 변환
             List<ParentPollDTO> candidateInfos = candidateSelectionCounts.entrySet().stream()
                     .map(entry -> ParentPollDTO.builder()
+//                            .candidateName(candidateRepository.findById(entry.getKey()).orElseThrow(()->new RuntimeException("없으요")).getName())
                             .candidateId(entry.getKey())
                             .rate((int) ((double) entry.getValue() / totalVotes * 100))
                             .selection(entry.getValue())
@@ -88,7 +92,18 @@ public class PostConverter {
             if(highestSelectionCandidate.isPresent()) {
                 parentPollDTO = highestSelectionCandidate.get();
             }
+            // 1등 후보 이름, 사진 반환
+            Long id=parentPollDTO.getCandidateId();
+            Optional<String> name = parentPost.getGeneralPoll().getCandidateList().stream()
+                    .filter(candidate -> candidate.getId().equals(id))
+                    .map(Candidate::getName)
+                    .findFirst();
+            String candidateName=name.get();
+            String candidateImage = parentPollDTO.getCandidateImage();
 
+
+            parentPollDTO.setCandidateName(candidateName);
+            parentPollDTO.setCandidateImage(candidateImage);
 
             return ParentPostDTO.builder()
                     .nickname(parentPost.getUser().getNickname())
@@ -101,8 +116,8 @@ public class PostConverter {
                     .build();
         }
 
-            List<PollOptionDTO> pollOptionDTOList = parentPost.getCardPoll().getCandidateList().stream()
-                    .map(PostConverter::toPollOptionDTO).collect(Collectors.toList());
+            List<PollOptionDTO.PollOptionRes> pollOptionDTOList = parentPost.getCardPoll().getCandidateList().stream()
+                    .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
 
             // 총 투표수 계산
             long totalVotes = parentPost.getCardPoll().getCardVoteList().stream()
@@ -129,6 +144,21 @@ public class PostConverter {
 
             // 1등 후보의 정보를 ParentPollDTO 객체로 반환
             parentPollDTO = highestSelectionCandidate.get();
+
+             // 1등 후보 이름, 사진 반환
+            Long id=parentPollDTO.getCandidateId();
+            Optional<String> name = parentPost.getGeneralPoll().getCandidateList().stream()
+                .filter(candidate -> candidate.getId().equals(id))
+                .map(Candidate::getName)
+                .findFirst();
+            String candidateName=name.get();
+            Optional<File> image = parentPost.getGeneralPoll().getCandidateList().stream()
+                .filter(candidate -> candidate.getId().equals(id))
+                .map(Candidate::getFile)
+                .findFirst();
+            String candidateImage=image.get().getUrl();
+            parentPollDTO.setCandidateName(candidateName);
+            parentPollDTO.setCandidateImage(candidateImage);
 
 
             return ParentPostDTO.builder()
@@ -174,10 +204,11 @@ public class PostConverter {
             }
         }
 
+
+
         return Post.builder()
                 .title(request.getTitle())
                 .content(request.getContent())
-                .file(request.getFile())
                 .postType(postType)
                 .voteType(postVoteType)
                 .point(request.getPoint())
@@ -192,12 +223,16 @@ public class PostConverter {
     public static PostResponseDTO.PostDetailResponse postDetailResponse(Post post, Boolean engage,Long userId, Post parentPost){
         Integer likeCount = post.getPostLikeList().size();
         Integer commentCount = post.getCommentList().size();
-        List<PollOptionDTO> userChoiceList=null;
+        Boolean myPost=false;
+        List<PollOptionDTO.PollOptionRes> userChoiceList=null;
         List<Integer> percent=null;
         List<String> voteResult=null;
         Integer value=null;
         Boolean isLike=!post.getPostLikeList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
         Boolean isComment=!post.getCommentList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        if(post.getUser().getId().equals(userId)){
+            myPost=true;
+        }
 
 
         if(post.getPostType()==REVIEW){
@@ -206,13 +241,14 @@ public class PostConverter {
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .file(post.getFile())
+                    .file(FileConverter.toFileDTO(post.getFileList()))
                     .parentPost(toParentPostDTO(parentPost))
                     .view(post.getView())
                     .like(likeCount)
                     .comment(commentCount)
                     .isLike(isLike)
                     .isComment(isComment)
+                    .myPost(myPost)
                     .build();
         }
         if(post.getVoteType()==PostVoteType.GAUGE){
@@ -224,7 +260,7 @@ public class PostConverter {
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .file(post.getFile())
+                    .file(FileConverter.toFileDTO(post.getFileList()))
                     .gauge(value)
                     .point(post.getPoint())
                     .deadline(post.getGaugePoll().getDeadline())
@@ -233,11 +269,12 @@ public class PostConverter {
                     .comment(commentCount)
                     .isLike(isLike)
                     .isComment(isComment)
+                    .myPost(myPost)
                     .build();
         }
         if(post.getVoteType()==PostVoteType.GENERAL){
-            List<PollOptionDTO> pollOptionDTOList=post.getGeneralPoll().getCandidateList().stream()
-                    .map(PostConverter::toPollOptionDTO).collect(Collectors.toList());
+            List<PollOptionDTO.PollOptionRes> pollOptionDTOList=post.getGeneralPoll().getCandidateList().stream()
+                    .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
             if(engage) {
                 //투표한 후보에 대한 정보
                 Set<Long> selectedOptionIds = post.getGeneralPoll().getGeneralVoteList().stream()
@@ -246,7 +283,7 @@ public class PostConverter {
                         .collect(Collectors.toSet());
                 userChoiceList = post.getGeneralPoll().getCandidateList().stream()
                         .filter(candidate -> selectedOptionIds.contains(candidate.getId()))
-                        .map(PostConverter::toPollOptionDTO)
+                        .map(PostConverter::toPollOptionResDTO)
                         .collect(Collectors.toList());
 
                 // 총 투표수 계산
@@ -287,7 +324,7 @@ public class PostConverter {
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .file(post.getFile())
+                    .file(FileConverter.toFileDTO(post.getFileList()))
                     .pollTitle(post.getGeneralPoll().getPollTitle())
                     .pollOption(pollOptionDTOList)
                     .point(post.getPoint())
@@ -300,10 +337,11 @@ public class PostConverter {
                     .comment(commentCount)
                     .isLike(isLike)
                     .isComment(isComment)
+                    .myPost(myPost)
                     .build();
         }
-        List<PollOptionDTO> pollOptionDTOList=post.getCardPoll().getCandidateList().stream()
-                .map(PostConverter::toPollOptionDTO).collect(Collectors.toList());
+        List<PollOptionDTO.PollOptionRes> pollOptionDTOList=post.getCardPoll().getCandidateList().stream()
+                .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
         if(engage) {
             //투표한 후보에 대한 정보
             Set<Long> selectedOptionIds = post.getCardPoll().getCardVoteList().stream()
@@ -312,7 +350,7 @@ public class PostConverter {
                     .collect(Collectors.toSet());
             userChoiceList = post.getCardPoll().getCandidateList().stream()
                     .filter(candidate -> selectedOptionIds.contains(candidate.getId()))
-                    .map(PostConverter::toPollOptionDTO)
+                    .map(PostConverter::toPollOptionResDTO)
                     .collect(Collectors.toList());
 
             // 총 투표수 계산
@@ -353,7 +391,7 @@ public class PostConverter {
                 .createdAt(post.getCreatedAt())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .file(post.getFile())
+                .file(FileConverter.toFileDTO(post.getFileList()))
                 .pollTitle(post.getCardPoll().getPollTitle())
                 .pollOption(pollOptionDTOList)
                 .point(post.getPoint())
@@ -366,6 +404,7 @@ public class PostConverter {
                 .comment(commentCount)
                 .isLike(isLike)
                 .isComment(isComment)
+                .myPost(myPost)
                 .build();
     }
 
@@ -381,14 +420,14 @@ public class PostConverter {
 
         Integer likeCount = post.getPostLikeList().size();
         Integer commentCount = post.getCommentList().size();
-        List<PollOptionDTO> userChoiceList=null;
+        List<PollOptionDTO.PollOptionRes> userChoiceList=null;
         Boolean isLike=!post.getPostLikeList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
         Boolean isComment=!post.getCommentList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
         Boolean engage=false;
 
         if(post.getVoteType()==PostVoteType.GENERAL) {
-            List<PollOptionDTO> pollOptionDTOList=post.getGeneralPoll().getCandidateList().stream()
-                    .map(PostConverter::toPollOptionDTO).collect(Collectors.toList());
+            List<PollOptionDTO.PollOptionRes> pollOptionDTOList=post.getGeneralPoll().getCandidateList().stream()
+                    .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
             if(!post.getGeneralPoll().getGeneralVoteList().stream().filter(cardVote -> cardVote.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty()){
                 engage=true;
             }
@@ -400,7 +439,7 @@ public class PostConverter {
                         .collect(Collectors.toSet());
                 userChoiceList = post.getGeneralPoll().getCandidateList().stream()
                         .filter(candidate -> selectedOptionIds.contains(candidate.getId()))
-                        .map(PostConverter::toPollOptionDTO)
+                        .map(PostConverter::toPollOptionResDTO)
                         .collect(Collectors.toList());
 
                 return PostResponseDTO.PollPostGetResponse.builder()
@@ -457,8 +496,8 @@ public class PostConverter {
                     .isComment(isComment)
                     .build();
         }
-        List<PollOptionDTO> pollOptionDTOList=post.getCardPoll().getCandidateList().stream()
-                .map(PostConverter::toPollOptionDTO).collect(Collectors.toList());
+        List<PollOptionDTO.PollOptionRes> pollOptionDTOList=post.getCardPoll().getCandidateList().stream()
+                .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
         System.out.println("fuck");
         if(!post.getCardPoll().getCardVoteList().stream().filter(cardVote -> cardVote.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty()){
             engage=true;
@@ -471,7 +510,7 @@ public class PostConverter {
                     .collect(Collectors.toSet());
             userChoiceList = post.getCardPoll().getCandidateList().stream()
                     .filter(candidate -> selectedOptionIds.contains(candidate.getId()))
-                    .map(PostConverter::toPollOptionDTO)
+                    .map(PostConverter::toPollOptionResDTO)
                     .collect(Collectors.toList());
 
             return PostResponseDTO.PollPostGetResponse.builder()
@@ -519,16 +558,13 @@ public class PostConverter {
                 .nickname(post.getUser().getNickname())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .ReviewPic(post.getFile())
+                .ReviewPicList(FileConverter.toFileDTO(post.getFileList()))
                 .uploadDate(post.getCreatedAt())
                 .like(likeCount)
                 .comment(commentCount)
                 .isLike(isLike)
                 .isComment(isComment)
                 .build();
-
-
-
     }
 
     public static PostResponseDTO.ReviewPostGetListDTO reviewPostGetListDTO(Page<Post> postList,Long userId){
@@ -544,6 +580,7 @@ public class PostConverter {
         Integer likeCount = post.getPostLikeList().size();
         Integer commentCount = post.getCommentList().size();
         return ParentPostDTO.CandidatePostDTO.builder()
+                .postId(post.getId())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .like(likeCount)
@@ -592,7 +629,7 @@ public class PostConverter {
                 .title(post.getTitle())
                 .content(post.getContent())
                 .post_id(post.getId())
-                .file(post.getFile())
+                .file(FileConverter.toFileDTO(post.getFileList()))
                 .like(like_cnt)
                 .comment_cnt(comment_cnt)
                 .created_at(post.getCreatedAt())

@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static friend.spring.apiPayload.code.status.ErrorStatus.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = false)
@@ -42,35 +44,37 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public void checkComment(Boolean flag) {
         if (!flag) {
-            throw new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND);
+            throw new CommentHandler(COMMENT_NOT_FOUND);
         }
     }
 
     @Override
     public void checkCommentLike(Boolean flag) {
         if (!flag) {
-            throw new CommentHandler(ErrorStatus.COMMENT_LIKE_NOT_FOUND);
+            throw new CommentHandler(COMMENT_LIKE_NOT_FOUND);
+        } else {
+            throw new CommentHandler(COMMENT_LIKE_DUPLICATE);
         }
     }
 
     @Override
     public void checkCommentChoice(Boolean flag) {
         if (!flag) {
-            throw new CommentHandler(ErrorStatus.COMMENT_CHOICE_OVER_ONE);
+            throw new CommentHandler(COMMENT_CHOICE_OVER_ONE);
         }
     }
 
     @Override
     public void checkSelectCommentAnotherUser(Boolean flag) {
         if (!flag) {
-            throw new CommentHandler(ErrorStatus.COMMENT_SELECT_MYSELF);
+            throw new CommentHandler(COMMENT_SELECT_MYSELF);
         }
     }
 
     @Override
     public void checkCommentWriterUser(Boolean flag) {
         if (!flag) {
-            throw new CommentHandler(ErrorStatus.COMMENT_NOT_CORRECT_USER);
+            throw new CommentHandler(COMMENT_NOT_CORRECT_USER);
         }
     }
 
@@ -130,6 +134,15 @@ public class CommentServiceImpl implements CommentService {
         Post post = optionalPost.get();
         Comment comment = optionalComment.get();
         User user = optionalUser.get();
+
+        if (!Objects.equals(comment.getPost().getId(), post.getId())) {
+            throw new CommentHandler(COMMENT_POST_NOT_MATCH);
+        }
+
+        Optional<Comment_like> optionalComment_like = commentLikeRepository.findByCommentIdAndUserId(commentId, userId);
+        if (!optionalComment_like.isEmpty()) {
+            this.checkCommentLike(true);
+        }
 
         Comment_like comment_like = CommentConverter.toCommentLike(post, comment, user);
         return commentLikeRepository.save(comment_like);

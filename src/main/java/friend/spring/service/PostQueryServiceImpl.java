@@ -92,7 +92,7 @@ public class PostQueryServiceImpl implements PostQueryService{
     @Override
     @Transactional
     public Page<Post> getPostList(Integer page,Integer size,String category){
-        if(category=="ALL"){
+        if(category.equals("모두")){
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         return postRepository.findByPostTypeAndState(PostType.VOTE, PostState.POSTING, pageable);}
         Category category1 = categoryRepository.findByName(category);

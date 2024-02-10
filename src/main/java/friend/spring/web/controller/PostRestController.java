@@ -1,32 +1,32 @@
 package friend.spring.web.controller;
 import friend.spring.apiPayload.ApiResponse;
-import friend.spring.converter.CommentConverter;
+import friend.spring.converter.CandidateConverter;
 import friend.spring.converter.PostConverter;
+import friend.spring.domain.Candidate;
 import friend.spring.domain.Post;
 import friend.spring.repository.PostRepository;
 import friend.spring.service.JwtTokenService;
 import friend.spring.service.PostQueryService;
 import friend.spring.service.PostService;
-import friend.spring.web.dto.ParentPostDTO;
-import friend.spring.domain.mapping.Comment_like;
+import friend.spring.web.dto.*;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
-import friend.spring.service.PostService;
-import friend.spring.web.dto.CommentResponseDTO;
-import friend.spring.web.dto.PostRequestDTO;
-import friend.spring.web.dto.PostResponseDTO;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -38,32 +38,48 @@ public class PostRestController {
     private final PostQueryService postQueryService;
     private final PostRepository postRepository;
     private final JwtTokenService jwtTokenService;
-    @PostMapping("/")
+    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "글 작성 API", description = "글을 추가 합니다.")
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
             @Parameter(name="title", description="<String> 글 제목"),
             @Parameter(name="content", description="<String> 글 내용"),
-            @Parameter(name="category", description="카테고리. 대문자(ex EDUCATION)" ),
+            @Parameter(name="category", description="카테고리. 한글 입력(ex 교육)" ),
             @Parameter(name="postType", description="<Integer> 글 종류<br>1 : VOTE <br>2 : REVIEW"),
             @Parameter(name="postVoteType", description="<Integer> 투표 종류<br>1 : GENERAL <br>2 : GAUGE <br>3 : CARD<br>해당 사항 없을시 null"),
             @Parameter(name="pollTitle", description="<String> 투표 제목"),
             @Parameter(name="multipleChoice", description="<Boolean> 복수 선택 여부"),
-            @Parameter(name="pollOption", description="<Class> 투표 후보{optionString : string, optionImg : string}<br>해당 사항 없을시 null"),
             @Parameter(name="parent_id", description="<Long> 원글(후기글 경우) id<br>해당 사항 없을시 null"),
             @Parameter(name="deadline", description="<Timestamp> 투표 마감 시간<br>해당 사항 없을시 null"),
             @Parameter(name="point", description="<Integer> 포인트<br>해당 사항 없을시 null")
 
     })
-    public ApiResponse<PostResponseDTO.AddPostResultDTO> join(@RequestBody @Valid PostRequestDTO.AddPostDTO request,
+    public ApiResponse<PostResponseDTO.AddPostResultDTO> join(@RequestPart(value = "request") @Valid PostRequestDTO.AddPostDTO request,
+                                                              @RequestPart(value = "file", required = false) List<MultipartFile> file,
                                                               @RequestHeader("atk") String atk,
                                                               HttpServletRequest request2){
-        Post post= postService.joinPost(request,request2);
+        Post post= postService.joinPost(request,request2, file);
         return ApiResponse.onSuccess(PostConverter.toAddPostResultDTO(post));
     }
 
+    @PostMapping(value = "/{post-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "후보 생성 API", description = "후보를 생성합니다.(글 작성 API 호출 후 postId 응답 받으시면, 후보 개수 만큼 바로 호출해주세요!)")
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
+            @Parameter(name="pollOption", description="<Class> 투표 후보{optionString : string, optionImg : MultipartFile}<br>해당 사항 없을시 null"),
+    })
+    public ApiResponse<CandidateResponseDTO.AddCandidateResultDTO> createCandidate(
+            @PathVariable(name="post-id") Long postId,
+            @RequestParam String optionString,
+            @RequestParam(required = false) MultipartFile optionImg,
+            @RequestHeader("atk") String atk,
+            HttpServletRequest request2) {
+        Candidate candidate = postService.createCandidate(postId, optionString, optionImg,request2);
+        return ApiResponse.onSuccess(CandidateConverter.toAddCandidateResultDTO(candidate));
+    }
 
-    @GetMapping("/voteList")
+
+    @GetMapping("/poll-postList")
     @Operation(summary = "후기글 작성시 내투표 보기 API", description = "후기글 작성시 내투표 보기합니다.")
     @Parameters({
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
@@ -80,7 +96,8 @@ public class PostRestController {
 
     }
     @GetMapping("/{post-id}")
-    @Operation(summary = "글 상세 보기 API", description = "글 상세 보기합니다.")
+    @Operation(summary = "글 상세 보기 API", description = "글 상세 보기합니다<br>response로 나오는 isLike, isComment는 각각 조회하는 사용자의 좋아요 클릭 여부, " +
+            "댓글 작성 여부입니다..")
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
@@ -90,7 +107,6 @@ public class PostRestController {
         Long userId=jwtTokenService.JwtToId(request2);
         Optional<Post> postOptional =postQueryService.getPostDetail(PostId);
         Post parentPost=postQueryService.ParentPost(PostId);;
-//        Optional<Post> postOptional =postRepository.findById(PostId);
         Boolean engage=postQueryService.checkEngage(PostId,userId);
         Post post = postOptional.get();
         return ApiResponse.onSuccess(PostConverter.postDetailResponse(post,engage,userId,parentPost));
@@ -102,7 +118,7 @@ public class PostRestController {
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
             @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)"),
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
-            @Parameter(name = "category", description = "query string(RequestParam) - category(대문자). 모두 보기는 ALL")
+            @Parameter(name = "category", description = "query string(RequestParam) - category(한글). 모두 보기는 '모두'라고 입력 하시면 됩니다.")
     })
     public ApiResponse<PostResponseDTO.PollPostGetListDTO> getPostDetail(@RequestParam(name = "page", defaultValue = "0") Integer page,
                                                                          @RequestParam(name = "size",defaultValue = "15") Integer size,
@@ -133,7 +149,7 @@ public class PostRestController {
         return ApiResponse.onSuccess(PostConverter.reviewPostGetListDTO(postPage,userId));
     }
 
-    @PatchMapping("/{post-id}/post/edit")
+    @PatchMapping("/{post-id}/edit")
     @Operation(summary = "글 수정 API", description = "댓글 수정하는 API입니다. ex) /posts/1/comment/1/edit")
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
@@ -148,8 +164,8 @@ public class PostRestController {
         return ApiResponse.onSuccess(null);
     }
 
-    @PatchMapping("/{post-id}/post/del")
-    @Operation(summary = "댓글 삭제 API", description = "댓글 삭제하는 API입니다. ex) /posts/1/comment/1/del")
+    @PatchMapping("/{post-id}/del")
+    @Operation(summary = "글 삭제 API", description = "글 삭제하는 API입니다. ex) /posts/1/del")
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
@@ -186,7 +202,7 @@ public class PostRestController {
     }
 
     // 글 추천(좋아요) 해제
-    @PostMapping("/{post-id}/like/del")
+    @DeleteMapping("/{post-id}/like/del")
     @Operation(summary = "글 추천(좋아요) 해제 API", description = "글 추천(좋아요) 해제하는 API입니다. ex) /posts/1/like/del")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
@@ -263,7 +279,7 @@ public class PostRestController {
     }
 
     // 글 스크랩 해제
-    @PostMapping("/{post-id}/scrap/del")
+    @DeleteMapping("/{post-id}/scrap/del")
     @Operation(summary = "글 스크랩 해제 API", description = "글 스크랩 해제하는 API입니다. ex) /posts/1/scrap/del")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),

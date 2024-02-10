@@ -41,6 +41,7 @@ public class CommentResponseDTO {
         Long parentCommentId;
         Integer commentLike;
         List<commentGetRes> childrenComments;
+        Boolean isDeleted; // 댓글 삭제 여부
     }
 
     @Builder
