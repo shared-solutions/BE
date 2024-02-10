@@ -105,15 +105,14 @@ public class PostRestController {
                                                                          @RequestHeader("atk") String atk,
                                                                          HttpServletRequest request2){
         Long userId=jwtTokenService.JwtToId(request2);
-        Optional<Post> postOptional =postQueryService.getPostDetail(PostId);
+        Post post =postQueryService.getPostDetail(PostId);
         Post parentPost=postQueryService.ParentPost(PostId);;
         Boolean engage=postQueryService.checkEngage(PostId,userId);
-        Post post = postOptional.get();
         return ApiResponse.onSuccess(PostConverter.postDetailResponse(post,engage,userId,parentPost));
 
     }
     @GetMapping("/poll-post/{category}")
-    @Operation(summary = "고민글 전체 보기 API", description = "글 전체 보기합니다")
+    @Operation(summary = "고민글 전체 보기 API", description = "고민글 전체 보기합니다")
     @Parameters({
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
             @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)"),
@@ -132,7 +131,7 @@ public class PostRestController {
     }
 
     @GetMapping("/review-post")
-    @Operation(summary = "후기글 전체 보기 API", description = "글 전체 보기합니다")
+    @Operation(summary = "후기글 전체 보기 API", description = "후기글 전체 보기합니다")
     @Parameters({
             @Parameter(name = "arrange", description = "query string(RequestParam) - 정렬 기준 변수입니다. (0: 조회순,1: 최신순) 디폴트값 0"),
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작) 디폴트값 0"),
@@ -156,7 +155,7 @@ public class PostRestController {
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
     public ApiResponse<Void> editPost(@PathVariable("post-id") Long postId,
-                                      @RequestBody PostRequestDTO.PostEditReq request,
+                                      @RequestBody @Valid PostRequestDTO.PostEditReq request,
                                       @RequestHeader("atk") String atk,
                                       HttpServletRequest request2) {
         Long userId=jwtTokenService.JwtToId(request2);
