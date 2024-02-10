@@ -103,7 +103,7 @@ public class CommentRestController {
 
     // 댓글 조회
     @GetMapping("/{post-id}/comments")
-    @Operation(summary = "댓글 조회 API", description = "댓글을 조회하는 API입니다. ex) /posts/111/comments?page=0&size=10")
+    @Operation(summary = "댓글 조회 API", description = "댓글을 조회하는 API입니다. ex) /posts/111/comments")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
