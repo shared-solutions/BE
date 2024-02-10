@@ -109,17 +109,12 @@ public class CommentRestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
     })
     @Parameters({
-            @Parameter(name = "post-id", description = "path variable - 글 아이디"),
-            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)"),
-            @Parameter(name = "size", description = "query string(RequestParam) - 루트댓글 몇 개씩 불러올지 개수를 세는 변수 (1 이상 자연수로 설정)")
+            @Parameter(name = "post-id", description = "path variable - 글 아이디")
     })
-    public ApiResponse<Page<CommentResponseDTO.commentGetRes>> getComments(
-            @PathVariable("post-id") Long postId,
-            @RequestParam(name = "page") Integer page,
-            @RequestParam(name = "size") Integer size
-
+    public ApiResponse<List<CommentResponseDTO.commentGetRes>> getComments(
+            @PathVariable("post-id") Long postId
     ) {
-        return ApiResponse.onSuccess(commentService.getComments(postId, page, size));
+        return ApiResponse.onSuccess(commentService.getComments(postId));
     }
 
     // 댓글 채택

@@ -21,7 +21,7 @@ public interface CommentService {
 
     Comment_like likeComment(Long postId, Long commentId, HttpServletRequest request);
 
-    Page<CommentResponseDTO.commentGetRes> getComments(Long postId, Integer page, Integer size);
+    List<CommentResponseDTO.commentGetRes> getComments(Long postId);
 
     void dislikeComment(Long postId, Long commentId, HttpServletRequest request);
 

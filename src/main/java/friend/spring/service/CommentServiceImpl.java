@@ -152,24 +152,20 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Page<CommentResponseDTO.commentGetRes> getComments(Long postId, Integer page, Integer size) {
+    public List<CommentResponseDTO.commentGetRes> getComments(Long postId) {
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
         }
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Comment> commentPage = commentRepository.findByPostIdAndParentCommentIsNull(postId, pageable); // 루트 댓글만 가져옴
-        List<CommentResponseDTO.commentGetRes> commentGetResList = commentPage
-                .map(comment -> {
-                    CommentResponseDTO.commentGetRes commentGetRes = CommentConverter.toCommentGetRes(comment);
-                    return commentGetRes;
-                })
-                .filter(Objects::nonNull) // null인 요소는 필터링
-                .get()
-                .collect(Collectors.toList());
+        List<Comment> commentList = commentRepository.findByPostIdAndParentCommentIsNull(postId); // 루트 댓글만 가져옴
+        List<CommentResponseDTO.commentGetRes> commentGetResList = new ArrayList<>();
+        for (Comment comment : commentList) {
+            CommentResponseDTO.commentGetRes commentGetRes = CommentConverter.toCommentGetRes(comment);
+            commentGetResList.add(commentGetRes);
+        }
 
-        return new PageImpl<>(commentGetResList, pageable, commentPage.getTotalElements());
+        return commentGetResList;
     }
 
     @Override
