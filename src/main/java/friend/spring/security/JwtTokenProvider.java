@@ -54,7 +54,7 @@ public class JwtTokenProvider {
     // JWT Access 토큰 생성
     public TokenDTO createAccessToken(String email) {
         // 토큰 유효시간 30분
-        long tokenValidTime = 30 * 60 * 1000L;
+        long tokenValidTime =2 * 60 * 60 * 1000L;
 
         Optional<User> user = userRepository.findByEmail(email);
 
@@ -81,7 +81,7 @@ public class JwtTokenProvider {
     // JWT Refresh 토큰 생성
     public TokenDTO createRefreshToken(String email) {
         // Refresh 토큰 유효시간 2주
-        long tokenValidTime = 30 * 60 * 1000L;
+        long tokenValidTime = 2 * 7 * 24 * 60 * 60 * 1000L;
         Optional<User> user = userRepository.findByEmail(email);
 
         Claims claims = Jwts.claims().setSubject(email); // JWT payload에 저장되는 정보단위
