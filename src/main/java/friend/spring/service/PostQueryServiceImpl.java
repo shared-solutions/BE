@@ -12,16 +12,14 @@ import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -122,7 +120,25 @@ public class PostQueryServiceImpl implements PostQueryService{
         Long userId = jwtTokenProvider.getCurrentUser(request);
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 //        List<Post> userPost = postRepository.findByUserId(userId);
-        return postRepository.findByUserIdAndPostTypeAndState(userId, PostType.VOTE, PostState.POSTING, pageable);
+        Page<Post> allPost= postRepository.findByUserIdAndPostTypeAndState(userId, PostType.VOTE, PostState.POSTING, pageable);
+        List<Post> filterEndPost=allPost.getContent().stream()
+                .filter(post->{
+                    LocalDateTime deadline=null;
+                    switch (post.getVoteType()){
+                        case GENERAL:
+                            deadline=post.getGeneralPoll().getDeadline();
+                            break;
+                        case GAUGE:
+                            deadline=post.getGaugePoll().getDeadline();
+                            break;
+                        case CARD:
+                            deadline=post.getCardPoll().getDeadline();
+                            break;
+                    }
+                    return deadline !=null&&deadline.isBefore(LocalDateTime.now());
+                }).collect(Collectors.toList());
+        return new PageImpl<>(filterEndPost,pageable, filterEndPost.size());
+
     }
 
 }
