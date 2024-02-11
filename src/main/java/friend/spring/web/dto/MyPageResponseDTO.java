@@ -46,4 +46,15 @@ public class MyPageResponseDTO {
     public static class SavedAllPostResDTO{
         List<SavedPostResDTO> postList;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyProfileResDTO{
+        String userImage;
+        String nickName;
+        String email;
+        String phone;
+    }
 }

@@ -2,6 +2,7 @@ package friend.spring.service;
 
 import friend.spring.domain.Category;
 import friend.spring.domain.Post;
+import friend.spring.domain.User;
 import friend.spring.domain.mapping.Post_scrap;
 import org.springframework.data.domain.Page;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,4 +19,6 @@ public interface MyPageService {
     Page<Post> getAllPostList(Long userId,  Integer page, Integer sort);
 
     void editUserImage(MultipartFile file, HttpServletRequest request);
+
+    User getEditUserPage(Long userId);
 }

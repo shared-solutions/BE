@@ -94,4 +94,12 @@ public class MyPageServiceImpl implements MyPageService{
         File newFile = s3Service.uploadSingleImage(file, S3ImageType.USER, user, null);
         user.setFile(newFile);
     }
+
+    @Override
+    public User getEditUserPage(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        return user;
+    }
+
+
 }

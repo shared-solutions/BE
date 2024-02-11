@@ -5,6 +5,7 @@ import friend.spring.converter.CommentConverter;
 import friend.spring.converter.MyPageConverter;
 import friend.spring.domain.Category;
 import friend.spring.domain.Post;
+import friend.spring.domain.User;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.service.JwtTokenService;
 import friend.spring.service.MyPageService;
@@ -98,5 +99,24 @@ public class MyPageRestController {
     ) {
         myPageService.editUserImage(file, request);
         return ApiResponse.onSuccess(null);
+    }
+
+    // 회원정보 수정 페이지
+    @GetMapping(value = "/profile/modify")
+    @Operation(summary = "회원정보 수정 페이지 API", description = "회원정보 수정 페이지를 조회하는 API입니다. ex) /user/my-page/profile/modify")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
+    })
+    public ApiResponse<MyPageResponseDTO.MyProfileResDTO> getEditUserPage(
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
+    ) {
+        Long userId = jwtTokenService.JwtToId(request);
+        User editUserPage = myPageService.getEditUserPage(userId);
+        return ApiResponse.onSuccess(MyPageConverter.toMyProfileResDTO(editUserPage));
     }
 }
