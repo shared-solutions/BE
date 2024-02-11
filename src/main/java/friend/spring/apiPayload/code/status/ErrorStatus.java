@@ -53,6 +53,8 @@ public enum ErrorStatus implements BaseErrorCode {
     CANDIDATE_NOT_FOUND(HttpStatus.NOT_FOUND,"POST4011","후보를 찾을 수 없습니다"),
     TOO_MUCH_FIXED(HttpStatus.NOT_FOUND,"POST4012","이미 2회 이상 수정 했습니다"),
     NOT_ENOUGH_POINT(HttpStatus.BAD_REQUEST,"POST4013","해당 유저의 포인트가 부족 합니다"),
+    POST_LIKE_DUPLICATE(HttpStatus.BAD_REQUEST, "POST4014", "글에 대한 좋아요 데이터가 이미 존재합니다."),
+    POST_SCRAP_DUPLICATE(HttpStatus.BAD_REQUEST, "POST4015", "글에 대한 스크랩 데이터가 이미 존재합니다."),
 
     // 댓글 관련 응답
     COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND, "COMMENT4001", "댓글을 찾을 수 없습니다."),

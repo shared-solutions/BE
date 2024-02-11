@@ -84,6 +84,8 @@ public class PostServiceImpl implements PostService{
     public void checkPostLike(Boolean flag) {
         if (!flag) {
             throw new PostHandler(POST_LIKE_NOT_FOUND);
+        } else {
+            throw new PostHandler(POST_LIKE_DUPLICATE);
         }
     }
 
@@ -91,6 +93,8 @@ public class PostServiceImpl implements PostService{
     public void checkPostScrap(Boolean flag) {
         if (!flag) {
             throw new PostHandler(POST_SCRAP_NOT_FOUND);
+        } else {
+            throw new PostHandler(POST_SCRAP_DUPLICATE);
         }
     }
 
@@ -363,6 +367,11 @@ public class PostServiceImpl implements PostService{
         User user = optionalUser.get();
 
         Post_like post_like = PostConverter.toPostLike(post, user);
+        Optional<Post_like> optionalPost_like = postLikeRepository.findByPostIdAndUserId(postId, userId);
+        if (!optionalPost_like.isEmpty()) {
+            this.checkPostLike(true);
+        }
+
         return postLikeRepository.save(post_like);
     }
 
@@ -493,6 +502,10 @@ public class PostServiceImpl implements PostService{
         User user = optionalUser.get();
 
         Post_scrap post_scrap = PostConverter.toPostScrap(post, user);
+        Optional<Post_scrap> optionalPost_scrap = postScrapRepository.findByPostIdAndUserId(postId, userId);
+        if (!optionalPost_scrap.isEmpty()) {
+            this.checkPostScrap(true);
+        }
         return postScrapRepository.save(post_scrap);
     }
 
