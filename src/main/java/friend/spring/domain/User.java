@@ -161,5 +161,9 @@ public class User extends BaseEntity implements UserDetails {
     public void setPoint(Integer point) {
         this.point = point;
     }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
 }
 
