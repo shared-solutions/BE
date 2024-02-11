@@ -5,6 +5,7 @@ import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.CommentHandler;
 import friend.spring.converter.CommentConverter;
 import friend.spring.domain.Comment;
+import friend.spring.domain.Point;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.mapping.Comment_choice;
@@ -37,6 +38,7 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final CommentChoiceRepository commentChoiceRepository;
+    private final PointRepository pointRepository;
     private final UserService userService;
     private final PostService postService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -135,6 +137,7 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = optionalComment.get();
         User user = optionalUser.get();
 
+        // 댓글 소속이 글과 일치하는지 확인
         if (!Objects.equals(comment.getPost().getId(), post.getId())) {
             throw new CommentHandler(COMMENT_POST_NOT_MATCH);
         }
@@ -183,6 +186,11 @@ public class CommentServiceImpl implements CommentService {
             this.checkComment(false);
         }
 
+        // 댓글 소속이 글과 일치하는지 확인
+        if (!Objects.equals(optionalComment.get().getPost().getId(), optionalPost.get().getId())) {
+            throw new CommentHandler(COMMENT_POST_NOT_MATCH);
+        }
+
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
             userService.checkUser(false);
@@ -209,6 +217,11 @@ public class CommentServiceImpl implements CommentService {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             this.checkComment(false);
+        }
+
+        // 댓글 소속이 글과 일치하는지 확인
+        if (!Objects.equals(optionalComment.get().getPost().getId(), optionalPost.get().getId())) {
+            throw new CommentHandler(COMMENT_POST_NOT_MATCH);
         }
 
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -238,6 +251,16 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Comment_choice comment_choice = CommentConverter.toCommentChoice(post, comment);
+
+        // 채택된 사용자에게 포인트 적립
+        comment.getUser().setPoint(comment.getUser().getPoint() + post.getPoint());
+        Point newPoint = Point.builder()
+                .amount(post.getPoint())
+                .content("채택된 댓글에 대한 " + post.getPoint() + " 포인트 적립")
+                .build();
+        newPoint.setUser(user);
+        pointRepository.save(newPoint);
+
         return commentChoiceRepository.save(comment_choice);
     }
 
@@ -247,8 +270,14 @@ public class CommentServiceImpl implements CommentService {
         Long userId = jwtTokenProvider.getCurrentUser(request);
 
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+
+        // 댓글 소속이 글과 일치하는지 확인
+        if (!Objects.equals(comment.getPost().getId(), post.getId())) {
+            throw new CommentHandler(COMMENT_POST_NOT_MATCH);
+        }
+
         // 로그인한 사용자가 이 댓글의 작성자인지 확인
         if (!Objects.equals(user.getId(), comment.getUser().getId())) {
             // 작성자가 아닌 경우 -> 에러 반환
@@ -275,8 +304,14 @@ public class CommentServiceImpl implements CommentService {
         Long userId = jwtTokenProvider.getCurrentUser(request);
 
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+
+        // 댓글 소속이 글과 일치하는지 확인
+        if (!Objects.equals(comment.getPost().getId(), post.getId())) {
+            throw new CommentHandler(COMMENT_POST_NOT_MATCH);
+        }
+
         // 로그인한 사용자가 이 댓글의 작성자인지 확인
         if (!Objects.equals(user.getId(), comment.getUser().getId())) {
             // 작성자가 아닌 경우 -> 에러 반환
