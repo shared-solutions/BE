@@ -7,11 +7,9 @@ import friend.spring.domain.Category;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.mapping.Comment_choice;
-import friend.spring.service.JwtTokenService;
-import friend.spring.service.MyPageService;
-import friend.spring.service.PostService;
-import friend.spring.service.UserService;
+import friend.spring.service.*;
 import friend.spring.web.dto.CommentResponseDTO;
+import friend.spring.web.dto.MyPageRequestDTO;
 import friend.spring.web.dto.MyPageResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -35,6 +34,7 @@ public class MyPageRestController {
     private final MyPageService myPageService;
 
     private final JwtTokenService jwtTokenService;
+    private final EmailService emailService;
 
     //저장한 게시물(내 카테고리) 조회
     @GetMapping("/post")
@@ -118,5 +118,43 @@ public class MyPageRestController {
         Long userId = jwtTokenService.JwtToId(request);
         User editUserPage = myPageService.getEditUserPage(userId);
         return ApiResponse.onSuccess(MyPageConverter.toMyProfileResDTO(editUserPage));
+    }
+
+    @PatchMapping(value = "/profile/modify/name")
+    @Operation(summary = "회원정보 이름 수정 API", description = "회원정보 이름을 수정하는 API입니다. ex) /user/my-page/profile/modify/name")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005",description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
+    })
+    public ApiResponse<MyPageResponseDTO.ProfileEditNameRes> editUserName(
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request,
+            @RequestBody @Valid MyPageRequestDTO.ProfileEditNameReq profileEditNameReq){
+        Long userId = jwtTokenService.JwtToId(request);
+        emailService.CheckAuthNum(profileEditNameReq.getEmail(), profileEditNameReq.getCertification());
+        User editUserName = myPageService.editUserName(userId, profileEditNameReq);
+        return ApiResponse.onSuccess(MyPageConverter.toProfileEditNameResDTO(editUserName));
+    }
+
+    @PatchMapping(value = "/profile/modify/email")
+    @Operation(summary = "회원정보 이메일 수정 API", description = "회원정보 이메일을 수정하는 API입니다. ex) /user/my-page/profile/modify/email")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005",description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
+    })
+    public ApiResponse<MyPageResponseDTO.ProfileEditEmailRes> editUserEmail(
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request,
+            @RequestBody @Valid MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq){
+        Long userId = jwtTokenService.JwtToId(request);
+        emailService.CheckAuthNum(profileEditEmailReq.getCurEmail(), profileEditEmailReq.getCertification());
+        User editUserEmail = myPageService.editUserEmail(userId, profileEditEmailReq);
+        return ApiResponse.onSuccess(MyPageConverter.toProfileEditEmailResDTO(editUserEmail));
     }
 }

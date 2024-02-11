@@ -165,5 +165,9 @@ public class User extends BaseEntity implements UserDetails {
     public void setFile(File file) {
         this.file = file;
     }
+
+    public void setNickname(String nickname){ this.nickname = nickname; }
+
+    public void setEmail(String email){this.email = email;}
 }
 

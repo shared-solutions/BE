@@ -15,6 +15,7 @@ import friend.spring.repository.PostRepository;
 import friend.spring.repository.PostScrapRepository;
 import friend.spring.repository.UserRepository;
 import friend.spring.security.JwtTokenProvider;
+import friend.spring.web.dto.MyPageRequestDTO;
 import friend.spring.web.dto.MyPageResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -98,6 +99,20 @@ public class MyPageServiceImpl implements MyPageService{
     @Override
     public User getEditUserPage(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        return user;
+    }
+
+    @Override
+    public User editUserName(Long userId, MyPageRequestDTO.ProfileEditNameReq profileEditNameReq) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        user.setNickname(profileEditNameReq.getNickName());
+        return user;
+    }
+
+    @Override
+    public User editUserEmail(Long userId, MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        user.setEmail(profileEditEmailReq.getChangeEmail());
         return user;
     }
 
