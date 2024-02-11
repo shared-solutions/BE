@@ -1,13 +1,16 @@
 package friend.spring.web.controller;
 
 import friend.spring.apiPayload.ApiResponse;
+import friend.spring.converter.CommentConverter;
 import friend.spring.converter.MyPageConverter;
 import friend.spring.domain.Category;
 import friend.spring.domain.Post;
+import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.service.JwtTokenService;
 import friend.spring.service.MyPageService;
 import friend.spring.service.PostService;
 import friend.spring.service.UserService;
+import friend.spring.web.dto.CommentResponseDTO;
 import friend.spring.web.dto.MyPageResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -15,7 +18,9 @@ import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -76,4 +81,22 @@ public class MyPageRestController {
         return ApiResponse.onSuccess(MyPageConverter.toSavedAllPostResDTO(allPostList));
     }
 
+    // 회원정보 수정(사용자 프로필 사진)
+    @PatchMapping(value = "/profile/modify/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "회원정보 수정(사용자 프로필 사진) API", description = "회원정보 수정(사용자 프로필 사진)하는 API입니다. ex) /user/my-page/profile/modify/image")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
+    })
+    public ApiResponse<Void> editUserImage(
+            @RequestParam("file") MultipartFile file,
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
+    ) {
+        myPageService.editUserImage(file, request);
+        return ApiResponse.onSuccess(null);
+    }
 }

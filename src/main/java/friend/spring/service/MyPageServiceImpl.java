@@ -5,13 +5,16 @@ import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.PostHandler;
 import friend.spring.converter.MyPageConverter;
 import friend.spring.domain.Category;
+import friend.spring.domain.File;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
+import friend.spring.domain.enums.S3ImageType;
 import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.repository.CategoryRepository;
 import friend.spring.repository.PostRepository;
 import friend.spring.repository.PostScrapRepository;
 import friend.spring.repository.UserRepository;
+import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.MyPageResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +25,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,6 +44,9 @@ public class MyPageServiceImpl implements MyPageService{
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final PostScrapRepository postScrapRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final S3Service s3Service;
+
     @Override
     public void checkPost(Boolean flag) {
         if (!flag) {
@@ -70,5 +78,20 @@ public class MyPageServiceImpl implements MyPageService{
             return scrapListByRecent;
         }
         else return null;
+    }
+
+    @Override
+    @Transactional
+    public void editUserImage(MultipartFile file, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
+        User user = optionalUser.get();
+        File newFile = s3Service.uploadSingleImage(file, S3ImageType.USER, user, null);
+        user.setFile(newFile);
     }
 }
