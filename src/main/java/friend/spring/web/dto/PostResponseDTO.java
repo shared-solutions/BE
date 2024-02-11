@@ -26,6 +26,7 @@ public class PostResponseDTO {
     @AllArgsConstructor
     public static class PostDetailResponse {
         String nickname;
+        String userImg;
         LocalDateTime createdAt;
         String title;
         String content;
@@ -63,7 +64,9 @@ public class PostResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PollPostGetResponse{
+        Long postId;
         String nickname;
+        String userImg;
         String title;
         String content;
         LocalDateTime uploadDate;
@@ -89,7 +92,9 @@ public class PostResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ReviewPostGetResponse{
+        Long postId;
         String nickname;
+        String userImg;
         String title;
         String content;
         LocalDateTime uploadDate;

@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ParentPostDTO {
     String nickname;
+    String userImg;
     String title;
     String content;
     List<PollOptionDTO.PollOptionRes> pollOption;

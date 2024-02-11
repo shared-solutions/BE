@@ -117,11 +117,11 @@ public class PostRestController {
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
             @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)"),
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
-            @Parameter(name = "category", description = "query string(RequestParam) - category(한글). 모두 보기는 '모두'라고 입력 하시면 됩니다.")
+            @Parameter(name = "category", description = "path variable - category(한글). 모두 보기는 '모두'라고 입력 하시면 됩니다.")
     })
-    public ApiResponse<PostResponseDTO.PollPostGetListDTO> getPostDetail(@RequestParam(name = "page", defaultValue = "0") Integer page,
+    public ApiResponse<PostResponseDTO.PollPostGetListDTO> getPostAll(@RequestParam(name = "page", defaultValue = "0") Integer page,
                                                                          @RequestParam(name = "size",defaultValue = "15") Integer size,
-                                                                         @RequestParam(name = "category") String category,
+                                                                         @PathVariable(name = "category") String category,
                                                                          @RequestHeader("atk") String atk,
                                                                          HttpServletRequest request2){
         Long userId=jwtTokenService.JwtToId(request2);
@@ -138,7 +138,7 @@ public class PostRestController {
             @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정) 디폴트값 15"),
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
-    public ApiResponse<PostResponseDTO.ReviewPostGetListDTO> getReviewDetail(@RequestParam(name="arrange", defaultValue = "0") Integer arrange,
+    public ApiResponse<PostResponseDTO.ReviewPostGetListDTO> getReviewAll(@RequestParam(name="arrange", defaultValue = "0") Integer arrange,
                                                                              @RequestParam(name = "page", defaultValue = "0") Integer page,
                                                                              @RequestParam(name = "size",defaultValue = "15") Integer size,
                                                                              @RequestHeader("atk") String atk,

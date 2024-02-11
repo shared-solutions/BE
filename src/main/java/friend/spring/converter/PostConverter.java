@@ -48,10 +48,19 @@ public class PostConverter {
         ParentPollDTO parentPollDTO=null;
         Integer parentLikes =parentPost.getPostLikeList().size();
         Integer parentComments= parentPost.getCommentList().size();
+        File userFile=null;
+        String userImg=null;
+        Optional<File> userFileOptional=Optional.ofNullable(parentPost.getUser().getFile());
+
+        if(userFileOptional.isPresent()){
+            userFile = userFileOptional.get();
+            userImg=userFile.getUrl();
+        }
 
         if(parentPost.getVoteType()==PostVoteType.GAUGE) {
             return ParentPostDTO.builder()
                     .nickname(parentPost.getUser().getNickname())
+                    .userImg(userImg)
                     .title(parentPost.getTitle())
                     .content(parentPost.getContent())
                     .gauge(parentPost.getGaugePoll().getGauge())
@@ -91,22 +100,37 @@ public class PostConverter {
             // 1등 후보의 정보를 ParentPollDTO 객체로 반환
             if(highestSelectionCandidate.isPresent()) {
                 parentPollDTO = highestSelectionCandidate.get();
+                // 1등 후보 이름, 사진 반환
+                Long id=parentPollDTO.getCandidateId();
+                //1등이 있는 경우만 포함.
+                Optional<String> name = parentPost.getGeneralPoll().getCandidateList().stream()
+                        .filter(candidate -> candidate.getId().equals(id))
+                        .map(Candidate::getName)
+                        .findFirst();
+                String candidateName=name.get();
+                String candidateImage = parentPollDTO.getCandidateImage();
+
+
+                parentPollDTO.setCandidateName(candidateName);
+                parentPollDTO.setCandidateImage(candidateImage);
+
             }
-            // 1등 후보 이름, 사진 반환
-            Long id=parentPollDTO.getCandidateId();
-            Optional<String> name = parentPost.getGeneralPoll().getCandidateList().stream()
-                    .filter(candidate -> candidate.getId().equals(id))
-                    .map(Candidate::getName)
-                    .findFirst();
-            String candidateName=name.get();
-            String candidateImage = parentPollDTO.getCandidateImage();
-
-
-            parentPollDTO.setCandidateName(candidateName);
-            parentPollDTO.setCandidateImage(candidateImage);
+//            // 1등 후보 이름, 사진 반환
+//            Long id=parentPollDTO.getCandidateId();
+//            Optional<String> name = parentPost.getGeneralPoll().getCandidateList().stream()
+//                    .filter(candidate -> candidate.getId().equals(id))
+//                    .map(Candidate::getName)
+//                    .findFirst();
+//            String candidateName=name.get();
+//            String candidateImage = parentPollDTO.getCandidateImage();
+//
+//
+//            parentPollDTO.setCandidateName(candidateName);
+//            parentPollDTO.setCandidateImage(candidateImage);
 
             return ParentPostDTO.builder()
                     .nickname(parentPost.getUser().getNickname())
+                    .userImg(userImg)
                     .title(parentPost.getTitle())
                     .content(parentPost.getContent())
                     .pollOption(pollOptionDTOList)
@@ -141,28 +165,48 @@ public class PostConverter {
             // 선택률이 가장 높은 후보 찾기
             Optional<ParentPollDTO> highestSelectionCandidate = candidateInfos.stream()
                     .max(Comparator.comparingInt(ParentPollDTO::getRate));
+            //1등이 있는 경우만
+            if(highestSelectionCandidate.isPresent()) {
+                // 1등 후보의 정보를 ParentPollDTO 객체로 반환
+                parentPollDTO = highestSelectionCandidate.get();
 
-            // 1등 후보의 정보를 ParentPollDTO 객체로 반환
-            parentPollDTO = highestSelectionCandidate.get();
-
-             // 1등 후보 이름, 사진 반환
-            Long id=parentPollDTO.getCandidateId();
-            Optional<String> name = parentPost.getGeneralPoll().getCandidateList().stream()
-                .filter(candidate -> candidate.getId().equals(id))
-                .map(Candidate::getName)
-                .findFirst();
-            String candidateName=name.get();
-            Optional<File> image = parentPost.getGeneralPoll().getCandidateList().stream()
-                .filter(candidate -> candidate.getId().equals(id))
-                .map(Candidate::getFile)
-                .findFirst();
-            String candidateImage=image.get().getUrl();
-            parentPollDTO.setCandidateName(candidateName);
-            parentPollDTO.setCandidateImage(candidateImage);
+                // 1등 후보 이름, 사진 반환
+                Long id=parentPollDTO.getCandidateId();
+                Optional<String> name = parentPost.getCardPoll().getCandidateList().stream()
+                        .filter(candidate -> candidate.getId().equals(id))
+                        .map(Candidate::getName)
+                        .findFirst();
+                String candidateName=name.get();
+//                Optional<File> image = parentPost.getCardPoll().getCandidateList().stream()
+//                        .filter(candidate -> candidate.getId().equals(id))
+//                        .map(Candidate::getFile)
+//                        .findFirst();
+                String candidateImage=parentPollDTO.getCandidateImage();
+                parentPollDTO.setCandidateName(candidateName);
+                parentPollDTO.setCandidateImage(candidateImage);
+            }
+//            // 1등 후보의 정보를 ParentPollDTO 객체로 반환
+//            parentPollDTO = highestSelectionCandidate.get();
+//
+//             // 1등 후보 이름, 사진 반환
+//            Long id=parentPollDTO.getCandidateId();
+//            Optional<String> name = parentPost.getGeneralPoll().getCandidateList().stream()
+//                .filter(candidate -> candidate.getId().equals(id))
+//                .map(Candidate::getName)
+//                .findFirst();
+//            String candidateName=name.get();
+//            Optional<File> image = parentPost.getGeneralPoll().getCandidateList().stream()
+//                .filter(candidate -> candidate.getId().equals(id))
+//                .map(Candidate::getFile)
+//                .findFirst();
+//            String candidateImage=image.get().getUrl();
+//            parentPollDTO.setCandidateName(candidateName);
+//            parentPollDTO.setCandidateImage(candidateImage);
 
 
             return ParentPostDTO.builder()
                     .nickname(parentPost.getUser().getNickname())
+                    .userImg(userImg)
                     .title(parentPost.getTitle())
                     .content(parentPost.getContent())
                     .pollOption(pollOptionDTOList)
@@ -234,11 +278,19 @@ public class PostConverter {
         if(post.getUser().getId().equals(userId)){
             myPost=true;
         }
+        File userFile=null;
+        String userImg=null;
+        Optional<File> userFileOptional=Optional.ofNullable(post.getUser().getFile());
 
+        if(userFileOptional.isPresent()){
+            userFile = userFileOptional.get();
+            userImg=userFile.getUrl();
+        }
 
         if(post.getPostType()==REVIEW){
             return PostResponseDTO.PostDetailResponse.builder()
                     .nickname(post.getUser().getNickname())
+                    .userImg(userImg)
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
@@ -259,6 +311,7 @@ public class PostConverter {
             }
             return PostResponseDTO.PostDetailResponse.builder()
                     .nickname(post.getUser().getNickname())
+                    .userImg(userImg)
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
@@ -359,6 +412,7 @@ public class PostConverter {
             }
             return PostResponseDTO.PostDetailResponse.builder()
                     .nickname(post.getUser().getNickname())
+                    .userImg(userImg)
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
@@ -491,6 +545,7 @@ public class PostConverter {
         }
         return PostResponseDTO.PostDetailResponse.builder()
                 .nickname(post.getUser().getNickname())
+                .userImg(userImg)
                 .createdAt(post.getCreatedAt())
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -515,10 +570,21 @@ public class PostConverter {
 
     //전체 보기
     public static PostResponseDTO.PollPostGetResponse pollPostGetResponse(Post post, Long userId){
+        File userFile=null;
+        String userImg=null;
+        Optional<File> userFileOptional=Optional.ofNullable(post.getUser().getFile());
+
+        if(userFileOptional.isPresent()){
+        userFile = userFileOptional.get();
+        userImg=userFile.getUrl();
+        }
+
         //로컬 db test
         if(post.getPostType()==VOTE&&post.getVoteType()==null){
             return PostResponseDTO.PollPostGetResponse.builder()
+                    .postId(post.getId())
                     .nickname(post.getUser().getNickname())
+                    .userImg(userImg)
                     .content(Long.toString(post.getId()))
                     .build();
         }
@@ -548,7 +614,9 @@ public class PostConverter {
                         .collect(Collectors.toList());
 
                 return PostResponseDTO.PollPostGetResponse.builder()
+                        .postId(post.getId())
                         .nickname(post.getUser().getNickname())
+                        .userImg(userImg)
                         .title(post.getTitle())
                         .content(post.getContent())
                         .uploadDate(post.getCreatedAt())
@@ -562,7 +630,9 @@ public class PostConverter {
 
             }
             return PostResponseDTO.PollPostGetResponse.builder()
+                    .postId(post.getId())
                     .nickname(post.getUser().getNickname())
+                    .userImg(userImg)
                     .title(post.getTitle())
                     .content(post.getContent())
                     .uploadDate(post.getCreatedAt())
@@ -579,7 +649,9 @@ public class PostConverter {
             }
             if(engage) {
                 return PostResponseDTO.PollPostGetResponse.builder()
+                        .postId(post.getId())
                         .nickname(post.getUser().getNickname())
+                        .userImg(userImg)
                         .title(post.getTitle())
                         .content(post.getContent())
                         .uploadDate(post.getCreatedAt())
@@ -591,7 +663,9 @@ public class PostConverter {
                         .build();
             }
             return PostResponseDTO.PollPostGetResponse.builder()
+                    .postId(post.getId())
                     .nickname(post.getUser().getNickname())
+                    .userImg(userImg)
                     .title(post.getTitle())
                     .content(post.getContent())
                     .uploadDate(post.getCreatedAt())
@@ -603,7 +677,6 @@ public class PostConverter {
         }
         List<PollOptionDTO.PollOptionRes> pollOptionDTOList=post.getCardPoll().getCandidateList().stream()
                 .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
-        System.out.println("fuck");
         if(!post.getCardPoll().getCardVoteList().stream().filter(cardVote -> cardVote.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty()){
             engage=true;
         }
@@ -619,7 +692,9 @@ public class PostConverter {
                     .collect(Collectors.toList());
 
             return PostResponseDTO.PollPostGetResponse.builder()
+                    .postId(post.getId())
                     .nickname(post.getUser().getNickname())
+                    .userImg(userImg)
                     .title(post.getTitle())
                     .content(post.getContent())
                     .uploadDate(post.getCreatedAt())
@@ -633,7 +708,9 @@ public class PostConverter {
 
         }
         return PostResponseDTO.PollPostGetResponse.builder()
+                .postId(post.getId())
                 .nickname(post.getUser().getNickname())
+                .userImg(userImg)
                 .title(post.getTitle())
                 .content(post.getContent())
                 .uploadDate(post.getCreatedAt())
@@ -659,8 +736,18 @@ public class PostConverter {
         Integer commentCount = post.getCommentList().size();
         Boolean isLike=!post.getPostLikeList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
         Boolean isComment=!post.getCommentList().stream().filter(like->like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        File userFile=null;
+        String userImg=null;
+        Optional<File> userFileOptional=Optional.ofNullable(post.getUser().getFile());
+
+        if(userFileOptional.isPresent()){
+            userFile = userFileOptional.get();
+            userImg=userFile.getUrl();
+        }
         return PostResponseDTO.ReviewPostGetResponse.builder()
+                .postId(post.getId())
                 .nickname(post.getUser().getNickname())
+                .userImg(userImg)
                 .title(post.getTitle())
                 .content(post.getContent())
                 .ReviewPicList(FileConverter.toFileDTO(post.getFileList()))
