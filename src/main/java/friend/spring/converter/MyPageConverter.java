@@ -50,4 +50,17 @@ public class MyPageConverter {
         return MyPageResponseDTO.SavedAllPostResDTO.builder()
                 .postList(savedAllPostList).build();
     }
+
+    public static MyPageResponseDTO.MyProfileResDTO toMyProfileResDTO(User user){
+        String userPhoto = null;
+        if(user.getFile() != null){
+            userPhoto = user.getFile().getUrl();
+        }
+        return MyPageResponseDTO.MyProfileResDTO.builder()
+                .userImage(userPhoto)
+                .nickName(user.getNickname())
+                .email(user.getEmail())
+                .phone(user.getPhone())
+                .build();
+    }
 }
