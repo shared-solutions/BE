@@ -82,9 +82,9 @@ public class MyPageRestController {
         return ApiResponse.onSuccess(MyPageConverter.toSavedAllPostResDTO(allPostList));
     }
 
-    // 회원정보 수정(사용자 프로필 사진)
+    // 회원정보 사용자 프로필 사진 수정
     @PatchMapping(value = "/profile/modify/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "회원정보 수정(사용자 프로필 사진) API", description = "회원정보 수정(사용자 프로필 사진)하는 API입니다. ex) /user/my-page/profile/modify/image")
+    @Operation(summary = "회원정보 사용자 프로필 사진 수정 API", description = "사용자 프로필 사진을 수정하는 API입니다. ex) /user/my-page/profile/modify/image")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
