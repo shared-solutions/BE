@@ -113,8 +113,10 @@ public class PostServiceImpl implements PostService{
         if (file != null) {
             s3Service.uploadPostImages(file, S3ImageType.POST, newPost);
         }
-
-
+        LocalDateTime deadline=request.getDeadline();
+        if(request.getDeadline()==null){
+            deadline=LocalDateTime.now().plusHours(1);
+        }
 
         //일반 투표 api
         if(newPost.getPostType()==VOTE){
@@ -139,7 +141,7 @@ public class PostServiceImpl implements PostService{
 
             General_poll generalPoll = General_poll.builder()
                     .pollTitle(request.getPollTitle())
-                    .deadline(request.getDeadline())
+                    .deadline(deadline)
                     .build();
             if(request.getMultipleChoice()!=null){
                 generalPoll.setMultipleChoice(request.getMultipleChoice());
@@ -170,7 +172,7 @@ public class PostServiceImpl implements PostService{
 
             Card_poll cardPoll = Card_poll.builder()
                     .pollTitle(request.getPollTitle())
-                    .deadline(request.getDeadline())
+                    .deadline(deadline)
                     .build();
             if(request.getMultipleChoice()!=null){
                 cardPoll.setMultipleChoice(request.getMultipleChoice());
@@ -201,7 +203,7 @@ public class PostServiceImpl implements PostService{
             Gauge_poll gaugePoll = Gauge_poll.builder()
                     .pollTitle(request.getPollTitle())
                     .gauge(0)
-                    .deadline(request.getDeadline())
+                    .deadline(deadline)
                     .build();
 
             newPost.setGaugePoll(gaugePoll);
