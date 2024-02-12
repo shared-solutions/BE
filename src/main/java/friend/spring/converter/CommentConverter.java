@@ -11,6 +11,7 @@ import friend.spring.web.dto.CommentResponseDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CommentConverter {
     public static Comment toComment(CommentRequestDTO.commentCreateReq request, Post post, User user, Comment parentComment) {
@@ -42,17 +43,10 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.commentGetRes toCommentGetRes(Comment comment) {
+    public static CommentResponseDTO.commentGetRes toCommentGetRes(Comment comment, Long loginUserId, Boolean isPushedLike, Boolean isOwnerOfPost, List<CommentResponseDTO.commentGetRes> subComments) {
         Long parentCommentId = null;
         if (comment.getParentComment() != null) {
             parentCommentId = comment.getParentComment().getId();
-        }
-
-        List<CommentResponseDTO.commentGetRes> subComments = new ArrayList<>();
-        if (comment.getSubCommentList() != null) {
-            for (Comment c : comment.getSubCommentList()) {
-                subComments.add(toCommentGetRes(c));
-            }
         }
 
         // 유저 프로필
@@ -61,11 +55,20 @@ public class CommentConverter {
             userPhoto = comment.getUser().getFile().getUrl();
         }
 
+        // 댓글 삭제 여부
         boolean isDeleted;
         if (comment.getState().equals(CommentState.DELETED)) {
             isDeleted = true;
         } else {
             isDeleted = false;
+        }
+
+        // 내가 쓴 댓글인지 여부
+        boolean isMyComment;
+        if (Objects.equals(comment.getUser().getId(), loginUserId)) {
+            isMyComment = true;
+        } else {
+            isMyComment = false;
         }
 
         return CommentResponseDTO.commentGetRes.builder()
@@ -80,6 +83,9 @@ public class CommentConverter {
                 .commentLike(comment.getCommentLikeList().size())
                 .childrenComments(subComments)
                 .isDeleted(isDeleted)
+                .isMyComment(isMyComment)
+                .isPushedLike(isPushedLike)
+                .isOwnerOfPost(isOwnerOfPost)
                 .build();
     }
 
