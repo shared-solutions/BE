@@ -4,6 +4,7 @@ import friend.spring.domain.Category;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.mapping.Post_scrap;
+import friend.spring.web.dto.MyPageRequestDTO;
 import friend.spring.web.dto.MyPageResponseDTO;
 import org.springframework.data.domain.Page;
 
@@ -61,6 +62,29 @@ public class MyPageConverter {
                 .nickName(user.getNickname())
                 .email(user.getEmail())
                 .phone(user.getPhone())
+                .build();
+    }
+
+    public static User toUserName(MyPageRequestDTO.ProfileEditNameReq profileEditNameReq){
+        return User.builder()
+                .nickname(profileEditNameReq.getNickName())
+                .build();
+    }
+    public static MyPageResponseDTO.ProfileEditNameRes toProfileEditNameResDTO(User user){
+        return MyPageResponseDTO.ProfileEditNameRes.builder()
+                .nickName(user.getNickname())
+                .build();
+    }
+
+    public static MyPageResponseDTO.ProfileEditEmailRes toProfileEditEmailResDTO(User user){
+        return MyPageResponseDTO.ProfileEditEmailRes.builder()
+                .changeEmail(user.getEmail())
+                .build();
+    }
+
+    public static User toUserEmail(MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq){
+        return User.builder()
+                .email(profileEditEmailReq.getChangeEmail())
                 .build();
     }
 }
