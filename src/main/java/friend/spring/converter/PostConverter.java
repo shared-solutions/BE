@@ -8,6 +8,7 @@ import friend.spring.web.dto.*;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -258,6 +259,8 @@ public class PostConverter {
 
         if(post.getPostType()==REVIEW){
             return PostResponseDTO.PostDetailResponse.builder()
+                    .postType(REVIEW)
+                    .postVoteType(null)
                     .nickname(post.getUser().getNickname())
                     .userImg(userImg)
                     .createdAt(post.getCreatedAt())
@@ -274,17 +277,24 @@ public class PostConverter {
                     .build();
         }
         if(post.getVoteType()==PostVoteType.GAUGE){
+            //나노초 단위로 마감 여부 확인
+            LocalDateTime now = LocalDateTime.now();
+            long nanosUntilDeadline = ChronoUnit.NANOS.between(now, post.getGaugePoll().getDeadline());
+            Boolean voteOnGoing = nanosUntilDeadline > 0;
+            //투표에 참여 했을 경우
             if(engage){
                 value=post.getGaugePoll().getGauge();
                 isVote=true;
             }
             return PostResponseDTO.PostDetailResponse.builder()
+                    .postType(VOTE)
+                    .postVoteType(PostVoteType.GAUGE)
                     .nickname(post.getUser().getNickname())
                     .userImg(userImg)
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .OnGoing(post.getGaugePoll().getVoteOnGoing())
+                    .OnGoing(voteOnGoing)
                     .isVoted(isVote)
                     .file(FileConverter.toFileDTO(post.getFileList()))
                     .gauge(value)
@@ -299,6 +309,12 @@ public class PostConverter {
                     .build();
         }
         if(post.getVoteType()==PostVoteType.GENERAL){
+            //나노초 단위로 마감 여부 확인
+            LocalDateTime now = LocalDateTime.now();
+            long nanosUntilDeadline = ChronoUnit.NANOS.between(now, post.getGeneralPoll().getDeadline());
+            Boolean voteOnGoing = nanosUntilDeadline > 0;
+
+            //투표 후보 리스트
             List<PollOptionDTO.PollOptionRes> pollOptionDTOList=post.getGeneralPoll().getCandidateList().stream()
                     .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
             if(engage) {
@@ -380,12 +396,14 @@ public class PostConverter {
                 }
             }
             return PostResponseDTO.PostDetailResponse.builder()
+                    .postType(VOTE)
+                    .postVoteType(PostVoteType.GENERAL)
                     .nickname(post.getUser().getNickname())
                     .userImg(userImg)
                     .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
-                    .OnGoing(post.getGeneralPoll().getVoteOnGoing())
+                    .OnGoing(voteOnGoing)
                     .isVoted(isVote)
                     .file(FileConverter.toFileDTO(post.getFileList()))
                     .pollTitle(post.getGeneralPoll().getPollTitle())
@@ -403,6 +421,11 @@ public class PostConverter {
                     .myPost(myPost)
                     .build();
         }
+        //나노초 단위로 마감 여부 확인
+        LocalDateTime now = LocalDateTime.now();
+        long nanosUntilDeadline = ChronoUnit.NANOS.between(now, post.getCardPoll().getDeadline());
+        Boolean voteOnGoing = nanosUntilDeadline > 0;
+
         List<PollOptionDTO.PollOptionRes> pollOptionDTOList=post.getCardPoll().getCandidateList().stream()
                 .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
         if(engage) {
@@ -513,12 +536,14 @@ public class PostConverter {
             }
         }
         return PostResponseDTO.PostDetailResponse.builder()
+                .postType(VOTE)
+                .postVoteType(PostVoteType.CARD)
                 .nickname(post.getUser().getNickname())
                 .userImg(userImg)
                 .createdAt(post.getCreatedAt())
                 .title(post.getTitle())
                 .content(post.getContent())
-                .OnGoing(post.getCardPoll().getVoteOnGoing())
+                .OnGoing(voteOnGoing)
                 .isVoted(isVote)
                 .file(FileConverter.toFileDTO(post.getFileList()))
                 .pollTitle(post.getCardPoll().getPollTitle())
@@ -552,6 +577,7 @@ public class PostConverter {
         if(post.getPostType()==VOTE&&post.getVoteType()==null){
             return PostResponseDTO.PollPostGetResponse.builder()
                     .postId(post.getId())
+                    .postVoteType(null)
                     .nickname(post.getUser().getNickname())
                     .userImg(userImg)
                     .content(Long.toString(post.getId()))
@@ -584,6 +610,7 @@ public class PostConverter {
 
                 return PostResponseDTO.PollPostGetResponse.builder()
                         .postId(post.getId())
+                        .postVoteType(PostVoteType.GENERAL)
                         .nickname(post.getUser().getNickname())
                         .userImg(userImg)
                         .title(post.getTitle())
@@ -600,6 +627,7 @@ public class PostConverter {
             }
             return PostResponseDTO.PollPostGetResponse.builder()
                     .postId(post.getId())
+                    .postVoteType(PostVoteType.GENERAL)
                     .nickname(post.getUser().getNickname())
                     .userImg(userImg)
                     .title(post.getTitle())
@@ -619,6 +647,7 @@ public class PostConverter {
             if(engage) {
                 return PostResponseDTO.PollPostGetResponse.builder()
                         .postId(post.getId())
+                        .postVoteType(PostVoteType.GAUGE)
                         .nickname(post.getUser().getNickname())
                         .userImg(userImg)
                         .title(post.getTitle())
@@ -633,6 +662,7 @@ public class PostConverter {
             }
             return PostResponseDTO.PollPostGetResponse.builder()
                     .postId(post.getId())
+                    .postVoteType(PostVoteType.GAUGE)
                     .nickname(post.getUser().getNickname())
                     .userImg(userImg)
                     .title(post.getTitle())
@@ -662,6 +692,7 @@ public class PostConverter {
 
             return PostResponseDTO.PollPostGetResponse.builder()
                     .postId(post.getId())
+                    .postVoteType(PostVoteType.CARD)
                     .nickname(post.getUser().getNickname())
                     .userImg(userImg)
                     .title(post.getTitle())
@@ -678,6 +709,7 @@ public class PostConverter {
         }
         return PostResponseDTO.PollPostGetResponse.builder()
                 .postId(post.getId())
+                .postVoteType(PostVoteType.CARD)
                 .nickname(post.getUser().getNickname())
                 .userImg(userImg)
                 .title(post.getTitle())

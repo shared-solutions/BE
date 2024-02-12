@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -51,6 +53,13 @@ public class VoteServiceImpl implements VoteService{
         if (request.getSelectList() != null) {
             newGeneralVote.setSelect_list(request.getSelectList());
         }
+        //나노초 단위로 마감 여부 확인
+        LocalDateTime now = LocalDateTime.now();
+        long nanosUntilDeadline = ChronoUnit.NANOS.between(now, post.getGeneralPoll().getDeadline());
+        Boolean voteOnGoing = nanosUntilDeadline > 0;
+        if(!voteOnGoing){
+            throw new GeneralException(ErrorStatus.DEADLINE_OVER);
+        }
 
         user.setPoint(user.getPoint() + 5);
         Point newPoint=Point.builder()
@@ -76,6 +85,14 @@ public class VoteServiceImpl implements VoteService{
 
         Gauge_poll gaugePoll=post.getGaugePoll();
         newGaugeVote.setGaugePoll(gaugePoll);
+
+        //나노초 단위로 마감 여부 확인
+        LocalDateTime now = LocalDateTime.now();
+        long nanosUntilDeadline = ChronoUnit.NANOS.between(now, post.getGaugePoll().getDeadline());
+        Boolean voteOnGoing = nanosUntilDeadline > 0;
+        if(!voteOnGoing){
+            throw new GeneralException(ErrorStatus.DEADLINE_OVER);
+        }
 
         user.setPoint(user.getPoint() + 5);
         Point newPoint=Point.builder()
@@ -123,6 +140,15 @@ public class VoteServiceImpl implements VoteService{
         if (request.getSelectList() != null) {
             newCardVote.setSelect_list(request.getSelectList());
         }
+
+        //나노초 단위로 마감 여부 확인
+        LocalDateTime now = LocalDateTime.now();
+        long nanosUntilDeadline = ChronoUnit.NANOS.between(now, post.getCardPoll().getDeadline());
+        Boolean voteOnGoing = nanosUntilDeadline > 0;
+        if(!voteOnGoing){
+            throw new GeneralException(ErrorStatus.DEADLINE_OVER);
+        }
+
         user.setPoint(user.getPoint() + 5);
         Point newPoint=Point.builder()
                 .amount(user.getPoint())

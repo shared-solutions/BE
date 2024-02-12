@@ -1,4 +1,6 @@
 package friend.spring.web.dto;
+import friend.spring.domain.enums.PostType;
+import friend.spring.domain.enums.PostVoteType;
 import friend.spring.validation.annotation.TitleTextLimit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +27,8 @@ public class PostResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PostDetailResponse {
+        PostType postType;
+        PostVoteType postVoteType;
         String nickname;
         String userImg;
         LocalDateTime createdAt;
@@ -65,6 +69,7 @@ public class PostResponseDTO {
     @AllArgsConstructor
     public static class PollPostGetResponse{
         Long postId;
+        PostVoteType postVoteType;
         String nickname;
         String userImg;
         String title;
