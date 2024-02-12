@@ -115,18 +115,7 @@ public class PostConverter {
                 parentPollDTO.setCandidateImage(candidateImage);
 
             }
-//            // 1등 후보 이름, 사진 반환
-//            Long id=parentPollDTO.getCandidateId();
-//            Optional<String> name = parentPost.getGeneralPoll().getCandidateList().stream()
-//                    .filter(candidate -> candidate.getId().equals(id))
-//                    .map(Candidate::getName)
-//                    .findFirst();
-//            String candidateName=name.get();
-//            String candidateImage = parentPollDTO.getCandidateImage();
-//
-//
-//            parentPollDTO.setCandidateName(candidateName);
-//            parentPollDTO.setCandidateImage(candidateImage);
+
 
             return ParentPostDTO.builder()
                     .nickname(parentPost.getUser().getNickname())
@@ -177,31 +166,11 @@ public class PostConverter {
                         .map(Candidate::getName)
                         .findFirst();
                 String candidateName=name.get();
-//                Optional<File> image = parentPost.getCardPoll().getCandidateList().stream()
-//                        .filter(candidate -> candidate.getId().equals(id))
-//                        .map(Candidate::getFile)
-//                        .findFirst();
+
                 String candidateImage=parentPollDTO.getCandidateImage();
                 parentPollDTO.setCandidateName(candidateName);
                 parentPollDTO.setCandidateImage(candidateImage);
             }
-//            // 1등 후보의 정보를 ParentPollDTO 객체로 반환
-//            parentPollDTO = highestSelectionCandidate.get();
-//
-//             // 1등 후보 이름, 사진 반환
-//            Long id=parentPollDTO.getCandidateId();
-//            Optional<String> name = parentPost.getGeneralPoll().getCandidateList().stream()
-//                .filter(candidate -> candidate.getId().equals(id))
-//                .map(Candidate::getName)
-//                .findFirst();
-//            String candidateName=name.get();
-//            Optional<File> image = parentPost.getGeneralPoll().getCandidateList().stream()
-//                .filter(candidate -> candidate.getId().equals(id))
-//                .map(Candidate::getFile)
-//                .findFirst();
-//            String candidateImage=image.get().getUrl();
-//            parentPollDTO.setCandidateName(candidateName);
-//            parentPollDTO.setCandidateImage(candidateImage);
 
 
             return ParentPostDTO.builder()

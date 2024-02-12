@@ -50,7 +50,7 @@ public class PostRestController {
             @Parameter(name="pollTitle", description="<String> 투표 제목"),
             @Parameter(name="multipleChoice", description="<Boolean> 복수 선택 여부"),
             @Parameter(name="parent_id", description="<Long> 원글(후기글 경우) id<br>해당 사항 없을시 null"),
-            @Parameter(name="deadline", description="<Timestamp> 투표 마감 시간<br>해당 사항 없을시 null"),
+            @Parameter(name="deadline", description="<LocaldateTime> 투표 마감 시간<br>해당 사항 없을시 null(기본값 1시간 이후)"),
             @Parameter(name="point", description="<Integer> 포인트<br>해당 사항 없을시 null")
 
     })
