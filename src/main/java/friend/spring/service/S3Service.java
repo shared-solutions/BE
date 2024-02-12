@@ -40,11 +40,20 @@ public class S3Service {
         if (type == S3ImageType.USER && user != null) { // 사용자 프로필 이미지인 경우
             String pictureUrl = s3Manager.uploadFile(s3Manager.generateUserKeyName(createFileName()), file);
             newFile = fileRepository.save(FileConverter.toFile(pictureUrl, user, null, null));
-
         } else { // 후보 이미지인 경우
             String pictureUrl = s3Manager.uploadFile(s3Manager.generateCandidateKeyName(createFileName()), file);
             newFile = fileRepository.save(FileConverter.toFile(pictureUrl, null, null, candidate));
         }
+        return newFile;
+    }
+
+    // 유저 프로필 사진 변경(이미 데이터가 있는 경우)
+    @Transactional
+    public File editSingleImage(MultipartFile file, User user) {
+        File newFile;
+        String pictureUrl = s3Manager.uploadFile(s3Manager.generateUserKeyName(createFileName()), file);
+        newFile = fileRepository.findByUserId(user.getId()).get();
+        newFile.setUrl(pictureUrl);
         return newFile;
     }
 

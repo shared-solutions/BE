@@ -29,4 +29,8 @@ public class File extends BaseEntity { // S3에 저장한 이미지 파일 링�
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    public void setUrl(String imageUrl){
+        this.url = imageUrl;
+    }
 }

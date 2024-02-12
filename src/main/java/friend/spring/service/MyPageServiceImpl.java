@@ -10,10 +10,7 @@ import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.enums.S3ImageType;
 import friend.spring.domain.mapping.Post_scrap;
-import friend.spring.repository.CategoryRepository;
-import friend.spring.repository.PostRepository;
-import friend.spring.repository.PostScrapRepository;
-import friend.spring.repository.UserRepository;
+import friend.spring.repository.*;
 import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.MyPageRequestDTO;
 import friend.spring.web.dto.MyPageResponseDTO;
@@ -45,6 +42,7 @@ public class MyPageServiceImpl implements MyPageService{
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final PostScrapRepository postScrapRepository;
+    private final FileRepository fileRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final S3Service s3Service;
 
@@ -92,7 +90,14 @@ public class MyPageServiceImpl implements MyPageService{
         }
 
         User user = optionalUser.get();
-        File newFile = s3Service.uploadSingleImage(file, S3ImageType.USER, user, null);
+
+        Optional<File> optionalFile = fileRepository.findByUserId(userId);
+        File newFile = null;
+        if (optionalFile.isPresent()) { // 이미 유저 프로필사진이 있는 경우 -> 기존 데이터 변경
+            newFile = s3Service.editSingleImage(file, user);
+        } else { // 유저 프로필 사진이 없는 경우 -> 새로 데이터 추가
+            newFile = s3Service.uploadSingleImage(file, S3ImageType.USER, user, null);
+        }
         user.setFile(newFile);
     }
 
