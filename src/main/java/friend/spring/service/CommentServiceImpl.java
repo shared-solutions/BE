@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -152,7 +153,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentResponseDTO.commentGetRes> getComments(Long postId) {
+    public List<CommentResponseDTO.commentGetRes> getComments(Long postId, HttpServletRequest request) {
+        Long loginUserId = jwtTokenProvider.getCurrentUser(request);
+        Optional<User> optionalUser = userRepository.findById(loginUserId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
@@ -161,11 +168,48 @@ public class CommentServiceImpl implements CommentService {
         List<Comment> commentList = commentRepository.findByPostIdAndParentCommentIsNull(postId); // 루트 댓글만 가져옴
         List<CommentResponseDTO.commentGetRes> commentGetResList = new ArrayList<>();
         for (Comment comment : commentList) {
-            CommentResponseDTO.commentGetRes commentGetRes = CommentConverter.toCommentGetRes(comment);
+            // 대댓글 처리
+            List<CommentResponseDTO.commentGetRes> subComments = new ArrayList<>();
+            if (comment.getSubCommentList() != null) {
+                for (Comment c : comment.getSubCommentList()) {
+                    Boolean isPushedLike_sub = checkIsPushedLike(comment, loginUserId);
+                    Boolean isOwnerOfPost_sub = checkIsOwnerOfPost(comment, loginUserId);
+                    CommentResponseDTO.commentGetRes subCommentGetRes = CommentConverter.toCommentGetRes(comment, loginUserId, isPushedLike_sub, isOwnerOfPost_sub, null);
+                    subComments.add(subCommentGetRes);
+                }
+            }
+
+            Boolean isPushedLike = checkIsPushedLike(comment, loginUserId);
+            Boolean isOwnerOfPost = checkIsOwnerOfPost(comment, loginUserId);
+
+            CommentResponseDTO.commentGetRes commentGetRes = CommentConverter.toCommentGetRes(comment, loginUserId, isPushedLike, isOwnerOfPost, subComments);
             commentGetResList.add(commentGetRes);
         }
 
         return commentGetResList;
+    }
+
+    public Boolean checkIsPushedLike(Comment comment, Long loginUserId) {
+        // 좋아요 이미 눌렀는지 여부
+        Optional<Comment_like> optionalComment_like = commentLikeRepository.findByCommentIdAndUserId(comment.getId(), loginUserId);
+        Boolean isPushedLike;
+        if (optionalComment_like.isEmpty()) {
+            isPushedLike = false;
+        } else {
+            isPushedLike = true;
+        }
+        return isPushedLike;
+    }
+
+    public Boolean checkIsOwnerOfPost(Comment comment, Long loginUserId) {
+        // 내가 쓴 글인지 여부
+        Boolean isOwnerOfPost;
+        if (Objects.equals(comment.getPost().getUser().getId(), loginUserId)) {
+            isOwnerOfPost = true;
+        } else {
+            isOwnerOfPost = false;
+        }
+        return isOwnerOfPost;
     }
 
     @Override

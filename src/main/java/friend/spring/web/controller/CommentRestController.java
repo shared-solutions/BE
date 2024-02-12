@@ -113,9 +113,11 @@ public class CommentRestController {
             @Parameter(name = "post-id", description = "path variable - 글 아이디")
     })
     public ApiResponse<List<CommentResponseDTO.commentGetRes>> getComments(
-            @PathVariable("post-id") Long postId
+            @PathVariable("post-id") Long postId,
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
     ) {
-        return ApiResponse.onSuccess(commentService.getComments(postId));
+        return ApiResponse.onSuccess(commentService.getComments(postId, request));
     }
 
     // 댓글 채택
@@ -172,7 +174,7 @@ public class CommentRestController {
     }
 
     // 댓글 삭제
-    @PatchMapping("/{post-id}/comment/{comment-id}/like/del")
+    @PatchMapping("/{post-id}/comment/{comment-id}/del")
     @Operation(summary = "댓글 삭제 API", description = "댓글 삭제하는 API입니다. ex) /posts/1/comment/1/del")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
