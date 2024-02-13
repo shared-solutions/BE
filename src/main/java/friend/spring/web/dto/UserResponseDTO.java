@@ -8,6 +8,8 @@ import java.util.List;
 
 public class UserResponseDTO {
 
+//    public static List<TokenDTO> LoginResDTO;
+
     @Builder
     @Getter
     @NoArgsConstructor
@@ -107,24 +109,27 @@ public class UserResponseDTO {
         String refreshToken;
         String tokenExpiresTime;
 
-
     }
 
-//    @Getter
-//    @Builder
-//    @AllArgsConstructor(access = AccessLevel.PROTECTED)
-//    @NoArgsConstructor(access = AccessLevel.PROTECTED)
-//    public static class TokenRefreshResponse {
-//
-//        String accessToken;
-//        String refreshToken;
-//    }
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class OAuthResponse {
+
+        Boolean isLogin;
+        TokenDTO accessToken;
+        TokenDTO refreshToken;
+        String email;
+
+    }
 
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter
     @Builder
     public static class UserSummaryInfo {
+
         Long user_id;
         String nickname;
         String image;
