@@ -59,7 +59,7 @@ public class AuthServiceImpl implements AuthService {
             User user = queryUser.get();
             TokenDTO accessToken = jwtTokenProvider.createAccessToken(user.getEmail());
             TokenDTO refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail());
-            redisTemplate.opsForValue().set("RT:"+user.getEmail(),refreshToken.getToken(),refreshToken.getTokenExpriresTime().getTime(),TimeUnit.MILLISECONDS);
+            redisTemplate.opsForValue().set("RT:" + user.getEmail(), refreshToken.getToken(), refreshToken.getTokenExpriresTime().getTime(), TimeUnit.MILLISECONDS);
 
             List<TokenDTO> tokenDTOList = new ArrayList<>();
             tokenDTOList.add(refreshToken);
@@ -73,51 +73,6 @@ public class AuthServiceImpl implements AuthService {
             redisTemplate.opsForValue().set("RT:" + refreshToken, TimeUnit.MILLISECONDS);
 
             return (List<TokenDTO>) UserConverter.toOAuthResponse(accessToken, refreshToken, false, user);
-//ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
-//        if (queryUser.isPresent()) {
-//            User user = userRepository.findByEmail(kakaoProfile.getKakao_account().getEmail())
-//                    .orElseThrow(() -> new GeneralException(USERS_NOT_FOUND_EMAIL));//가입 안된 이메일
-//            if (!encoder.matches(kakaoProfile.getKakao_account().getEmail(), user.getPassword())) {
-//                throw new GeneralException(PASSWORD_INCORRECT); //비밀번호 불일치, 계정없음
-//            }
-//            //토큰발급
-//            TokenDTO accessToken = jwtTokenProvider.createAccessToken(user.getEmail());
-//            TokenDTO refreshToken = jwtTokenProvider.createRefreshToken(user.getEmail());
-//
-//            // login 시 Redis에 RT:gominchingy@gmail.com(key): --refresh token실제값--(value) 형태로 refresh 토큰 저장하기
-//            // opsForValue() : set을 통해 key,value값 저장하고 get(key)통해 value가져올 수 있음.
-//            // refreshToken.getTokenExpriresTime().getTime() : 리프레시 토큰의 만료시간이 지나면 해당 값 자동 삭제
-//            redisTemplate.opsForValue().set("RT:" + user.getEmail(), refreshToken.getToken(), refreshToken.getTokenExpriresTime().getTime(), TimeUnit.MILLISECONDS);
-//
-//            List<TokenDTO> tokenDTOList = new ArrayList<>();
-//            tokenDTOList.add(accessToken);
-//            tokenDTOList.add(refreshToken);
-//            System.out.println(tokenDTOList);
-//
-//            return tokenDTOList;
-//        }
-//        return UserResponseDTO.OAuthResponse();
         }
     }
 }
-//    @Override
-//    @Transactional
-//    public JwtTokenProvider refresh(String refreshToken) {
-//        jwtTokenProvider.validateToken(refreshToken);
-//
-//        if (!jwtTokenProvider.validateToken(refreshToken)) {
-//            throw new GeneralException(ErrorStatus.NOT_EQUAL_TOKEN);
-//        }
-//
-//        TokenDTO accessToken =
-//                jwtTokenProvider.createAccessToken(jwtTokenProvider.getemail(refreshToken));
-//        TokenDTO newRefreshToken =
-//                jwtTokenProvider.createAccessToken(jwtTokenProvider.getemail(refreshToken));
-////        refreshTokenService.saveToken(newRefreshToken);
-//        return AuthConverter.toTokenRefreshResponse(accessToken, refreshToken);
-//    }
-
-//    public void logout(Long userId) {
-////        refreshTokenService.deleteToken(userId);
-////    }
-//}

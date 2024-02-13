@@ -34,7 +34,3 @@ public class AuthController {
         return ApiResponse.onSuccess(authService.kakaoLogin(code));
     }
 }
-//    @GetMapping("/login/kakao")
-//    public BaseResponse<OAuthResponse> kakaoLogin(@RequestParam("code") String code) {
-//        return BaseResponse.onSuccess(authService.kakaoLogin(code));
-//    }
