@@ -43,6 +43,8 @@ dependencies {
 	runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.4'
 // redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	//kakao
+//	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	// S3
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation platform('software.amazon.awssdk:bom:2.20.56')

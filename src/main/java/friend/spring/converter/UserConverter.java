@@ -2,6 +2,7 @@ package friend.spring.converter;
 
 import friend.spring.domain.*;
 import friend.spring.domain.enums.Gender;
+import friend.spring.kakao.dto.response.KakaoProfile;
 import friend.spring.web.dto.*;
 import friend.spring.domain.enums.RoleType;
 
@@ -9,7 +10,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import friend.spring.web.dto.UserResponseDTO;
-import io.swagger.models.auth.In;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -19,8 +19,7 @@ import java.util.stream.Collectors;
 public class UserConverter {
 
 
-
-    public static UserResponseDTO.MyPageResDTO toMypageResDTO(User user){
+    public static UserResponseDTO.MyPageResDTO toMypageResDTO(User user) {
         String userPhoto = null;
         if (user.getFile() != null) {
             userPhoto = user.getFile().getUrl();
@@ -30,19 +29,18 @@ public class UserConverter {
                 .userPhoto(userPhoto)
                 .userName(user.getNickname())
                 .userPoint(user.getPoint())
-                .userLevelInt(user.getLevel().getLike()+1)
+                .userLevelInt(user.getLevel().getLike() + 1)
                 .userLevelName(user.getLevel().getName())
                 .userRecommend(user.getLike())
                 .build();
     }
 
 
-    public static UserResponseDTO.PointViewDTO toPointViewResDTO(Integer point){
+    public static UserResponseDTO.PointViewDTO toPointViewResDTO(Integer point) {
         return UserResponseDTO.PointViewDTO.builder()
                 .point(point)
                 .build();
     }
-
 
 
     public static UserResponseDTO.EmailSendRes toEmailSendRes(String code) {
@@ -51,7 +49,7 @@ public class UserConverter {
                 .build();
     }
 
-    public static UserResponseDTO.JoinResultDTO joinResultDTO(User user){
+    public static UserResponseDTO.JoinResultDTO joinResultDTO(User user) {
         return UserResponseDTO.JoinResultDTO.builder()
                 .email(user.getEmail())
                 .createAt(LocalDate.from(LocalDateTime.now()))
@@ -60,11 +58,11 @@ public class UserConverter {
     }
 
 
-    public static User toUser(UserRequestDTO.UserJoinRequest userJoinRequest, String pw, Level initLevel){
+    public static User toUser(UserRequestDTO.UserJoinRequest userJoinRequest, String pw, Level initLevel) {
 
         Gender gender = null;
 
-        switch (userJoinRequest.getGender()){
+        switch (userJoinRequest.getGender()) {
             case 1:
                 gender = Gender.MALE;
                 break;
@@ -75,8 +73,6 @@ public class UserConverter {
                 gender = Gender.NONE;
                 break;
         }
-
-
         return User.builder()
                 .email(userJoinRequest.getEmail())
                 .password(pw)
@@ -96,7 +92,7 @@ public class UserConverter {
     }
 
     //나의 프로필(Q&A질문)
-    public static UserResponseDTO.QuestionResDTO toQuestionResDTO(User user, Level nxtLevel, Page<Post> postList, Page<Comment> commentList){
+    public static UserResponseDTO.QuestionResDTO toQuestionResDTO(User user, Level nxtLevel, Page<Post> postList, Page<Comment> commentList) {
         //질문 목록
         List<PostResponseDTO.MyPostDTO> myPostDTOList = postList.stream()
                 .map(PostConverter::toMyPostResDTO).collect(Collectors.toList());
@@ -111,13 +107,13 @@ public class UserConverter {
                 .filter(comment -> comment.getCommentChoiceList().isEmpty()).collect(Collectors.toList());
         //답변 채택률
         int aChoice = all - myCommentList.size();
-        double aChoicePercent = ((double)aChoice / (double)all) * 100;
+        double aChoicePercent = ((double) aChoice / (double) all) * 100;
 
         //질문 채택률
         int Question = myPostDTOList.size();
         List<Post> myPostList = postList.stream()
                 .filter(post -> post.getCommentChoiceList().isEmpty()).collect(Collectors.toList());
-        double pChoicePercent = ((double) (Question - myPostList.size()) / (double) Question)*100;
+        double pChoicePercent = ((double) (Question - myPostList.size()) / (double) Question) * 100;
 
         // 유저 프로필
         String userPhoto = null;
@@ -126,7 +122,7 @@ public class UserConverter {
         }
 
         //남은 다음 등급
-        double nxtGrade = ((double)user.getLike()/(double)(nxtLevel.getLike() - user.getLevel().getLike())) * 100.0;
+        double nxtGrade = ((double) user.getLike() / (double) (nxtLevel.getLike() - user.getLevel().getLike())) * 100.0;
         return UserResponseDTO.QuestionResDTO.builder()
                 .userPhoto(userPhoto)
                 .nickName(user.getNickname())
@@ -143,7 +139,7 @@ public class UserConverter {
     }
 
     //나의 프로필(Q&A답변)
-    public static UserResponseDTO.AnswerResDTO toAnswerResDTO(User user, Level nxtLevel, Page<Comment> commentList){
+    public static UserResponseDTO.AnswerResDTO toAnswerResDTO(User user, Level nxtLevel, Page<Comment> commentList) {
         //답변 목록
         List<CommentResponseDTO.myCommentRes> myCommentDTOList = commentList.stream()
                 .map(CommentConverter::toMyCommentResDTO).collect(Collectors.toList());
@@ -155,7 +151,7 @@ public class UserConverter {
                 .filter(comment -> comment.getCommentChoiceList().isEmpty()).collect(Collectors.toList());
         int choice = all - myCommentList.size();
         //채택 답변률
-        double percent = ((double)choice / (double)all) * 100.0;
+        double percent = ((double) choice / (double) all) * 100.0;
 
         // 유저 프로필
         String userPhoto = null;
@@ -164,7 +160,7 @@ public class UserConverter {
         }
 
         //남은 다음 등급
-        double nxtGrade = ((double)user.getLike()/(double)(nxtLevel.getLike() - user.getLevel().getLike())) * 100.0;
+        double nxtGrade = ((double) user.getLike() / (double) (nxtLevel.getLike() - user.getLevel().getLike())) * 100.0;
         return UserResponseDTO.AnswerResDTO.builder()
                 .userPhoto(userPhoto)
                 .nickName(user.getNickname())
@@ -192,4 +188,20 @@ public class UserConverter {
                 .build();
     }
 
+    public static UserResponseDTO.OAuthResponse toOAuthResponse(
+            TokenDTO accessToken, TokenDTO refreshToken, Boolean isLogin, User user) {
+        return UserResponseDTO.OAuthResponse.builder()
+                .refreshToken(refreshToken)
+                .accessToken(accessToken)
+                .isLogin(isLogin)
+                .email(user.getEmail())
+                .build();
+    }
+
+    public static User KakaoUser(
+            KakaoProfile kakaoProfile){
+        return User.builder()
+                .email(kakaoProfile.getKakao_account().getEmail()).build();
+
+    }
 }
