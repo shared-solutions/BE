@@ -157,4 +157,42 @@ public class MyPageRestController {
         User editUserEmail = myPageService.editUserEmail(userId, profileEditEmailReq);
         return ApiResponse.onSuccess(MyPageConverter.toProfileEditEmailResDTO(editUserEmail));
     }
+
+    @PatchMapping(value = "/profile/modify/phone")
+    @Operation(summary = "회원정보 번호 수정 API", description = "회원정보 번호를 수정하는 API입니다. ex) /user/my-page/profile/modify/phone")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005",description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
+    })
+    public ApiResponse<MyPageResponseDTO.ProfileEditPhoneRes> editUserEmail(
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request,
+            @RequestBody @Valid MyPageRequestDTO.ProfileEditPhoneReq profileEditPhoneReq){
+        Long userId = jwtTokenService.JwtToId(request);
+        emailService.CheckAuthNum(profileEditPhoneReq.getEmail(), profileEditPhoneReq.getCertification());
+        User editUserPhone = myPageService.editUserPhone(userId, profileEditPhoneReq);
+        return ApiResponse.onSuccess(MyPageConverter.toProfileEditPhoneResDTO(editUserPhone));
+    }
+
+    @PatchMapping(value = "/profile/modify/password")
+    @Operation(summary = "회원정보 비밀번호 수정 API", description = "회원정보 비밀번호를 수정하는 API입니다. ex) /user/my-page/profile/modify/password")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4008",description = "NOT_FOUND, 비밀번호가 틀렸습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4009",description = "NOT_FOUND, 확인 비밀번호가 일치하지 않습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
+    })
+    public ApiResponse<MyPageResponseDTO.ProfileEditPasswordRes> editUserEmail(
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request,
+            @RequestBody @Valid MyPageRequestDTO.ProfileEditPasswordReq profileEditPasswordReq){
+        Long userId = jwtTokenService.JwtToId(request);
+        User editUserPassword = myPageService.editUserPassword(userId, profileEditPasswordReq);
+        return ApiResponse.onSuccess(MyPageConverter.toProfileEditPasswordResDTO(editUserPassword));
+    }
 }

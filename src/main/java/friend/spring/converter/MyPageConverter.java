@@ -87,4 +87,16 @@ public class MyPageConverter {
                 .email(profileEditEmailReq.getChangeEmail())
                 .build();
     }
+
+    public static MyPageResponseDTO.ProfileEditPhoneRes toProfileEditPhoneResDTO(User user){
+        return MyPageResponseDTO.ProfileEditPhoneRes.builder()
+                .phone(user.getPhone())
+                .build();
+    }
+
+    public static MyPageResponseDTO.ProfileEditPasswordRes toProfileEditPasswordResDTO(User user){
+        return MyPageResponseDTO.ProfileEditPasswordRes.builder()
+                .changePassword(user.getPassword())
+                .build();
+    }
 }
