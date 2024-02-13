@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +46,8 @@ public class MyPageServiceImpl implements MyPageService{
     private final FileRepository fileRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final S3Service s3Service;
+
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
     public void checkPost(Boolean flag) {
@@ -118,6 +121,27 @@ public class MyPageServiceImpl implements MyPageService{
     public User editUserEmail(Long userId, MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq) {
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         user.setEmail(profileEditEmailReq.getChangeEmail());
+        return user;
+    }
+
+    @Override
+    public User editUserPhone(Long userId, MyPageRequestDTO.ProfileEditPhoneReq profileEditPhoneReq) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        user.setPhone(profileEditPhoneReq.getPhone());
+        return user;
+    }
+
+    @Override
+    public User editUserPassword(Long userId, MyPageRequestDTO.ProfileEditPasswordReq profileEditPasswordReq) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        if (!encoder.matches(profileEditPasswordReq.getCurPassword(), user.getPassword())){
+            throw new GeneralException(ErrorStatus.PASSWORD_INCORRECT);
+        }
+        if (!profileEditPasswordReq.getChangePassword().equals(profileEditPasswordReq.getCheckPassword())){
+            throw new GeneralException(ErrorStatus.PASSWORD_CHECK_INCORRECT);
+        }
+        String encode = encoder.encode(profileEditPasswordReq.getChangePassword());
+        user.setPassword(encode);
         return user;
     }
 

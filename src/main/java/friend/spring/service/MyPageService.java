@@ -26,4 +26,7 @@ public interface MyPageService {
     User editUserName(Long userId, MyPageRequestDTO.ProfileEditNameReq profileEditNameReq);
 
     User editUserEmail(Long userId, MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq);
+    User editUserPhone(Long userId, MyPageRequestDTO.ProfileEditPhoneReq profileEditPhoneReq);
+
+    User editUserPassword(Long userId, MyPageRequestDTO.ProfileEditPasswordReq profileEditPasswordReq);
 }
