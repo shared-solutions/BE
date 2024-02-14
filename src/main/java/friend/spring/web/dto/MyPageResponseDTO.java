@@ -91,4 +91,12 @@ public class MyPageResponseDTO {
     public static class ProfileEditPasswordRes{
         String changePassword;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyInquiryRes{
+        Long inquiry_id;
+    }
 }

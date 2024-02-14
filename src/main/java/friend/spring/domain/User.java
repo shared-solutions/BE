@@ -119,6 +119,10 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Gauge_vote> gaugeVoteList = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Inquiry> InquiryList = new ArrayList<>();
+
     @OneToOne(mappedBy = "user")
     @JoinColumn(name = "file_id")
     private File file;

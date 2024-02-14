@@ -4,6 +4,7 @@ import friend.spring.apiPayload.ApiResponse;
 import friend.spring.converter.CommentConverter;
 import friend.spring.converter.MyPageConverter;
 import friend.spring.domain.Category;
+import friend.spring.domain.Inquiry;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.mapping.Comment_choice;
@@ -167,7 +168,7 @@ public class MyPageRestController {
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
     })
-    public ApiResponse<MyPageResponseDTO.ProfileEditPhoneRes> editUserEmail(
+    public ApiResponse<MyPageResponseDTO.ProfileEditPhoneRes> editUserPhone(
             @RequestHeader(name = "atk") String atk,
             HttpServletRequest request,
             @RequestBody @Valid MyPageRequestDTO.ProfileEditPhoneReq profileEditPhoneReq){
@@ -187,12 +188,51 @@ public class MyPageRestController {
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
     })
-    public ApiResponse<MyPageResponseDTO.ProfileEditPasswordRes> editUserEmail(
+    public ApiResponse<MyPageResponseDTO.ProfileEditPasswordRes> editUserPassword(
             @RequestHeader(name = "atk") String atk,
             HttpServletRequest request,
             @RequestBody @Valid MyPageRequestDTO.ProfileEditPasswordReq profileEditPasswordReq){
         Long userId = jwtTokenService.JwtToId(request);
         User editUserPassword = myPageService.editUserPassword(userId, profileEditPasswordReq);
         return ApiResponse.onSuccess(MyPageConverter.toProfileEditPasswordResDTO(editUserPassword));
+    }
+
+    @PatchMapping(value = "/profile/modify/security")
+    @Operation(summary = "회원정보 보안 메일 수정 API", description = "회원정보 보안 메일을 수정하는 API입니다. ex) /user/my-page/profile/modify/security")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "이미 존재하는 메일 주소입니다.")
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
+    })
+    public ApiResponse<MyPageResponseDTO.ProfileEditEmailRes> editUserSecurity(
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request,
+            @RequestBody @Valid MyPageRequestDTO.ProfileEditSecurityReq profileEditSecurityReq){
+        Long userId = jwtTokenService.JwtToId(request);
+        emailService.CheckAuthNum(profileEditSecurityReq.getCurEmail(), profileEditSecurityReq.getCertification());
+        emailService.CheckAuthNum(profileEditSecurityReq.getChangeEmail(), profileEditSecurityReq.getNxtCertification());
+        User editUserSecurity = myPageService.editUserSecurity(userId, profileEditSecurityReq);
+        return ApiResponse.onSuccess(MyPageConverter.toProfileEditEmailResDTO(editUserSecurity));
+    }
+
+    @PatchMapping(value = "/inquiry")
+    @Operation(summary = "설정 문의하기 API", description = "문의를 작성하는 API입니다. ex) /user/my-page/inquiry")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4007", description = "최소 5자 이상, 30자 미만 입력해 주세요."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4008", description = "최소 5자 이상, 1000자 미만 입력해 주세요.")
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
+    })
+    public ApiResponse<MyPageResponseDTO.MyInquiryRes> editUserSecurity(
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request,
+            @RequestBody @Valid MyPageRequestDTO.MyInquiryReq myInquiryReq){
+        Long userId = jwtTokenService.JwtToId(request);
+        Inquiry inquiry = myPageService.createInquiry(userId, myInquiryReq);
+        return ApiResponse.onSuccess(MyPageConverter.toMyInquiryRes(inquiry));
     }
 }
