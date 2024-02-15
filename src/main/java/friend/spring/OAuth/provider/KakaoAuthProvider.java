@@ -1,18 +1,16 @@
-package friend.spring.kakao.provider;
+package friend.spring.OAuth.provider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
-import friend.spring.kakao.dto.response.KakaoProfile;
-import friend.spring.kakao.dto.response.OAuthToken;
+import friend.spring.OAuth.KakaoProfile;
+import friend.spring.OAuth.OAuthToken;
 import friend.spring.security.PrincipalDetailService;
 import org.springframework.beans.factory.annotation.Value;
 import friend.spring.repository.UserRepository;
 import friend.spring.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -34,7 +32,7 @@ public class KakaoAuthProvider {
     @Value("${kakao.auth.client}")
     private String client;
 
-    @Value("${kakao.auth.redirect-uri}")
+    @Value("${kakao.auth.redirect_uri}")
     private String redirect;
 
     @Value("${kakao.auth.secret_key}")
