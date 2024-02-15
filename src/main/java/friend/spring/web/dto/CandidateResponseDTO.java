@@ -12,6 +12,7 @@ public class CandidateResponseDTO {
     public static class CandidateSummaryRes {
         Long candidate_id; // 후보 아이디
         String candidate_name; // 후보 이름
+        String candidate_image; // 후보 이미지
         Double ratio; // 비율
     }
 

@@ -148,6 +148,7 @@ public class PostResponseDTO {
         Long general_poll_id;
         Long gauge_poll_id;
         Long card_poll_id;
+        Integer gauge;
         List<CandidateResponseDTO.CandidateSummaryRes> candidateList;
     }
 

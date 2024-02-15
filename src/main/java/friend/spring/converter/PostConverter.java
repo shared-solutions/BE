@@ -819,6 +819,7 @@ public class PostConverter {
 
     public static PostResponseDTO.PostSummaryListRes toPostSummaryRes(Post post, Integer like_cnt, Integer comment_cnt, String postVoteType,
                                                                       List<CandidateResponseDTO.CandidateSummaryRes> candidateSummaryResList,
+                                                                      Integer gauge,
                                                                       Long general_poll_id, Long gauge_poll_id, Long card_poll_id
     ) {
         return PostResponseDTO.PostSummaryListRes.builder()
@@ -834,6 +835,7 @@ public class PostConverter {
                 .general_poll_id(general_poll_id)
                 .gauge_poll_id(gauge_poll_id)
                 .card_poll_id(card_poll_id)
+                .gauge(gauge)
                 .candidateList(candidateSummaryResList)
                 .build();
     }

@@ -427,6 +427,7 @@ public class PostServiceImpl implements PostService{
                     Long general_poll_id = null;
                     Long gauge_poll_id = null;
                     Long card_poll_id = null;
+                    Integer gauge = null;
                     List<Candidate> candidateList = null;
                     List<CandidateResponseDTO.CandidateSummaryRes> candidateSummaryResList = null;
 
@@ -456,6 +457,7 @@ public class PostServiceImpl implements PostService{
                     } else if (post.getVoteType().equals(GAUGE)) {
                         postVoteType = "GAUGE";
                         gauge_poll_id = post.getGaugePoll().getId();
+                        gauge = post.getGaugePoll().getGauge();
                     } else {
                         postVoteType = "CARD";
                         card_poll_id = post.getCardPoll().getId();
@@ -479,7 +481,7 @@ public class PostServiceImpl implements PostService{
                         }
                     }
 
-                    PostResponseDTO.PostSummaryListRes postGetRes = PostConverter.toPostSummaryRes(post, like_cnt, comment_cnt, postVoteType, candidateSummaryResList, general_poll_id, gauge_poll_id, card_poll_id);
+                    PostResponseDTO.PostSummaryListRes postGetRes = PostConverter.toPostSummaryRes(post, like_cnt, comment_cnt, postVoteType, candidateSummaryResList, gauge, general_poll_id, gauge_poll_id, card_poll_id);
                     return postGetRes;
                 })
                 .filter(Objects::nonNull) // null인 요소는 필터링
