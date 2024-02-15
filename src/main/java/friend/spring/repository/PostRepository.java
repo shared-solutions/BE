@@ -20,7 +20,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByPostTypeAndStateAndCategory(PostType postType, PostState state,Category category,Pageable pageable);
     Page<Post> findByUserIdAndPostTypeAndState(Long userId, PostType postType, PostState state, Pageable pageable);
     Page<Post> findAllByUser(User user, PageRequest pageRequest);
-    @Query(value = "SELECT * FROM post WHERE post.created_at >= DATE_ADD(now(), INTERVAL -24 HOUR) ORDER BY post.point DESC", nativeQuery = true)
+    @Query(value = "SELECT * FROM post WHERE post.created_at >= DATE_ADD(now(), INTERVAL -7 DAY) ORDER BY post.point DESC", nativeQuery = true)
     Page<Post> findBestPosts(Pageable pageable);
     Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }
