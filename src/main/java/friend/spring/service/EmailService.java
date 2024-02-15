@@ -1,6 +1,5 @@
 package friend.spring.service;
 
-import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.config.RedisUtil;
@@ -83,5 +82,6 @@ public class EmailService {
             redisUtil.setDataExpire(Integer.toString(authNumber),toMail,60*5L);
 
         }
+
 
     }
