@@ -64,7 +64,7 @@ mail:
     password: ${gmail.password}
 kakao:
   auth:
-    client: 58d29ff7378109a321d4edc551a773c2
-    redirect_uri: http://localhost:3000/api/auth/callback/kakao
-    secret_key: OSzm4b9sGFMZ982joQAkhZ7Fpiph4eOY
+    client: ${KAKAO_AUTH_CLIENT}
+    redirect-uri: ${KAKAO_AUTH_REDIRECT_URI}
+    secret_key: ${KAKAO_AUTH_SECRET_KEY}
 
