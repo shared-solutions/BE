@@ -138,6 +138,30 @@ public class UserRestController {
        return ApiResponse.onSuccess(UserConverter.joinResultDTO(user));
 
     }
+    @PostMapping ("/passwordMailSend")//비밀번호 재설정 인증 코드 전송
+    @Operation(summary = "비밀번호 재설정 인증 코드 전송 API",description = "비밀번호 재설정 인증 코드 전송하는 API입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+    })
+    @Parameters({ })
+    public ApiResponse<UserResponseDTO.EmailSendRes> mailSend(@RequestBody @Valid UserRequestDTO.PasswordEmailSendReq emailDto){
+        System.out.println("비밀번호 재설정 인증 요청이 들어옴");
+        System.out.println("비밀번호 재설정 인증 이메일 :"+emailDto.getEmail());
+
+        String code = mailService.joinEmail(emailDto.getEmail());
+        return ApiResponse.onSuccess(UserConverter.toEmailSendRes(code));
+    }
+    @PostMapping("/passwordMailauthCheck")//이메일 코드 확인
+    @Operation(summary = "비밀번호 재설정 코드 확인 API",description = "비밀번호 재설정 코드 확인하는 API입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005",description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
+    })
+    @Parameters({ })
+    public ApiResponse<Void> mailauthCheck(@RequestBody @Valid UserRequestDTO.PasswordEmailSendCheckReq emailSendCheckReq){
+        mailService.CheckAuthNum(emailSendCheckReq.getEmail(), emailSendCheckReq.getAuthNum());
+        return ApiResponse.onSuccess(null);
+    }
 
     //로그인
     @PostMapping("/login")
