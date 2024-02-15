@@ -1,4 +1,4 @@
-package friend.spring.kakao.dto.response;
+package friend.spring.OAuth;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;

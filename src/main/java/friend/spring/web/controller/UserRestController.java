@@ -7,20 +7,19 @@ import friend.spring.domain.Comment;
 import friend.spring.domain.Level;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
+import friend.spring.service.AuthService;
 import friend.spring.repository.UserRepository;
 import friend.spring.service.CommentService;
 import friend.spring.service.EmailService;
 import friend.spring.service.PostService;
 import friend.spring.service.UserService;
 import friend.spring.service.*;
-import friend.spring.web.dto.AlarmResponseDTO;
 import friend.spring.web.dto.TokenDTO;
 import friend.spring.web.dto.UserRequestDTO;
 import friend.spring.web.dto.UserResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,7 +41,7 @@ public class UserRestController {
     private final PostService postService;
     private final CommentService commentService;
     private final JwtTokenService jwtTokenService;
-
+    private final AuthService authService;
   
     //마이 페이지 조회
     @GetMapping("/my-page")
@@ -214,6 +213,16 @@ public class UserRestController {
         Long userId=jwtTokenService.JwtToId(request2);
         Integer point = userService.pointCheck(userId);
         return ApiResponse.onSuccess(UserConverter.toPointViewResDTO(point));
+    }
+
+    @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 및 회원 가입을 진행")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    @GetMapping("/login/kakao")
+    public ApiResponse<List<TokenDTO>> kakaoLogin(@RequestParam("code") String code) throws GeneralException {
+
+        return ApiResponse.onSuccess(authService.kakaoLogin(code));
     }
 }
 

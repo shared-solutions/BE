@@ -2,7 +2,7 @@ package friend.spring.converter;
 
 import friend.spring.domain.*;
 import friend.spring.domain.enums.Gender;
-import friend.spring.kakao.dto.response.KakaoProfile;
+import friend.spring.OAuth.KakaoProfile;
 import friend.spring.web.dto.*;
 import friend.spring.domain.enums.RoleType;
 
@@ -204,4 +204,5 @@ public class UserConverter {
                 .email(kakaoProfile.getKakao_account().getEmail()).build();
 
     }
+
 }

@@ -1,4 +1,4 @@
-package friend.spring.kakao.service;
+package friend.spring.service;
 
 import friend.spring.web.dto.TokenDTO;
 

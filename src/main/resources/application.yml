@@ -65,6 +65,6 @@ mail:
 kakao:
   auth:
     client: 58d29ff7378109a321d4edc551a773c2
-    redirect-uri: http://localhost:3000/api/auth/callback/kakao
+    redirect_uri: http://localhost:3000/api/auth/callback/kakao
     secret_key: OSzm4b9sGFMZ982joQAkhZ7Fpiph4eOY
 

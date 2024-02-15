@@ -1,22 +1,15 @@
-package friend.spring.kakao.service;
+package friend.spring.service;
 
-import friend.spring.apiPayload.ApiResponse;
-import friend.spring.apiPayload.GeneralException;
-import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.converter.UserConverter;
 import friend.spring.domain.User;
-import friend.spring.kakao.dto.response.KakaoProfile;
-import friend.spring.kakao.dto.response.OAuthToken;
-import friend.spring.kakao.provider.KakaoAuthProvider;
+import friend.spring.OAuth.KakaoProfile;
+import friend.spring.OAuth.OAuthToken;
+import friend.spring.OAuth.provider.KakaoAuthProvider;
 import friend.spring.repository.UserRepository;
 import friend.spring.security.JwtTokenProvider;
-import friend.spring.service.UserService;
 import friend.spring.web.dto.TokenDTO;
-import friend.spring.web.dto.UserRequestDTO;
-import friend.spring.web.dto.UserResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-
-import static friend.spring.apiPayload.code.status.ErrorStatus.*;
 
 @Service
 @RequiredArgsConstructor
