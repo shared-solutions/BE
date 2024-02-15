@@ -1,6 +1,7 @@
 package friend.spring.service;
 
 import friend.spring.domain.Category;
+import friend.spring.domain.Inquiry;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.mapping.Post_scrap;
@@ -29,4 +30,7 @@ public interface MyPageService {
     User editUserPhone(Long userId, MyPageRequestDTO.ProfileEditPhoneReq profileEditPhoneReq);
 
     User editUserPassword(Long userId, MyPageRequestDTO.ProfileEditPasswordReq profileEditPasswordReq);
+    User editUserSecurity(Long userId, MyPageRequestDTO.ProfileEditSecurityReq profileEditSecurityReq);
+
+    Inquiry createInquiry(Long userId, MyPageRequestDTO.MyInquiryReq myInquiryReq);
 }

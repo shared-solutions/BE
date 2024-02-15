@@ -4,10 +4,7 @@ import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.PostHandler;
 import friend.spring.converter.MyPageConverter;
-import friend.spring.domain.Category;
-import friend.spring.domain.File;
-import friend.spring.domain.Post;
-import friend.spring.domain.User;
+import friend.spring.domain.*;
 import friend.spring.domain.enums.S3ImageType;
 import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.repository.*;
@@ -46,6 +43,7 @@ public class MyPageServiceImpl implements MyPageService{
     private final FileRepository fileRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final S3Service s3Service;
+    private final InquiryRepository inquiryRepository;
 
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -120,6 +118,12 @@ public class MyPageServiceImpl implements MyPageService{
     @Override
     public User editUserEmail(Long userId, MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq) {
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        List<User> all = userRepository.findAll();
+        all.forEach(eachUser -> {
+                    if (eachUser.getEmail().equals(profileEditEmailReq.getChangeEmail())) {
+                        throw new GeneralException(ErrorStatus.USER_EXISTS_EMAIL);
+                    }
+                });
         user.setEmail(profileEditEmailReq.getChangeEmail());
         return user;
     }
@@ -143,6 +147,26 @@ public class MyPageServiceImpl implements MyPageService{
         String encode = encoder.encode(profileEditPasswordReq.getChangePassword());
         user.setPassword(encode);
         return user;
+    }
+
+    @Override
+    public User editUserSecurity(Long userId, MyPageRequestDTO.ProfileEditSecurityReq profileEditSecurityReq) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        List<User> all = userRepository.findAll();
+        all.forEach(eachUser -> {
+            if (eachUser.getEmail().equals(profileEditSecurityReq.getChangeEmail())) {
+                throw new GeneralException(ErrorStatus.USER_EXISTS_EMAIL);
+            }
+        });
+        user.setEmail(profileEditSecurityReq.getChangeEmail());
+        return user;
+    }
+
+    @Override
+    public Inquiry createInquiry(Long userId, MyPageRequestDTO.MyInquiryReq myInquiryReq) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Inquiry inquiry = MyPageConverter.toInquiry(myInquiryReq, user);
+        return inquiryRepository.save(inquiry);
     }
 
 

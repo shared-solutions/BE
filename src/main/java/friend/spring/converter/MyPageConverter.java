@@ -1,6 +1,7 @@
 package friend.spring.converter;
 
 import friend.spring.domain.Category;
+import friend.spring.domain.Inquiry;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.mapping.Post_scrap;
@@ -97,6 +98,20 @@ public class MyPageConverter {
     public static MyPageResponseDTO.ProfileEditPasswordRes toProfileEditPasswordResDTO(User user){
         return MyPageResponseDTO.ProfileEditPasswordRes.builder()
                 .changePassword(user.getPassword())
+                .build();
+    }
+
+    public static Inquiry toInquiry(MyPageRequestDTO.MyInquiryReq myInquiryReq, User user){
+        return Inquiry.builder()
+                .category(myInquiryReq.getInquiryCategory())
+                .content(myInquiryReq.getContent())
+                .user(user)
+                .build();
+    }
+
+    public static MyPageResponseDTO.MyInquiryRes toMyInquiryRes(Inquiry inquiry){
+        return MyPageResponseDTO.MyInquiryRes.builder()
+                .inquiry_id(inquiry.getId())
                 .build();
     }
 }
