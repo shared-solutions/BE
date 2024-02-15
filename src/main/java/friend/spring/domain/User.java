@@ -2,6 +2,7 @@ package friend.spring.domain;
 
 import friend.spring.domain.common.BaseEntity;
 import friend.spring.domain.enums.Gender;
+import friend.spring.domain.enums.RoleType;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
@@ -28,7 +29,7 @@ public class User extends BaseEntity implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 68)
     private String password;
 
     @Email////1)@기호를 포함해야 한다.2_@기호를 기준으로 이메일 주소를 이루는 로컬호스트와 도메인 파트가 존재해야 한다.3)도메인 파트는 최소하나의 점과
@@ -57,14 +58,12 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = true)
     private Boolean agree_info;
 
-    @Column(nullable = true)
-    private String image;
-
     @Column(nullable = true)//잠시 true로 수정
     private Boolean is_deleted;
 
     @Column(nullable = true)
-    private Integer point;
+    @Builder.Default
+    private Integer point=0;
 
     @Column(nullable = true)
     private String kakao;
@@ -72,6 +71,9 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = true)//잠시 true
     private Integer like;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
+    private RoleType role;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "level_id")
@@ -117,6 +119,14 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Gauge_vote> gaugeVoteList = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Inquiry> InquiryList = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user")
+    @JoinColumn(name = "file_id")
+    private File file;
+
     // UserDetails 상속
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -155,5 +165,17 @@ public class User extends BaseEntity implements UserDetails {
     public void setPoint(Integer point) {
         this.point = point;
     }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public void setNickname(String nickname){ this.nickname = nickname; }
+
+    public void setEmail(String email){this.email = email;}
+
+    public void setPhone(String  phone){this.phone = phone;}
+
+    public void setPassword(String password){this.password = password;}
 }
 

@@ -3,6 +3,7 @@ package friend.spring.converter;
 import friend.spring.domain.Comment;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
+import friend.spring.domain.enums.CommentState;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.web.dto.CommentRequestDTO;
@@ -10,6 +11,7 @@ import friend.spring.web.dto.CommentResponseDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CommentConverter {
     public static Comment toComment(CommentRequestDTO.commentCreateReq request, Post post, User user, Comment parentComment) {
@@ -18,6 +20,7 @@ public class CommentConverter {
                 .post(post)
                 .content(request.getContent())
                 .parentComment(parentComment)
+                .state(CommentState.POSTING)
                 .build();
     }
 
@@ -40,17 +43,32 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.commentGetRes toCommentGetRes(Comment comment) {
+    public static CommentResponseDTO.commentGetRes toCommentGetRes(Comment comment, Long loginUserId, Boolean isPushedLike, Boolean isOwnerOfPost, List<CommentResponseDTO.commentGetRes> subComments) {
         Long parentCommentId = null;
         if (comment.getParentComment() != null) {
             parentCommentId = comment.getParentComment().getId();
         }
 
-        List<CommentResponseDTO.commentGetRes> subComments = new ArrayList<>();
-        if (comment.getSubCommentList() != null) {
-            for (Comment c : comment.getSubCommentList()) {
-                subComments.add(toCommentGetRes(c));
-            }
+        // 유저 프로필
+        String userPhoto = null;
+        if (comment.getUser().getFile() != null) {
+            userPhoto = comment.getUser().getFile().getUrl();
+        }
+
+        // 댓글 삭제 여부
+        boolean isDeleted;
+        if (comment.getState().equals(CommentState.DELETED)) {
+            isDeleted = true;
+        } else {
+            isDeleted = false;
+        }
+
+        // 내가 쓴 댓글인지 여부
+        boolean isMyComment;
+        if (Objects.equals(comment.getUser().getId(), loginUserId)) {
+            isMyComment = true;
+        } else {
+            isMyComment = false;
         }
 
         return CommentResponseDTO.commentGetRes.builder()
@@ -58,12 +76,16 @@ public class CommentConverter {
                 .content(comment.getContent())
                 .userId(comment.getUser().getId())
                 .userNickname(comment.getUser().getNickname())
-                .userImage(comment.getUser().getImage())
+                .userImage(userPhoto)
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
                 .parentCommentId(parentCommentId)
                 .commentLike(comment.getCommentLikeList().size())
                 .childrenComments(subComments)
+                .isDeleted(isDeleted)
+                .isMyComment(isMyComment)
+                .isPushedLike(isPushedLike)
+                .isOwnerOfPost(isOwnerOfPost)
                 .build();
     }
 
