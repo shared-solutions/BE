@@ -114,4 +114,26 @@ public class MyPageConverter {
                 .inquiry_id(inquiry.getId())
                 .build();
     }
+
+    public static MyPageResponseDTO.SavedPostCategoryDetailRes toSavedPostCategoryDetailRes(Post post){
+        long diffTime = post.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.SECONDS); // now보다 이후면 +, 전이면 -
+        diffTime = diffTime / SECOND;
+        diffTime = diffTime / MINUTE;
+        diffTime = diffTime / HOUR;
+        return MyPageResponseDTO.SavedPostCategoryDetailRes.builder()
+                .ago(diffTime)
+                .title(post.getTitle())
+                .content(post.getContent())
+                .postLike(post.getPostLikeList().size())
+                .comment(post.getCommentList().size())
+                .build();
+    }
+
+    public static MyPageResponseDTO.SavedPostCategoryDetailListRes toSavedPostCategoryDetailListRes(Page<Post> postList, Category category){
+        List<MyPageResponseDTO.SavedPostCategoryDetailRes> postCategoryDetailResList = postList.stream().map(MyPageConverter::toSavedPostCategoryDetailRes).collect(Collectors.toList());
+        return MyPageResponseDTO.SavedPostCategoryDetailListRes.builder()
+                .name(category.getName())
+                .postList(postCategoryDetailResList)
+                .build();
+    }
 }

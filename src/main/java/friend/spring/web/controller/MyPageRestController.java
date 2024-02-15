@@ -235,4 +235,26 @@ public class MyPageRestController {
         Inquiry inquiry = myPageService.createInquiry(userId, myInquiryReq);
         return ApiResponse.onSuccess(MyPageConverter.toMyInquiryRes(inquiry));
     }
+
+    @GetMapping(value = "/post/{category-id}")
+    @Operation(summary = "사용자 글 카테고리 상세보기 조회 API", description = "카테고리별로 상세화면을 조회하는 API입니다. ex) /user/my-page/post/{category-id}")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
+            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)"),
+            @Parameter(name = "category-id", description = "path variable - 카테고리 아이디"),
+    })
+    public ApiResponse<MyPageResponseDTO.SavedPostCategoryDetailListRes> GetUserCategoryDetail(
+            @RequestHeader(name = "atk") String atk,
+            @PathVariable("category-id") Long categoryId,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            HttpServletRequest request){
+        Long userId = jwtTokenService.JwtToId(request);
+        Page<Post> categoryDetailList = myPageService.getCategoryDetailList(userId, categoryId, page);
+        Category category = myPageService.getCategory(categoryId);
+        return ApiResponse.onSuccess(MyPageConverter.toSavedPostCategoryDetailListRes(categoryDetailList, category));
+    }
 }
