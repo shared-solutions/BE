@@ -24,7 +24,7 @@ public class SseConverter {
                 .alarmContent(alarmContent)
                 .commentContent(comment.getContent())
                 .createdAt(comment.getCreatedAt())
-                .alarmType(AlarmType.COMMENT.toString())
+                .alarmType(alarmType.toString())
                 .postId(comment.getPost().getId())
                 .commentId(comment.getId())
                 .build();
