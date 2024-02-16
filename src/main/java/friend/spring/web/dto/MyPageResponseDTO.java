@@ -99,4 +99,23 @@ public class MyPageResponseDTO {
     public static class MyInquiryRes{
         Long inquiry_id;
     }
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SavedPostCategoryDetailRes{
+        Long ago;
+        String title;
+        String content;
+        Integer postLike;
+        Integer comment;
+    }
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SavedPostCategoryDetailListRes{
+        String name;
+        List<SavedPostCategoryDetailRes> postList;
+    }
 }

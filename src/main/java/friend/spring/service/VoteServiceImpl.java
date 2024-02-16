@@ -108,9 +108,9 @@ public class VoteServiceImpl implements VoteService{
         Post gaugePost=optionalPost.get();
         Integer currentGauge=gaugePost.getGaugePoll().getGauge();
         Integer engagedUser=gaugePost.getGaugePoll().getGaugeVoteList().size();
-        gaugePost.getGaugePoll().setGauge((currentGauge+request.getValue())/engagedUser);
-
-
+        int result1=(int)Math.round((currentGauge*(engagedUser-1.0)+value)/(engagedUser));
+        Integer result=(Integer)result1;
+        gaugePost.getGaugePoll().setGauge(result);
         return gaugeVoteRepository.save(newGaugeVote);
     }
     @Override

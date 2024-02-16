@@ -147,7 +147,7 @@ public class UserRestController {
         System.out.println("비밀번호 재설정 인증 요청이 들어옴");
         System.out.println("비밀번호 재설정 인증 이메일 :"+emailDto.getEmail());
 
-        String code = mailService.joinEmail(emailDto.getEmail());
+        String code = mailService.passwordEmail(emailDto.getEmail());
         return ApiResponse.onSuccess(UserConverter.toEmailSendRes(code));
     }
     @PostMapping("/passwordMailauthCheck")//이메일 코드 확인
