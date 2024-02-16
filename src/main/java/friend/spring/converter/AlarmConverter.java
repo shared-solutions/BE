@@ -15,24 +15,30 @@ public class AlarmConverter {
 
     //알림
     public static AlarmResponseDTO.AlarmResDTO toAlarmResDTO(Alarm alarm){
-        String userPhoto = null;
-        if (alarm.getUser().getFile() != null) {
-            userPhoto = alarm.getUser().getFile().getUrl();
-        }
-
         Long commentId = null;
+        String commentContent = null;
+        String userNickname = null;
+        String userPhoto = null;
         if (alarm.getComment() != null) {
             commentId = alarm.getComment().getId();
+            commentContent = alarm.getComment().getContent();
+            userNickname = alarm.getComment().getUser().getNickname();
+            if (alarm.getComment().getUser().getFile() != null) {
+                userPhoto = alarm.getComment().getUser().getFile().getUrl();
+            }
         }
 
         return AlarmResponseDTO.AlarmResDTO.builder()
-                .userNickname(alarm.getUser().getNickname())
+                .alarmId(alarm.getId())
+                .userNickname(userNickname)
                 .userPhoto(userPhoto)
                 .alarmType(alarm.getType().toString())
                 .alarmContent(alarm.getContent())
                 .postId(alarm.getPost().getId())
                 .commentId(commentId)
+                .commentContent(commentContent)
                 .createdAt(alarm.getCreatedAt())
+                .read(alarm.getRead())
                 .build();
     }
 
