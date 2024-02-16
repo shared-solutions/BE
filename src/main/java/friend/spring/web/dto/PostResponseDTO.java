@@ -76,7 +76,11 @@ public class PostResponseDTO {
         String content;
         LocalDateTime uploadDate;
         List<PollOptionDTO.PollOptionRes> pollOption;
+        List<PollOptionDTO.PollOptionRes> topCandidate;
         List<PollOptionDTO.PollOptionRes> userVote;
+        List<Integer> userVotePercent;
+        List<Integer> topCandidatePercent;
+        List<Integer> allCandidatePercent;
         String pollTitle; //게이지투표만 해당(게이지 투표 이름)
         Integer gauge;
         Integer like;
