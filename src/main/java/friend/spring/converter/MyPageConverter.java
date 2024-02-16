@@ -1,9 +1,6 @@
 package friend.spring.converter;
 
-import friend.spring.domain.Category;
-import friend.spring.domain.Inquiry;
-import friend.spring.domain.Post;
-import friend.spring.domain.User;
+import friend.spring.domain.*;
 import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.web.dto.MyPageRequestDTO;
 import friend.spring.web.dto.MyPageResponseDTO;
@@ -113,5 +110,66 @@ public class MyPageConverter {
         return MyPageResponseDTO.MyInquiryRes.builder()
                 .inquiry_id(inquiry.getId())
                 .build();
+    }
+
+    public static MyPageResponseDTO.SavedPostCategoryDetailRes toSavedPostCategoryDetailRes(Post post){
+        long diffTime = post.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.SECONDS); // now보다 이후면 +, 전이면 -
+        diffTime = diffTime / SECOND;
+        diffTime = diffTime / MINUTE;
+        diffTime = diffTime / HOUR;
+        return MyPageResponseDTO.SavedPostCategoryDetailRes.builder()
+                .ago(diffTime)
+                .title(post.getTitle())
+                .content(post.getContent())
+                .postLike(post.getPostLikeList().size())
+                .comment(post.getCommentList().size())
+                .build();
+    }
+
+    public static MyPageResponseDTO.SavedPostCategoryDetailListRes toSavedPostCategoryDetailListRes(Page<Post> postList, Category category){
+        List<MyPageResponseDTO.SavedPostCategoryDetailRes> postCategoryDetailResList = postList.stream().map(MyPageConverter::toSavedPostCategoryDetailRes).collect(Collectors.toList());
+        return MyPageResponseDTO.SavedPostCategoryDetailListRes.builder()
+                .name(category.getName())
+                .postList(postCategoryDetailResList)
+                .build();
+    }
+
+    public static MyPageResponseDTO.NoticeRes toNoticeRes(Notice notice){
+        long diffTime = notice.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.SECONDS); // now보다 이후면 +, 전이면 -
+        diffTime = diffTime / SECOND;
+        diffTime = diffTime / MINUTE;
+        diffTime = diffTime / HOUR;
+        String adminImage = null;
+        if (notice.getUser().getFile() != null){
+            adminImage = notice.getUser().getFile().getUrl();
+        }
+        return MyPageResponseDTO.NoticeRes.builder()
+                .adminImage(adminImage)
+                .ago(diffTime)
+                .title(notice.getTitle())
+                .content(notice.getContent())
+                .build();
+    }
+
+    public static MyPageResponseDTO.NoticeListRes toNoticeListRes(Page<Notice> noticeList){
+        List<MyPageResponseDTO.NoticeRes> noticeResList = noticeList.stream().map(MyPageConverter::toNoticeRes).collect(Collectors.toList());
+        return MyPageResponseDTO.NoticeListRes.builder()
+                .noticeList(noticeResList)
+                .build();
+    }
+
+    public static MyPageResponseDTO.NoticeDetailRes toNoticeDetailRes(Notice notice){
+        String adminImage = null;
+        if (notice.getUser().getFile() != null){
+            adminImage = notice.getUser().getFile().getUrl();
+        }
+        return MyPageResponseDTO.NoticeDetailRes.builder()
+                .adminImage(adminImage)
+                .adminName(notice.getUser().getNickname())
+                .createdAt(notice.getCreatedAt())
+                .content(notice.getContent())
+                .view(notice.getView())
+                .build();
+
     }
 }

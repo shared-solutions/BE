@@ -29,6 +29,7 @@ public enum ErrorStatus implements BaseErrorCode {
     PASSWORD_INCORRECT(HttpStatus.NOT_FOUND, "USER4008", "비밀번호가 틀렸습니다."),
     PASSWORD_CHECK_INCORRECT(HttpStatus.NOT_FOUND, "USER4009", "확인 비밀번호가 일치하지 않습니다."),
     RTK_INCORREXT(HttpStatus.UNAUTHORIZED,"USER4100","RefreshToken값을 확인해주세요."),
+    NOT_ADMIN(HttpStatus.BAD_REQUEST, "USER4101", "관리자가 아닙니다."),
 
     // Auth 관련
     AUTH_EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH_4101", "토큰이 만료되었습니다."),
@@ -72,6 +73,9 @@ public enum ErrorStatus implements BaseErrorCode {
     // 알림 관련 응답
     ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "ALARM4001", "알림이 없습니다"),
 
+
+    // 공지사항 관련 응답
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICE4001", "공지사항이 없습니다.")
     ;
 
     private final HttpStatus httpStatus;

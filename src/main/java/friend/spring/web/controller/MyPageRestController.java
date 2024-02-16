@@ -3,10 +3,7 @@ package friend.spring.web.controller;
 import friend.spring.apiPayload.ApiResponse;
 import friend.spring.converter.CommentConverter;
 import friend.spring.converter.MyPageConverter;
-import friend.spring.domain.Category;
-import friend.spring.domain.Inquiry;
-import friend.spring.domain.Post;
-import friend.spring.domain.User;
+import friend.spring.domain.*;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.service.*;
 import friend.spring.web.dto.CommentResponseDTO;
@@ -234,5 +231,59 @@ public class MyPageRestController {
         Long userId = jwtTokenService.JwtToId(request);
         Inquiry inquiry = myPageService.createInquiry(userId, myInquiryReq);
         return ApiResponse.onSuccess(MyPageConverter.toMyInquiryRes(inquiry));
+    }
+
+    @GetMapping(value = "/post/{category-id}")
+    @Operation(summary = "사용자 글 카테고리 상세보기 조회 API", description = "카테고리별로 상세화면을 조회하는 API입니다. ex) /user/my-page/post/{category-id}")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4004",description = "NOT_FOUND, 글에 대한 스크랩 데이터를 찾을 수 없습니다."),
+
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
+            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)"),
+            @Parameter(name = "category-id", description = "path variable - 카테고리 아이디"),
+    })
+    public ApiResponse<MyPageResponseDTO.SavedPostCategoryDetailListRes> GetUserCategoryDetail(
+            @RequestHeader(name = "atk") String atk,
+            @PathVariable("category-id") Long categoryId,
+            @RequestParam(name = "page", defaultValue = "0") Integer page,
+            HttpServletRequest request){
+        Long userId = jwtTokenService.JwtToId(request);
+        Page<Post> categoryDetailList = myPageService.getCategoryDetailList(userId, categoryId, page);
+        Category category = myPageService.getCategory(categoryId);
+        return ApiResponse.onSuccess(MyPageConverter.toSavedPostCategoryDetailListRes(categoryDetailList, category));
+    }
+
+    @GetMapping(value = "/setting/notice")
+    @Operation(summary = "공지사항 리스트 조회 API", description = "전체 공지사항의 리스트를 조회하는 API입니다. ex) /user/my-page/setting/notice")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "NOTICE4001",description = "NOT_FOUND, 공지사항이 없습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)"),
+    })
+    public ApiResponse<MyPageResponseDTO.NoticeListRes> getNoticeList(
+            @RequestParam(name = "page", defaultValue = "0") Integer page){
+        Page<Notice> noticeList = myPageService.getNoticeList(Long.parseLong("30"), page);
+        return ApiResponse.onSuccess(MyPageConverter.toNoticeListRes(noticeList));
+    }
+
+    @GetMapping(value = "/setting/notice/{notice-id}")
+    @Operation(summary = "공지사항 상세 조회 API", description = "전체 공지사항 상세내용을 조회하는 API입니다. ex) /user/my-page/setting/notice/{notice-id}")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "NOTICE4001",description = "NOT_FOUND, 공지사항이 없습니다."),
+    })
+    @Parameters({
+    })
+    public ApiResponse<MyPageResponseDTO.NoticeDetailRes> getNoticeDetail(
+            @PathVariable("notice-id") Long noticeId
+            ){
+        Notice noticeDetail = myPageService.getNoticeDetail(noticeId);
+        return ApiResponse.onSuccess(MyPageConverter.toNoticeDetailRes(noticeDetail));
     }
 }

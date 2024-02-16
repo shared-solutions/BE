@@ -44,4 +44,37 @@ public class AlarmRestController {
         Page<Alarm> alarmList = alarmService.getAlarmList(userId, page);
         return ApiResponse.onSuccess(AlarmConverter.toAlarmListResDTO(alarmList));
     }
+
+    // 홈 - 안 읽은 알림 존재 여부 조회
+    @GetMapping("/alarm/notReadAlarm")
+    @Operation(summary = "홈 - 안 읽은 알림 존재 여부 조회 API",description = "사용자가 안 읽은 알림이 존재하는지 여부를 조회하는 API입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공")
+    })
+    @Parameters({})
+    private ApiResponse<AlarmResponseDTO.AlarmLeftResDTO> getRemainingAlarm(
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
+    ){
+        return ApiResponse.onSuccess(alarmService.getRemainingAlarm(request));
+    }
+
+    // 알림 읽음 처리
+    @PatchMapping("/alarm/{alarm-id}")
+    @Operation(summary = "사용자 알림 읽음 처리 API",description = "사용자의 알림을 읽음 처리하는 API입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "ALARM4001",description = "NOT_FOUND, 알림을 찾을 수 없습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "alarm-id", description = "path variable - 알람 아이디"),
+    })
+    private ApiResponse<Void> editAlarmRead(
+            @PathVariable("alarm-id") Long alarmId,
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
+    ){
+        alarmService.editAlarmRead(alarmId, request);
+        return ApiResponse.onSuccess(null);
+    }
 }
