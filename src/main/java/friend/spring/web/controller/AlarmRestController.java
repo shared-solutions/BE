@@ -47,7 +47,7 @@ public class AlarmRestController {
 
     // 홈 - 안 읽은 알림 존재 여부 조회
     @GetMapping("/alarm/notReadAlarm")
-    @Operation(summary = "사용자 알림 조회 API",description = "사용자의 알림 목록을 조회하는 API입니다.")
+    @Operation(summary = "홈 - 안 읽은 알림 존재 여부 조회 API",description = "사용자가 안 읽은 알림이 존재하는지 여부를 조회하는 API입니다.")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공")
     })
