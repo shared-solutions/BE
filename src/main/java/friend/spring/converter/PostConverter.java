@@ -835,12 +835,14 @@ public class PostConverter {
             }
 
         }
+        System.out.println("여기서??????");
         List<PollOptionDTO.PollOptionRes> pollOptionDTOList = post.getCardPoll().getCandidateList().stream()
                 .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
+        System.out.println("!!!!!!!!!!!!!여기아님!!!!!!!!!!!!!!!!!");
         if (!post.getCardPoll().getCardVoteList().stream().filter(cardVote -> cardVote.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty()) {
             engage = true;
         }
-//일반 투표 마감 전
+//카드 투표 마감 전
         if (post.getCardPoll().getDeadline().isAfter(LocalDateTime.now())) {
             if (engage) {
                 //투표한 후보에 대한 정보
@@ -932,7 +934,7 @@ public class PostConverter {
                     .isComment(isComment)
                     .build();
         }
-//일반 투표 마감 후
+//카드 투표 마감 후
         //투표한 후보에 대한 정보
         Set<Long> selectedOptionIds = post.getCardPoll().getCardVoteList().stream()
                 .filter(cardVote -> cardVote.getUser().getId().equals(userId))
