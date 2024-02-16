@@ -30,4 +30,15 @@ public class Alarm extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
+
+    @Column(nullable = true)
+    private Boolean read; // 해당 알림 읽었는지 여부
+
+    public void setRead(Boolean read) {
+        this.read = read;
+    }
 }
