@@ -1,9 +1,6 @@
 package friend.spring.service;
 
-import friend.spring.domain.Category;
-import friend.spring.domain.Inquiry;
-import friend.spring.domain.Post;
-import friend.spring.domain.User;
+import friend.spring.domain.*;
 import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.web.dto.MyPageRequestDTO;
 import org.springframework.data.domain.Page;
@@ -36,4 +33,10 @@ public interface MyPageService {
     Page<Post> getCategoryDetailList(Long userId, Long categoryId, Integer page);
 
     Category getCategory(Long categoryId);
+
+    Page<Notice> getNoticeList(Long userid, Integer page);
+
+    User checkAdmin(Long adminId);
+
+    Notice getNoticeDetail(Long noticeId);
 }

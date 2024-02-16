@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -117,5 +118,36 @@ public class MyPageResponseDTO {
     public static class SavedPostCategoryDetailListRes{
         String name;
         List<SavedPostCategoryDetailRes> postList;
+    }
+
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class NoticeListRes{
+        List<NoticeRes> noticeList;
+    }
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class NoticeRes{
+        String adminImage;
+        Long ago;
+        String title;
+        String content;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class NoticeDetailRes{
+        String adminImage;
+        String adminName;
+        LocalDateTime createdAt;
+        String content;
+        Integer view;
     }
 }
