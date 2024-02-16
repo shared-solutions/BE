@@ -27,7 +27,6 @@ public class KakaoAuthProvider {
     private final PrincipalDetailService principalDetailService;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-//    private final RefreshTokenService refreshTokenService;
 
     @Value("${kakao.auth.client}")
     private String client;
