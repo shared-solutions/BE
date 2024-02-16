@@ -3,29 +3,26 @@ package friend.spring.service;
 import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.CommentHandler;
+import friend.spring.converter.AlarmConverter;
 import friend.spring.converter.CommentConverter;
-import friend.spring.domain.Comment;
-import friend.spring.domain.Point;
-import friend.spring.domain.Post;
-import friend.spring.domain.User;
+import friend.spring.converter.SseConverter;
+import friend.spring.domain.*;
+import friend.spring.domain.enums.AlarmType;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.repository.*;
 import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
+import friend.spring.web.dto.SseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static friend.spring.apiPayload.code.status.ErrorStatus.*;
 
@@ -40,9 +37,11 @@ public class CommentServiceImpl implements CommentService {
     private final CommentLikeRepository commentLikeRepository;
     private final CommentChoiceRepository commentChoiceRepository;
     private final PointRepository pointRepository;
+    private final AlarmRepository alarmRepository;
     private final UserService userService;
     private final PostService postService;
     private final JwtTokenProvider jwtTokenProvider;
+    private final SseService notificationService;
 
     @Override
     public void checkComment(Boolean flag) {
@@ -101,18 +100,43 @@ public class CommentServiceImpl implements CommentService {
         User user = optionalUser.get();
 
         // 대댓글인 경우
+        boolean isReplyComment = false;
         if (requestBody.getParentId() != null) {
+            isReplyComment = true;
             Optional<Comment> optionalParentComment = commentRepository.findById(requestBody.getParentId());
             if (optionalParentComment.isEmpty()) {
                 this.checkComment(false);
+            }
+
+            // 댓글 소속이 글과 일치하는지 확인
+            if (!Objects.equals(optionalParentComment.get().getPost().getId(), post.getId())) {
+                throw new CommentHandler(COMMENT_POST_NOT_MATCH);
             }
 
             parentComment = optionalParentComment.get();
         }
 
         Comment comment = CommentConverter.toComment(requestBody, post, user, parentComment);
+        commentRepository.save(comment);
 
-        return commentRepository.save(comment);
+        // 알림 ResponseDTO 생성
+        SseResponseDTO.CommentCreateResDTO commentCreateResDTO;
+
+        // 필수) 해당 댓글이 있는 글 주인에게 알림 생성
+        commentCreateResDTO = SseConverter.toCommentCreateResDTO(comment, AlarmType.COMMENT);
+        Alarm newAlarm = AlarmConverter.toAlarm(commentCreateResDTO.getAlarmContent(), AlarmType.COMMENT, post, comment.getPost().getUser(), comment);
+        alarmRepository.save(newAlarm);
+        notificationService.customNotify(comment.getPost().getUser().getId(), commentCreateResDTO, comment.getContent(), AlarmType.COMMENT.toString());
+
+        // 옵션) 해당 댓글이 대댓글인 경우, 루트 댓글 주인에게 알림 생성
+        if (isReplyComment) {
+            commentCreateResDTO = SseConverter.toCommentCreateResDTO(comment, AlarmType.REPLY_COMMENT);
+            newAlarm = AlarmConverter.toAlarm(commentCreateResDTO.getAlarmContent(), AlarmType.REPLY_COMMENT, post, comment.getPost().getUser(), comment);
+            alarmRepository.save(newAlarm);
+            notificationService.customNotify(comment.getParentComment().getUser().getId(), commentCreateResDTO, comment.getContent(), AlarmType.REPLY_COMMENT.toString());
+        }
+
+        return comment;
     }
 
     @Override
