@@ -1,14 +1,12 @@
 package friend.spring.web.dto;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
-import friend.spring.validation.annotation.TitleTextLimit;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.*;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,6 +25,9 @@ public class PostResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PostDetailResponse {
+        Boolean myPost;
+        Boolean OnGoing;
+        Boolean isVoted; //투표글에서만 사용, 후기글에서는 null
         PostType postType;
         PostVoteType postVoteType;
         String nickname;
@@ -34,24 +35,26 @@ public class PostResponseDTO {
         LocalDateTime createdAt;
         String title;
         String content;
-        Boolean OnGoing;
-        Boolean isVoted; //투표글에서만 사용, 후기글에서는 null
         List<FileDTO> file; // 첨부파일 이미지 리스트
         String pollTitle; // 투표글에서만 사용, 후기글에서는 null
         List<PollOptionDTO.PollOptionRes> pollOption; // 투표글에서만 사용, 후기글에서는 null
-        Integer gauge; // 게이지 투표글에서만 사용, 후기글에서는 null
+        List<PollOptionDTO.PollOptionRes> topCandidate;
+        List<PollOptionDTO.PollOptionRes> userVote;// 투표글에서 사용자가 투표완료시 투표한 후보
+        List<Integer> userVotePercent; // 투표글에서 사용자가 투표 완료시 투표한 후보 선택 퍼센트
+        List<Integer> topCandidatePercent;
+        List<Integer> allCandidatePercent;
+        List<String> userVoteResult; // 투표글에서 사용자가 투표 완료시 투표인원/총인원
+        List<String> topVoteResult;
+        Integer userGauge; // 게이지 투표글에서만 사용, 후기글에서는 null
+        Integer totalGauge;
         Integer point; // 투표글에서만 사용, 후기글에서는 null
         ParentPostDTO parentPost; // 후기글에서만 사용, 일반글에서는 null
         LocalDateTime deadline; // 투표글에서만 사용, 후기글에서는 null
-        List<PollOptionDTO.PollOptionRes> userVote; // 투표글에서 사용자가 투표완료시 투표한 후보
-        List<Integer> percent; // 투표글에서 사용자가 투표 완료시 투표한 후보 선택 퍼센트
-        List<String> voteResult; // 투표글에서 사용자가 투표 완료시 투표인원/총인원
         Integer view;
         Integer like;
         Integer comment;
         Boolean isLike;
         Boolean isComment;
-        Boolean myPost;
 
     }
 

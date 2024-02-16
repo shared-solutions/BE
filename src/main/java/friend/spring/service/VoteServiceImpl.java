@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +37,10 @@ public class VoteServiceImpl implements VoteService{
 
         Post post=postRepository.findById(PostId)
                 .orElseThrow(()-> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+
+        if(post.getGeneralPoll().getGeneralVoteList().stream().anyMatch(generalVote -> generalVote.getUser().getId().equals(userId))){
+            throw new GeneralException(ErrorStatus.ALREADY_VOTE);
+        }
 
         General_poll generalPoll=post.getGeneralPoll();
         newGeneralVote.setGeneralPoll(generalPoll);
@@ -83,8 +88,13 @@ public class VoteServiceImpl implements VoteService{
         Post post=postRepository.findById(PostId)
                 .orElseThrow(()-> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
+        if(post.getGaugePoll().getGaugeVoteList().stream().anyMatch(gaugeVote -> gaugeVote.getUser().getId().equals(userId))){
+            throw new GeneralException(ErrorStatus.ALREADY_VOTE);
+        }
         Gauge_poll gaugePoll=post.getGaugePoll();
         newGaugeVote.setGaugePoll(gaugePoll);
+
+
 
         //나노초 단위로 마감 여부 확인
         LocalDateTime now = LocalDateTime.now();
@@ -123,7 +133,9 @@ public class VoteServiceImpl implements VoteService{
 
         Post post=postRepository.findById(PostId)
                 .orElseThrow(()-> new GeneralException(ErrorStatus.POST_NOT_FOUND));
-
+        if(post.getCardPoll().getCardVoteList().stream().anyMatch(cardVote -> cardVote.getUser().getId().equals(userId))){
+            throw new GeneralException(ErrorStatus.ALREADY_VOTE);
+        }
         Card_poll cardPoll=post.getCardPoll();
         newCardVote.setCardPoll(cardPoll);
 
