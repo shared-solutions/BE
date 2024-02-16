@@ -169,5 +169,19 @@ public class MyPageServiceImpl implements MyPageService{
         return inquiryRepository.save(inquiry);
     }
 
+    @Override
+    public Page<Post> getCategoryDetailList(Long userId, Long categoryId, Integer page) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_CATGORY_NOT_FOUND));
+        Page<Post> detailList = postRepository.findCategoryDetail(userId, categoryId, PageRequest.of(page, 10));
+        return detailList;
+    }
+
+    @Override
+    public Category getCategory(Long categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_CATGORY_NOT_FOUND));
+        return category;
+    }
+
 
 }

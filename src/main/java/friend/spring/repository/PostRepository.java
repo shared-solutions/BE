@@ -4,6 +4,7 @@ import friend.spring.domain.Category;
 import friend.spring.domain.Post;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import friend.spring.domain.User;
 import org.springframework.data.domain.Page;
@@ -23,4 +24,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "SELECT * FROM post WHERE post.created_at >= DATE_ADD(now(), INTERVAL -7 DAY) ORDER BY post.point DESC", nativeQuery = true)
     Page<Post> findBestPosts(Pageable pageable);
     Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
+    @Query(value = "SELECT p FROM Post p JOIN p.postScrapList s JOIN p.category c WHERE s.user.id = :userId and c.id = :categoryId")
+    Page<Post> findCategoryDetail(Long userId, Long categoryId, PageRequest pageRequest);
 }

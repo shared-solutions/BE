@@ -33,4 +33,7 @@ public interface MyPageService {
     User editUserSecurity(Long userId, MyPageRequestDTO.ProfileEditSecurityReq profileEditSecurityReq);
 
     Inquiry createInquiry(Long userId, MyPageRequestDTO.MyInquiryReq myInquiryReq);
+    Page<Post> getCategoryDetailList(Long userId, Long categoryId, Integer page);
+
+    Category getCategory(Long categoryId);
 }
