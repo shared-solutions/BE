@@ -25,8 +25,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findBestPosts(Pageable pageable);
     Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
-    @Query(value = "SELECT * FROM post p join post_scrap ps ON p.user_id = ps.user_id join category c on p.category_id = c.id", nativeQuery = true)
-    Page<Post> findCategoryDetail(@Param("user_id") Long userId,
-                                  @Param("category_id") Long categoryId,
-                                  PageRequest pageRequest);
+    @Query(value = "SELECT p FROM Post p JOIN p.postScrapList s JOIN p.category c WHERE s.user.id = :userId and c.id = :categoryId")
+    Page<Post> findCategoryDetail(Long userId, Long categoryId, PageRequest pageRequest);
 }
