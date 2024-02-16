@@ -1,5 +1,5 @@
 package friend.spring.domain.enums;
 
-public enum RoleType {
-    USER, ADMIN
+public enum SocialType {
+    KAKAO
 }

@@ -166,4 +166,10 @@ public class JwtTokenProvider {
 
         return userIdx;
     }
+//    public String getemail(String token) {
+//        return getClaims(token).getBody().get("id", String.class);
+//    }
+//    private Jws<Claims> getClaims(String token) {
+//        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+//    }
 }

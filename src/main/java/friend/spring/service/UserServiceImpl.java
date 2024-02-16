@@ -161,7 +161,7 @@ public class UserServiceImpl implements UserService {
             // Refresh Token 삭제
             redisTemplate.delete("RT:" + user.getEmail());
         }
-        // 해당 AccessToken 유효시간 가지고 와서 BlackList 로 저장하기
+        // 해당 AccessToken 유효시간 가지고 와서 저장하기
         String accessToken = jwtTokenProvider.resolveAccessToken(request);
         Long expiration = jwtTokenProvider.getExpireTime(accessToken).getTime();
         // Redis 에 --accesstoken--(key) : logout(value) 로 저장, token 만료시간 지나면 자동 삭제

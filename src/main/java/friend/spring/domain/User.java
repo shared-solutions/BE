@@ -119,6 +119,10 @@ public class User extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Gauge_vote> gaugeVoteList = new ArrayList<>();
 
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Inquiry> InquiryList = new ArrayList<>();
+
     @OneToOne(mappedBy = "user")
     @JoinColumn(name = "file_id")
     private File file;
@@ -169,5 +173,9 @@ public class User extends BaseEntity implements UserDetails {
     public void setNickname(String nickname){ this.nickname = nickname; }
 
     public void setEmail(String email){this.email = email;}
+
+    public void setPhone(String  phone){this.phone = phone;}
+
+    public void setPassword(String password){this.password = password;}
 }
 

@@ -62,4 +62,9 @@ mail:
   AdminMail:
     id: ${gmail.username}
     password: ${gmail.password}
+kakao:
+  auth:
+    client: ${KAKAO_AUTH_CLIENT}
+    redirect-uri: ${KAKAO_AUTH_REDIRECT_URI}
+    secret_key: ${KAKAO_AUTH_SECRET_KEY}
 

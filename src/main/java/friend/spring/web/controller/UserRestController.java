@@ -7,20 +7,19 @@ import friend.spring.domain.Comment;
 import friend.spring.domain.Level;
 import friend.spring.domain.Post;
 import friend.spring.domain.User;
+import friend.spring.service.AuthService;
 import friend.spring.repository.UserRepository;
 import friend.spring.service.CommentService;
 import friend.spring.service.EmailService;
 import friend.spring.service.PostService;
 import friend.spring.service.UserService;
 import friend.spring.service.*;
-import friend.spring.web.dto.AlarmResponseDTO;
 import friend.spring.web.dto.TokenDTO;
 import friend.spring.web.dto.UserRequestDTO;
 import friend.spring.web.dto.UserResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.annotations.Api;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,7 +41,7 @@ public class UserRestController {
     private final PostService postService;
     private final CommentService commentService;
     private final JwtTokenService jwtTokenService;
-
+    private final AuthService authService;
   
     //마이 페이지 조회
     @GetMapping("/my-page")
@@ -138,6 +137,30 @@ public class UserRestController {
        return ApiResponse.onSuccess(UserConverter.joinResultDTO(user));
 
     }
+    @PostMapping ("/passwordMailSend")//비밀번호 재설정 인증 코드 전송
+    @Operation(summary = "비밀번호 재설정 인증 코드 전송 API",description = "비밀번호 재설정 인증 코드 전송하는 API입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+    })
+    @Parameters({ })
+    public ApiResponse<UserResponseDTO.EmailSendRes> mailSend(@RequestBody @Valid UserRequestDTO.PasswordEmailSendReq emailDto){
+        System.out.println("비밀번호 재설정 인증 요청이 들어옴");
+        System.out.println("비밀번호 재설정 인증 이메일 :"+emailDto.getEmail());
+
+        String code = mailService.passwordEmail(emailDto.getEmail());
+        return ApiResponse.onSuccess(UserConverter.toEmailSendRes(code));
+    }
+    @PostMapping("/passwordMailauthCheck")//이메일 코드 확인
+    @Operation(summary = "비밀번호 재설정 코드 확인 API",description = "비밀번호 재설정 코드 확인하는 API입니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005",description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
+    })
+    @Parameters({ })
+    public ApiResponse<Void> mailauthCheck(@RequestBody @Valid UserRequestDTO.PasswordEmailSendCheckReq emailSendCheckReq){
+        mailService.CheckAuthNum(emailSendCheckReq.getEmail(), emailSendCheckReq.getAuthNum());
+        return ApiResponse.onSuccess(null);
+    }
 
     //로그인
     @PostMapping("/login")
@@ -190,6 +213,16 @@ public class UserRestController {
         Long userId=jwtTokenService.JwtToId(request2);
         Integer point = userService.pointCheck(userId);
         return ApiResponse.onSuccess(UserConverter.toPointViewResDTO(point));
+    }
+
+    @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 및 회원 가입을 진행")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+    })
+    @GetMapping("/login/kakao")
+    public ApiResponse<List<TokenDTO>> kakaoLogin(@RequestParam("code") String code) throws GeneralException {
+
+        return ApiResponse.onSuccess(authService.kakaoLogin(code));
     }
 }
 

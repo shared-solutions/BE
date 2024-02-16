@@ -75,4 +75,28 @@ public class MyPageResponseDTO {
     public static class ProfileEditEmailRes{
         String changeEmail;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProfileEditPhoneRes{
+        String phone;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ProfileEditPasswordRes{
+        String changePassword;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MyInquiryRes{
+        Long inquiry_id;
+    }
 }
