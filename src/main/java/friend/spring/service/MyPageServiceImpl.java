@@ -5,6 +5,7 @@ import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.PostHandler;
 import friend.spring.converter.MyPageConverter;
 import friend.spring.domain.*;
+import friend.spring.domain.enums.RoleType;
 import friend.spring.domain.enums.S3ImageType;
 import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.repository.*;
@@ -44,6 +45,7 @@ public class MyPageServiceImpl implements MyPageService{
     private final JwtTokenProvider jwtTokenProvider;
     private final S3Service s3Service;
     private final InquiryRepository inquiryRepository;
+    private final NoticeRepository noticeRepository;
 
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -181,6 +183,28 @@ public class MyPageServiceImpl implements MyPageService{
     public Category getCategory(Long categoryId) {
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_CATGORY_NOT_FOUND));
         return category;
+    }
+
+    @Override
+    public Page<Notice> getNoticeList(Long userId, Integer page) {
+        User admin = checkAdmin(userId);
+        Page<Notice> noticeList = noticeRepository.findAllByUser(admin, PageRequest.of(page, 10));
+        return noticeList;
+    }
+
+    @Override
+    public User checkAdmin(Long adminId) {
+        User user = userRepository.findById(adminId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
+        if (user.getRole() == RoleType.USER){
+            throw new GeneralException(ErrorStatus.NOT_ADMIN);
+        }
+        return user;
+    }
+
+    @Override
+    public Notice getNoticeDetail(Long noticeId) {
+        Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new GeneralException(ErrorStatus.NOTICE_NOT_FOUND));
+        return notice;
     }
 
 
