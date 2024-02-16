@@ -1,6 +1,5 @@
 package friend.spring.web.dto;
 
-import friend.spring.domain.enums.AlarmType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -31,6 +30,7 @@ public class AlarmResponseDTO {
         String commentContent;
         Long postId;
         Long commentId;
+        Boolean read;
         LocalDateTime createdAt;
     }
 
