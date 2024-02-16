@@ -659,6 +659,8 @@ public class PostConverter {
                             })
                             .collect(Collectors.toList());
                     return PostResponseDTO.PollPostGetResponse.builder()
+                            .onGoing(true)
+                            .isVoted(true)
                             .postId(post.getId())
                             .postVoteType(PostVoteType.GENERAL)
                             .nickname(post.getUser().getNickname())
@@ -680,6 +682,8 @@ public class PostConverter {
 
                 }
                 return PostResponseDTO.PollPostGetResponse.builder()
+                        .onGoing(true)
+                        .isVoted(false)
                         .postId(post.getId())
                         .postVoteType(PostVoteType.GENERAL)
                         .nickname(post.getUser().getNickname())
@@ -758,6 +762,8 @@ public class PostConverter {
                     .collect(Collectors.toList());
             if (engage) {
                 return PostResponseDTO.PollPostGetResponse.builder()
+                        .onGoing(false)
+                        .isVoted(true)
                         .postId(post.getId())
                         .postVoteType(PostVoteType.GENERAL)
                         .nickname(post.getUser().getNickname())
@@ -779,6 +785,8 @@ public class PostConverter {
 
             }
             return PostResponseDTO.PollPostGetResponse.builder()
+                    .onGoing(false)
+                    .isVoted(false)
                     .postId(post.getId())
                     .postVoteType(PostVoteType.GENERAL)
                     .nickname(post.getUser().getNickname())
@@ -800,9 +808,19 @@ public class PostConverter {
             if (!post.getGaugePoll().getGaugeVoteList().stream().filter(cardVote -> cardVote.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty()) {
                 engage = true;
             }
+            Optional<Gauge_vote>userGaugeVoteOptional=post.getGaugePoll().getGaugeVoteList().stream()
+                    .filter(gaugeVote -> gaugeVote.getUser().getId().equals(userId))
+                    .findFirst();
+            Integer userGauge=null;
+            if(userGaugeVoteOptional.isPresent()){
+                userGauge=userGaugeVoteOptional.get().getValue();
+            }
             if (post.getGaugePoll().getDeadline().isAfter(LocalDateTime.now())) {
                 if (engage) {
+
                     return PostResponseDTO.PollPostGetResponse.builder()
+                            .onGoing(true)
+                            .isVoted(true)
                             .postId(post.getId())
                             .postVoteType(PostVoteType.GAUGE)
                             .nickname(post.getUser().getNickname())
@@ -811,7 +829,8 @@ public class PostConverter {
                             .content(post.getContent())
                             .uploadDate(post.getCreatedAt())
                             .pollTitle(post.getGaugePoll().getPollTitle())
-                            .gauge(post.getGaugePoll().getGauge())
+                            .userGauge(userGauge)
+                            .totalGauge(post.getGaugePoll().getGauge())
                             .like(likeCount)
                             .comment(commentCount)
                             .isLike(isLike)
@@ -819,6 +838,8 @@ public class PostConverter {
                             .build();
                 }
                 return PostResponseDTO.PollPostGetResponse.builder()
+                        .onGoing(true)
+                        .isVoted(false)
                         .postId(post.getId())
                         .postVoteType(PostVoteType.GAUGE)
                         .nickname(post.getUser().getNickname())
@@ -833,6 +854,43 @@ public class PostConverter {
                         .isComment(isComment)
                         .build();
             }
+            if (engage) {
+                return PostResponseDTO.PollPostGetResponse.builder()
+                        .onGoing(false)
+                        .isVoted(true)
+                        .postId(post.getId())
+                        .postVoteType(PostVoteType.GAUGE)
+                        .nickname(post.getUser().getNickname())
+                        .userImg(userImg)
+                        .title(post.getTitle())
+                        .content(post.getContent())
+                        .uploadDate(post.getCreatedAt())
+                        .pollTitle(post.getGaugePoll().getPollTitle())
+                        .userGauge(userGauge)
+                        .totalGauge(post.getGaugePoll().getGauge())
+                        .like(likeCount)
+                        .comment(commentCount)
+                        .isLike(isLike)
+                        .isComment(isComment)
+                        .build();
+            }
+            return PostResponseDTO.PollPostGetResponse.builder()
+                    .onGoing(false)
+                    .isVoted(false)
+                    .postId(post.getId())
+                    .postVoteType(PostVoteType.GAUGE)
+                    .nickname(post.getUser().getNickname())
+                    .userImg(userImg)
+                    .title(post.getTitle())
+                    .content(post.getContent())
+                    .uploadDate(post.getCreatedAt())
+                    .pollTitle(post.getGaugePoll().getPollTitle())
+                    .totalGauge(post.getGaugePoll().getGauge())
+                    .like(likeCount)
+                    .comment(commentCount)
+                    .isLike(isLike)
+                    .isComment(isComment)
+                    .build();
 
         }
         System.out.println("여기서??????");
@@ -899,6 +957,8 @@ public class PostConverter {
                         })
                         .collect(Collectors.toList());
                 return PostResponseDTO.PollPostGetResponse.builder()
+                        .onGoing(true)
+                        .isVoted(true)
                         .postId(post.getId())
                         .postVoteType(PostVoteType.CARD)
                         .nickname(post.getUser().getNickname())
@@ -920,6 +980,8 @@ public class PostConverter {
 
             }
             return PostResponseDTO.PollPostGetResponse.builder()
+                    .onGoing(true)
+                    .isVoted(false)
                     .postId(post.getId())
                     .postVoteType(PostVoteType.CARD)
                     .nickname(post.getUser().getNickname())
@@ -998,6 +1060,8 @@ public class PostConverter {
                 .collect(Collectors.toList());
         if (engage) {
             return PostResponseDTO.PollPostGetResponse.builder()
+                    .onGoing(false)
+                    .isVoted(true)
                     .postId(post.getId())
                     .postVoteType(PostVoteType.CARD)
                     .nickname(post.getUser().getNickname())
@@ -1019,6 +1083,8 @@ public class PostConverter {
 
         }
         return PostResponseDTO.PollPostGetResponse.builder()
+                .onGoing(false)
+                .isVoted(false)
                 .postId(post.getId())
                 .postVoteType(PostVoteType.CARD)
                 .nickname(post.getUser().getNickname())

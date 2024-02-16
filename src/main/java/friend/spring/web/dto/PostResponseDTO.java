@@ -68,6 +68,8 @@ public class PostResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PollPostGetResponse{
+        Boolean onGoing;
+        Boolean isVoted;
         Long postId;
         PostVoteType postVoteType;
         String nickname;
@@ -82,7 +84,8 @@ public class PostResponseDTO {
         List<Integer> topCandidatePercent;
         List<Integer> allCandidatePercent;
         String pollTitle; //게이지투표만 해당(게이지 투표 이름)
-        Integer gauge;
+        Integer userGauge;
+        Integer totalGauge;
         Integer like;
         Integer comment;
         Boolean isLike;
