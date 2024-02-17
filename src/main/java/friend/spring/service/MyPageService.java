@@ -39,4 +39,8 @@ public interface MyPageService {
     User checkAdmin(Long adminId);
 
     Notice getNoticeDetail(Long noticeId);
+
+    Term getTerm(Long userId);
+
+    Term getPrivacy(Long userId);
 }

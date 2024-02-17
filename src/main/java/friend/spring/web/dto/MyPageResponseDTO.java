@@ -150,4 +150,20 @@ public class MyPageResponseDTO {
         String content;
         Integer view;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class TermRes{
+        String content;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PrivacyRes{
+        String content;
+    }
 }

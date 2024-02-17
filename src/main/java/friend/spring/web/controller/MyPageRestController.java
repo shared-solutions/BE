@@ -268,7 +268,7 @@ public class MyPageRestController {
     })
     public ApiResponse<MyPageResponseDTO.NoticeListRes> getNoticeList(
             @RequestParam(name = "page", defaultValue = "0") Integer page){
-        Page<Notice> noticeList = myPageService.getNoticeList(Long.parseLong("30"), page);
+        Page<Notice> noticeList = myPageService.getNoticeList(30L, page);
         return ApiResponse.onSuccess(MyPageConverter.toNoticeListRes(noticeList));
     }
 
@@ -279,11 +279,38 @@ public class MyPageRestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "NOTICE4001",description = "NOT_FOUND, 공지사항이 없습니다."),
     })
     @Parameters({
+            @Parameter(name = "notice-id", description = "path variable - 공지사항 아이디"),
     })
     public ApiResponse<MyPageResponseDTO.NoticeDetailRes> getNoticeDetail(
             @PathVariable("notice-id") Long noticeId
             ){
         Notice noticeDetail = myPageService.getNoticeDetail(noticeId);
         return ApiResponse.onSuccess(MyPageConverter.toNoticeDetailRes(noticeDetail));
+    }
+
+    @GetMapping(value = "/setting/term")
+    @Operation(summary = "이용약관 조회 API", description = "이용약관을 조회하는 API입니다. ex) /user/my-page/setting/term")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+    })
+    @Parameters({
+    })
+    public ApiResponse<MyPageResponseDTO.TermRes> getTerm(
+    ){
+        Term term = myPageService.getTerm(30L);
+        return ApiResponse.onSuccess(MyPageConverter.toTermRes(term));
+    }
+
+    @GetMapping(value = "/setting/privacy")
+    @Operation(summary = "개인정보 처리방침 조회 API", description = "개인정보 처리방침을 조회하는 API입니다. ex) /user/my-page/setting/privacy")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
+    })
+    @Parameters({
+    })
+    public ApiResponse<MyPageResponseDTO.PrivacyRes> getPrivacy(
+    ){
+        Term term = myPageService.getPrivacy(30L);
+        return ApiResponse.onSuccess(MyPageConverter.toPrivacyRes(term));
     }
 }

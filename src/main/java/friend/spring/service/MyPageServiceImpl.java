@@ -46,6 +46,7 @@ public class MyPageServiceImpl implements MyPageService{
     private final S3Service s3Service;
     private final InquiryRepository inquiryRepository;
     private final NoticeRepository noticeRepository;
+    private final TermRepository termRepository;
 
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -205,6 +206,22 @@ public class MyPageServiceImpl implements MyPageService{
     public Notice getNoticeDetail(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(() -> new GeneralException(ErrorStatus.NOTICE_NOT_FOUND));
         return notice;
+    }
+
+    @Override
+    public Term getTerm(Long userId) {
+        User admin = checkAdmin(userId);
+        Long termId = 1L;
+        Term term = termRepository.findById(termId).get();
+        return term;
+    }
+
+    @Override
+    public Term getPrivacy(Long userId) {
+        User admin = checkAdmin(userId);
+        Long privacyId = 1L;
+        Term privacy = termRepository.findById(privacyId).get();
+        return privacy;
     }
 
 
