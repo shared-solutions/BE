@@ -23,6 +23,7 @@ public class PollOptionDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PollOptionRes {
+        private Long optionId;
         private String optionString;
         private String optionImgUrl;
     }

@@ -41,6 +41,7 @@ public class PostConverter {
             optionImgUrl = candidate.getFile().getUrl();
         }
         return PollOptionDTO.PollOptionRes.builder()
+                .optionId(candidate.getId())
                 .optionString(candidate.getName())
                 .optionImgUrl(optionImgUrl).build();
     }
