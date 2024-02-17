@@ -1,6 +1,7 @@
 package friend.spring.converter;
 
 import friend.spring.domain.Comment;
+import friend.spring.domain.Post;
 import friend.spring.domain.enums.AlarmType;
 import friend.spring.web.dto.SseResponseDTO;
 
@@ -27,6 +28,15 @@ public class SseConverter {
                 .alarmType(alarmType.toString())
                 .postId(comment.getPost().getId())
                 .commentId(comment.getId())
+                .build();
+    }
+
+    public static SseResponseDTO.VoteFinishResDTO toVoteFinishResDTO(Post post, AlarmType alarmType){
+        return SseResponseDTO.VoteFinishResDTO.builder()
+                .postId(post.getId())
+                .alarmContent(post.getContent())
+                .alarmType(alarmType.toString())
+                .createdAt(post.getCreatedAt())
                 .build();
     }
 }

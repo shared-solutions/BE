@@ -3,6 +3,7 @@ package friend.spring.service;
 import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.config.RedisUtil;
+import friend.spring.domain.Post;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -99,5 +100,16 @@ public class EmailService {
         mailSend(setFrom, toMail, title, content);
 
         return Integer.toString(authNumber);
+    }
+
+    public void voteFinishEmail(Post post){
+        String setFrom = "gominchingu@gmail.com"; // email-config에 설정한 자신의 이메일 주소를 입력
+        String toMail = post.getUser().getEmail();
+        String title = "고민친구 투표 마감 알림 이메일 입니다.";
+        String content =
+                "회원님의 고민투표" + post.getTitle() + "이 마감되었습니다." +
+                        "<br>" +
+                        "투표를 확인해보세요!";
+        mailSend(setFrom, toMail, title, content);
     }
 }
