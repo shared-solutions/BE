@@ -43,7 +43,7 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.commentGetRes toCommentGetRes(Comment comment, Long loginUserId, Boolean isPushedLike, Boolean isOwnerOfPost, List<CommentResponseDTO.commentGetRes> subComments) {
+    public static CommentResponseDTO.commentGetRes toCommentGetRes(Comment comment, Long loginUserId, Boolean isPushedLike, Boolean isOwnerOfPost, Boolean isSelected, List<CommentResponseDTO.commentGetRes> subComments) {
         Long parentCommentId = null;
         if (comment.getParentComment() != null) {
             parentCommentId = comment.getParentComment().getId();
@@ -86,6 +86,7 @@ public class CommentConverter {
                 .isMyComment(isMyComment)
                 .isPushedLike(isPushedLike)
                 .isOwnerOfPost(isOwnerOfPost)
+                .isSelected(isSelected)
                 .build();
     }
 
