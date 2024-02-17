@@ -196,9 +196,9 @@ public class CommentServiceImpl implements CommentService {
             List<CommentResponseDTO.commentGetRes> subComments = new ArrayList<>();
             if (comment.getSubCommentList() != null) {
                 for (Comment c : comment.getSubCommentList()) {
-                    Boolean isPushedLike_sub = checkIsPushedLike(comment, loginUserId);
-                    Boolean isOwnerOfPost_sub = checkIsOwnerOfPost(comment, loginUserId);
-                    CommentResponseDTO.commentGetRes subCommentGetRes = CommentConverter.toCommentGetRes(comment, loginUserId, isPushedLike_sub, isOwnerOfPost_sub, new ArrayList<>());
+                    Boolean isPushedLike_sub = checkIsPushedLike(c, loginUserId);
+                    Boolean isOwnerOfPost_sub = checkIsOwnerOfPost(c, loginUserId);
+                    CommentResponseDTO.commentGetRes subCommentGetRes = CommentConverter.toCommentGetRes(c, loginUserId, isPushedLike_sub, isOwnerOfPost_sub, new ArrayList<>());
                     subComments.add(subCommentGetRes);
                 }
             }
