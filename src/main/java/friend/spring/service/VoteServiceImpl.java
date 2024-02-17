@@ -68,7 +68,7 @@ public class VoteServiceImpl implements VoteService{
 
         user.setPoint(user.getPoint() + 5);
         Point newPoint=Point.builder()
-                .amount(user.getPoint())
+                .amount(5)
                 .content("일반 투표에 대한 "+5+" 포인트 획득")
                 .build();
         newPoint.setUser(user);
@@ -106,7 +106,7 @@ public class VoteServiceImpl implements VoteService{
 
         user.setPoint(user.getPoint() + 5);
         Point newPoint=Point.builder()
-                .amount(user.getPoint())
+                .amount(5)
                 .content("게이지 투표에 대한 "+5+" 포인트 획득")
                 .build();
         newPoint.setUser(user);
@@ -163,7 +163,7 @@ public class VoteServiceImpl implements VoteService{
 
         user.setPoint(user.getPoint() + 5);
         Point newPoint=Point.builder()
-                .amount(user.getPoint())
+                .amount(5)
                 .content("카드 투표에 대한 "+5+" 포인트 획득")
                 .build();
         newPoint.setUser(user);
