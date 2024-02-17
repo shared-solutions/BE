@@ -32,10 +32,8 @@ public class MyPageConverter {
     }
 
     public static MyPageResponseDTO.SavedPostResDTO toSavedPostResDTO(Post post){
-        long diffTime = post.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.SECONDS); // now보다 이후면 +, 전이면 -
-        diffTime = diffTime / SECOND;
-        diffTime = diffTime / MINUTE;
-        diffTime = diffTime / HOUR;
+        long diffTime = post.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.DAYS); // now보다 이후면 +, 전이면 -
+
         return MyPageResponseDTO.SavedPostResDTO.builder()
                 .ago(diffTime)
                 .title(post.getTitle())
@@ -113,10 +111,8 @@ public class MyPageConverter {
     }
 
     public static MyPageResponseDTO.SavedPostCategoryDetailRes toSavedPostCategoryDetailRes(Post post){
-        long diffTime = post.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.SECONDS); // now보다 이후면 +, 전이면 -
-        diffTime = diffTime / SECOND;
-        diffTime = diffTime / MINUTE;
-        diffTime = diffTime / HOUR;
+        long diffTime = post.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.DAYS); // now보다 이후면 +, 전이면 -
+
         return MyPageResponseDTO.SavedPostCategoryDetailRes.builder()
                 .ago(diffTime)
                 .title(post.getTitle())
@@ -135,10 +131,8 @@ public class MyPageConverter {
     }
 
     public static MyPageResponseDTO.NoticeRes toNoticeRes(Notice notice){
-        long diffTime = notice.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.SECONDS); // now보다 이후면 +, 전이면 -
-        diffTime = diffTime / SECOND;
-        diffTime = diffTime / MINUTE;
-        diffTime = diffTime / HOUR;
+        long diffTime = notice.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.DAYS); // now보다 이후면 +, 전이면 -
+
         String adminImage = null;
         if (notice.getUser().getFile() != null){
             adminImage = notice.getUser().getFile().getUrl();
