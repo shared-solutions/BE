@@ -45,6 +45,7 @@ public class CommentResponseDTO {
         Boolean isMyComment; // 내가 쓴 댓글인지 여부
         Boolean isPushedLike; // 좋아요 이미 눌렀는지 여부
         Boolean isOwnerOfPost; // 내가 쓴 글인지 여부
+        Boolean isSelected; // 채택 여부
         List<commentGetRes> childrenComments;
     }
 
