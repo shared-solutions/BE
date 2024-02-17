@@ -170,6 +170,17 @@ public class MyPageConverter {
                 .content(notice.getContent())
                 .view(notice.getView())
                 .build();
+    }
 
+    public static MyPageResponseDTO.TermRes toTermRes(Term term){
+        return MyPageResponseDTO.TermRes.builder()
+                .content(term.getTerm())
+                .build();
+    }
+
+    public static MyPageResponseDTO.PrivacyRes toPrivacyRes(Term term){
+        return MyPageResponseDTO.PrivacyRes.builder()
+                .content(term.getPrivacy())
+                .build();
     }
 }
