@@ -14,6 +14,7 @@ public class CandidateResponseDTO {
         String candidate_name; // 후보 이름
         String candidate_image; // 후보 이미지
         Double ratio; // 비율
+        Boolean mySelect; // 사용자가 투표했는지 여부
     }
 
     @Builder

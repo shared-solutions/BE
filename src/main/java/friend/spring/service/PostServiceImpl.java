@@ -4,9 +4,9 @@ import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.PostHandler;
 import friend.spring.apiPayload.handler.UserHandler;
-import friend.spring.converter.CandidateConverter;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.*;
+import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.S3ImageType;
 import friend.spring.domain.mapping.Post_like;
@@ -15,23 +15,16 @@ import friend.spring.repository.*;
 import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static friend.spring.apiPayload.code.status.ErrorStatus.*;
 import static friend.spring.domain.enums.PostType.*;
@@ -402,91 +395,32 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public Page<PostResponseDTO.PostSummaryListRes> getBestPosts(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Post> bestPostPage = postRepository.findBestPosts(pageable);
-        List<PostResponseDTO.PostSummaryListRes> postResList = getPostRes(bestPostPage);
-        return new PageImpl<>(postResList, pageable, bestPostPage.getTotalElements());
+    public PostResponseDTO.PollPostGetListDTO getBestPosts(Integer page, Integer size, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
+        LocalDateTime minusDays = LocalDateTime.now().minusDays(7); // 7일 이내
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "point"));
+        Page<Post> bestPostPage = postRepository.findByPostTypeAndStateAndCreatedAtAfter(PostType.VOTE, PostState.POSTING, minusDays, pageable);
+
+        return PostConverter.pollPostGetListDTO(bestPostPage,userId);
     }
 
     @Override
-    public Page<PostResponseDTO.PostSummaryListRes> getRecentPosts(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Post> recentPostPage = postRepository.findAllByOrderByCreatedAtDesc(pageable);
-        List<PostResponseDTO.PostSummaryListRes> postResList = getPostRes(recentPostPage);
-        return new PageImpl<>(postResList, pageable, recentPostPage.getTotalElements());
-    }
+    public PostResponseDTO.PollPostGetListDTO getRecentPosts(Integer page, Integer size, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
 
-    @Override
-    public List<PostResponseDTO.PostSummaryListRes> getPostRes(Page<Post> postPage) {
-        return postPage
-                .map(post -> {
-                    Integer like_cnt = postLikeRepository.countByPostId(post.getId());
-                    Integer comment_cnt = commentRepository.countByPostId(post.getId());
-                    String postVoteType = null;
-                    Long general_poll_id = null;
-                    Long gauge_poll_id = null;
-                    Long card_poll_id = null;
-                    Integer gauge = null;
-                    List<Candidate> candidateList = null;
-                    List<CandidateResponseDTO.CandidateSummaryRes> candidateSummaryResList = null;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Post> recentPostPage = postRepository.findByPostTypeAndState(PostType.VOTE, PostState.POSTING, pageable);
 
-                    if (post.getPostType().equals(REVIEW)) return null; // 고민 후기 글인 경우 패스
-
-                    if (post.getVoteType().equals(GENERAL)) { // 일반 투표인 경우
-                        postVoteType = "GENERAL";
-                        general_poll_id = post.getGeneralPoll().getId();
-                        candidateList = candidateRepository.findAllByGeneralPollId(general_poll_id);
-                        candidateSummaryResList = new ArrayList<>();
-
-                        // 총 투표수 계산
-                        Double totalVotes = (double) post.getGeneralPoll().getGeneralVoteList().stream()
-                                .flatMap(vote -> vote.getSelect_list().stream())
-                                .count();
-
-                        // 각 후보별 선택된 횟수 계산
-                        Map<Long, Long> candidateSelectionCounts = post.getGeneralPoll().getGeneralVoteList().stream()
-                                .flatMap(vote -> vote.getSelect_list().stream())
-                                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-
-                        for (Candidate candidate : candidateList) {
-                            long selectionCount = candidateSelectionCounts.getOrDefault(candidate.getId(), 0L);
-                            Double percent = (double) selectionCount / totalVotes * 100;
-                            candidateSummaryResList.add(CandidateConverter.toCandidateSummaryRes(candidate, percent));
-                        }
-                    } else if (post.getVoteType().equals(GAUGE)) {
-                        postVoteType = "GAUGE";
-                        gauge_poll_id = post.getGaugePoll().getId();
-                        gauge = post.getGaugePoll().getGauge();
-                    } else {
-                        postVoteType = "CARD";
-                        card_poll_id = post.getCardPoll().getId();
-                        candidateList = candidateRepository.findAllByCardPollId(card_poll_id);
-                        candidateSummaryResList = new ArrayList<>();
-
-                        // 총 투표수 계산
-                        Double totalVotes = (double) post.getCardPoll().getCardVoteList().stream()
-                                .flatMap(vote -> vote.getSelect_list().stream())
-                                .count();
-
-                        // 각 후보별 선택된 횟수 계산
-                        Map<Long, Long> candidateSelectionCounts = post.getCardPoll().getCardVoteList().stream()
-                                .flatMap(vote -> vote.getSelect_list().stream())
-                                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-
-                        for (Candidate candidate : candidateList) {
-                            long selectionCount = candidateSelectionCounts.getOrDefault(candidate.getId(), 0L);
-                            Double percent = (double) selectionCount / totalVotes * 100;
-                            candidateSummaryResList.add(CandidateConverter.toCandidateSummaryRes(candidate, percent));
-                        }
-                    }
-
-                    PostResponseDTO.PostSummaryListRes postGetRes = PostConverter.toPostSummaryRes(post, like_cnt, comment_cnt, postVoteType, candidateSummaryResList, gauge, general_poll_id, gauge_poll_id, card_poll_id);
-                    return postGetRes;
-                })
-                .filter(Objects::nonNull) // null인 요소는 필터링
-                .get()
-                .collect(Collectors.toList());
+        return PostConverter.pollPostGetListDTO(recentPostPage,userId);
     }
 
     @Override

@@ -145,27 +145,6 @@ public class PostResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PostSummaryListRes {
-        String title;
-        String content;
-        Long post_id;
-        List<FileDTO> file;
-        Integer like;
-        Integer comment_cnt;
-        LocalDateTime created_at;
-        UserResponseDTO.UserSummaryInfo user;
-        String postVoteType;
-        Long general_poll_id;
-        Long gauge_poll_id;
-        Long card_poll_id;
-        Integer gauge;
-        List<CandidateResponseDTO.CandidateSummaryRes> candidateList;
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
     public static class ScrapCreateRes {
         Long post_scrap_id;
     }
