@@ -1459,29 +1459,6 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostResponseDTO.PostSummaryListRes toPostSummaryRes(Post post, Integer like_cnt, Integer comment_cnt, String postVoteType,
-                                                                      List<CandidateResponseDTO.CandidateSummaryRes> candidateSummaryResList,
-                                                                      Integer gauge,
-                                                                      Long general_poll_id, Long gauge_poll_id, Long card_poll_id
-    ) {
-        return PostResponseDTO.PostSummaryListRes.builder()
-                .title(post.getTitle())
-                .content(post.getContent())
-                .post_id(post.getId())
-                .file(FileConverter.toFileDTO(post.getFileList()))
-                .like(like_cnt)
-                .comment_cnt(comment_cnt)
-                .created_at(post.getCreatedAt())
-                .user(UserConverter.toUserSummaryInfo(post.getUser()))
-                .postVoteType(postVoteType)
-                .general_poll_id(general_poll_id)
-                .gauge_poll_id(gauge_poll_id)
-                .card_poll_id(card_poll_id)
-                .gauge(gauge)
-                .candidateList(candidateSummaryResList)
-                .build();
-    }
-
     public static Post_scrap toPostScrap(Post post, User user) {
         return Post_scrap.builder()
                 .post(post)

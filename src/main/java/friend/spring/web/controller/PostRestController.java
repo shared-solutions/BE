@@ -230,13 +230,16 @@ public class PostRestController {
     })
     @Parameters({
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)"),
-            @Parameter(name = "size", description = "query string(RequestParam) - 한 번에 글 몇 개씩 불러올지 개수를 세는 변수 (1 이상 자연수로 설정)")
+            @Parameter(name = "size", description = "query string(RequestParam) - 한 번에 글 몇 개씩 불러올지 개수를 세는 변수 (1 이상 자연수로 설정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
-    public ApiResponse<Page<PostResponseDTO.PostSummaryListRes>> getBestPosts(
+    public ApiResponse<PostResponseDTO.PollPostGetListDTO> getBestPosts(
             @RequestParam(name = "page") Integer page,
-            @RequestParam(name = "size") Integer size
+            @RequestParam(name = "size") Integer size,
+            @RequestHeader("atk") String atk,
+            HttpServletRequest request
     ) {
-        return ApiResponse.onSuccess(postService.getBestPosts(page, size));
+        return ApiResponse.onSuccess(postService.getBestPosts(page, size, request));
     }
 
     // 홈 - 답변을 기다리는 고민들
@@ -247,13 +250,16 @@ public class PostRestController {
     })
     @Parameters({
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)"),
-            @Parameter(name = "size", description = "query string(RequestParam) - 한 번에 글 몇 개씩 불러올지 개수를 세는 변수 (1 이상 자연수로 설정)")
+            @Parameter(name = "size", description = "query string(RequestParam) - 한 번에 글 몇 개씩 불러올지 개수를 세는 변수 (1 이상 자연수로 설정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
-    public ApiResponse<Page<PostResponseDTO.PostSummaryListRes>> getRecentPosts(
+    public ApiResponse<PostResponseDTO.PollPostGetListDTO> getRecentPosts(
             @RequestParam(name = "page") Integer page,
-            @RequestParam(name = "size") Integer size
+            @RequestParam(name = "size") Integer size,
+            @RequestHeader("atk") String atk,
+            HttpServletRequest request
     ) {
-        return ApiResponse.onSuccess(postService.getRecentPosts(page, size));
+        return ApiResponse.onSuccess(postService.getRecentPosts(page, size, request));
     }
 
     // 글 스크랩 추가
