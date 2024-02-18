@@ -30,7 +30,7 @@ public class Gauge_poll extends BaseEntity {
     @Column(nullable = true)
     private LocalDateTime deadline= LocalDateTime.now().plusHours(1); // 디폴트 시간 1시간 설정.
 
-    @Column(nullable = true)
+    @Column(nullable = false)
     @Builder.Default
     private Boolean VoteOnGoing=true;
 

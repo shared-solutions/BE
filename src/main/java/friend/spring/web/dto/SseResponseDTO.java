@@ -22,4 +22,15 @@ public class SseResponseDTO {
         Long commentId;
         LocalDateTime createdAt;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class VoteFinishResDTO{
+        String alarmContent;
+        String alarmType;
+        Long postId;
+        LocalDateTime createdAt;
+    }
 }

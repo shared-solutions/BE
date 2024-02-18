@@ -13,7 +13,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SseService {
     // 기본 타임아웃 설정
-    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60; // 1시간
+    private static final Long DEFAULT_TIMEOUT = 60L * 1000 * 60 * 48; // 1시간 * 48 -> 데모데이 까지만!
 
     private final EmitterRepository emitterRepository;
     private final JwtTokenProvider jwtTokenProvider;

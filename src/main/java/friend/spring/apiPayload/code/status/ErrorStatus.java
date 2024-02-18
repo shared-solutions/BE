@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum ErrorStatus implements BaseErrorCode {
+public enum
+ErrorStatus implements BaseErrorCode {
 
 
     // 가장 일반적인 응답

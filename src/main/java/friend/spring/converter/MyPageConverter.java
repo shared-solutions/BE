@@ -20,6 +20,7 @@ import static java.util.Calendar.MINUTE;
 public class MyPageConverter {
     public static MyPageResponseDTO.CategoryResDTO toCategoryResDTO(Category category){
         return MyPageResponseDTO.CategoryResDTO.builder()
+                .categoryId(category.getId())
                 .category(category.getName())
                 .build();
     }
