@@ -134,4 +134,12 @@ public class UserResponseDTO {
         String nickname;
         String image;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PasswordUpdateRes{
+        String newPassword;
+    }
 }

@@ -2,6 +2,7 @@ package friend.spring.web.controller;
 
 import friend.spring.apiPayload.ApiResponse;
 import friend.spring.apiPayload.GeneralException;
+import friend.spring.converter.MyPageConverter;
 import friend.spring.converter.UserConverter;
 import friend.spring.domain.Comment;
 import friend.spring.domain.Level;
@@ -14,9 +15,7 @@ import friend.spring.service.EmailService;
 import friend.spring.service.PostService;
 import friend.spring.service.UserService;
 import friend.spring.service.*;
-import friend.spring.web.dto.TokenDTO;
-import friend.spring.web.dto.UserRequestDTO;
-import friend.spring.web.dto.UserResponseDTO;
+import friend.spring.web.dto.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -224,5 +223,25 @@ public class UserRestController {
 
         return ApiResponse.onSuccess(authService.kakaoLogin(code));
     }
-}
 
+
+    @PatchMapping(value = "/updatePassword")
+    @Operation(summary = "비밀번호 재설정 API", description = "(비밀번호 재설정 이메일 인증후) 비밀번호를 변경하는 API")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. ")
+    })
+    @Parameters({
+            @Parameter(name = "email", description = "RequestHeader - 비밀번호를 바꾸고자 하는 사용자의 email")
+    })
+    public ApiResponse<UserResponseDTO.PasswordUpdateRes> updatePassword(
+            @RequestHeader(name = "email") String mail,
+            HttpServletRequest request,
+            @RequestBody @Valid UserRequestDTO.PasswordUpdateReq passwordUpdateReq){
+        String email = userService.getEmail(request);
+        User updPassword = userService.updatePassword(email, passwordUpdateReq);
+
+        return ApiResponse.onSuccess(UserConverter.toUpdatePassword(updPassword));
+
+    }
+
+}

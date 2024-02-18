@@ -54,7 +54,7 @@ public class JwtTokenProvider {
     // JWT Access 토큰 생성
     public TokenDTO createAccessToken(String email) {
         // 토큰 유효시간 30분
-        long tokenValidTime =2 * 60 * 60 * 1000L;
+        long tokenValidTime =48 * 60 * 60 * 1000L;
 
         Optional<User> user = userRepository.findByEmail(email);
 

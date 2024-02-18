@@ -122,4 +122,15 @@ public class UserRequestDTO {
         private String name;
         private String authNum;
     }
+//비밀번호 변경
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class PasswordUpdateReq {
+
+        @NotEmpty(message = "변경할 비밀번호를 입력해 주세요")
+        private String newPassword;
+        private String newPasswordCheck;
+    }
 }

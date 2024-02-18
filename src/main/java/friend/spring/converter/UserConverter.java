@@ -204,5 +204,9 @@ public class UserConverter {
                 .email(kakaoProfile.getKakao_account().getEmail()).build();
 
     }
-
+    public static UserResponseDTO.PasswordUpdateRes toUpdatePassword(User user){
+        return UserResponseDTO.PasswordUpdateRes.builder()
+                .newPassword(user.getEmail())
+                .build();
+    }
 }
