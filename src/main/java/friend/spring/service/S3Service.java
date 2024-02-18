@@ -1,6 +1,7 @@
 package friend.spring.service;
 
 import friend.spring.aws.s3.AmazonS3Manager;
+import friend.spring.converter.Base64Decoder;
 import friend.spring.converter.FileConverter;
 import friend.spring.domain.*;
 import friend.spring.domain.enums.S3ImageType;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -35,8 +37,39 @@ public class S3Service {
         return fileList;
     }
 
+    public List<File> uploadPostImagesBase64(List<String> fileBase64List, S3ImageType type, Post post) {
+        List<File> fileList = new ArrayList<>();
+        // forEach 구문을 통해 multipartFiles 리스트로 넘어온 파일들을 순차적으로 fileList 에 추가
+        fileBase64List.forEach(base64String -> {
+            MultipartFile file = null;
+            try {
+                file = Base64Decoder.decodeBase64ToMultipartFile(base64String);
+                String pictureUrl = s3Manager.uploadFile(s3Manager.generatePostKeyName(createFileName()), file);
+                File newFile = fileRepository.save(FileConverter.toFile(pictureUrl, null, post, null));
+                fileList.add(newFile);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return fileList;
+    }
+
     public File uploadSingleImage(MultipartFile file, S3ImageType type, User user, Candidate candidate) {
         File newFile;
+        if (type == S3ImageType.USER && user != null) { // 사용자 프로필 이미지인 경우
+            String pictureUrl = s3Manager.uploadFile(s3Manager.generateUserKeyName(createFileName()), file);
+            newFile = fileRepository.save(FileConverter.toFile(pictureUrl, user, null, null));
+        } else { // 후보 이미지인 경우
+            String pictureUrl = s3Manager.uploadFile(s3Manager.generateCandidateKeyName(createFileName()), file);
+            newFile = fileRepository.save(FileConverter.toFile(pictureUrl, null, null, candidate));
+        }
+        return newFile;
+    }
+
+    public File uploadSingleImageBase64(String fileBase64, S3ImageType type, User user, Candidate candidate) throws IOException {
+        File newFile;
+        MultipartFile file = Base64Decoder.decodeBase64ToMultipartFile(fileBase64);
+
         if (type == S3ImageType.USER && user != null) { // 사용자 프로필 이미지인 경우
             String pictureUrl = s3Manager.uploadFile(s3Manager.generateUserKeyName(createFileName()), file);
             newFile = fileRepository.save(FileConverter.toFile(pictureUrl, user, null, null));
