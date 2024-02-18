@@ -44,11 +44,9 @@ public interface PostService {
 
     void checkPostScrap(Boolean flag);
 
-    Page<PostResponseDTO.PostSummaryListRes> getBestPosts(Integer page, Integer size);
+    PostResponseDTO.PollPostGetListDTO getBestPosts(Integer page, Integer size, HttpServletRequest request);
 
-    Page<PostResponseDTO.PostSummaryListRes> getRecentPosts(Integer page, Integer size);
-
-    List<PostResponseDTO.PostSummaryListRes> getPostRes(Page<Post> postPage);
+    PostResponseDTO.PollPostGetListDTO getRecentPosts(Integer page, Integer size, HttpServletRequest request);
 
     Post_scrap createScrapPost(Long postId, HttpServletRequest request);
 

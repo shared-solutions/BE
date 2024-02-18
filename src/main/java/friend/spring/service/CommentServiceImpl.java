@@ -196,17 +196,19 @@ public class CommentServiceImpl implements CommentService {
             List<CommentResponseDTO.commentGetRes> subComments = new ArrayList<>();
             if (comment.getSubCommentList() != null) {
                 for (Comment c : comment.getSubCommentList()) {
-                    Boolean isPushedLike_sub = checkIsPushedLike(comment, loginUserId);
-                    Boolean isOwnerOfPost_sub = checkIsOwnerOfPost(comment, loginUserId);
-                    CommentResponseDTO.commentGetRes subCommentGetRes = CommentConverter.toCommentGetRes(comment, loginUserId, isPushedLike_sub, isOwnerOfPost_sub, new ArrayList<>());
+                    Boolean isPushedLike_sub = checkIsPushedLike(c, loginUserId);
+                    Boolean isOwnerOfPost_sub = checkIsOwnerOfPost(c, loginUserId);
+                    Boolean isSelected = checkIsSelected(c);
+                    CommentResponseDTO.commentGetRes subCommentGetRes = CommentConverter.toCommentGetRes(c, loginUserId, isPushedLike_sub, isOwnerOfPost_sub, isSelected, new ArrayList<>());
                     subComments.add(subCommentGetRes);
                 }
             }
 
             Boolean isPushedLike = checkIsPushedLike(comment, loginUserId);
             Boolean isOwnerOfPost = checkIsOwnerOfPost(comment, loginUserId);
+            Boolean isSelected = checkIsSelected(comment);
 
-            CommentResponseDTO.commentGetRes commentGetRes = CommentConverter.toCommentGetRes(comment, loginUserId, isPushedLike, isOwnerOfPost, subComments);
+            CommentResponseDTO.commentGetRes commentGetRes = CommentConverter.toCommentGetRes(comment, loginUserId, isPushedLike, isOwnerOfPost, isSelected, subComments);
             commentGetResList.add(commentGetRes);
         }
 
@@ -235,6 +237,22 @@ public class CommentServiceImpl implements CommentService {
         }
         return isOwnerOfPost;
     }
+
+    public Boolean checkIsSelected(Comment comment) {
+        Optional<Comment_choice> optionalComment_choice = commentChoiceRepository.findByCommentIdAndPostId(comment.getId(), comment.getPost().getId());
+
+        // 이 댓글이 채택되었는지 여부
+        Boolean isSelected;
+        if (optionalComment_choice.isEmpty()) {
+            isSelected = false;
+        } else {
+            isSelected = true;
+        }
+
+        return isSelected;
+    }
+
+
 
     @Override
     public void dislikeComment(Long postId, Long commentId, HttpServletRequest request) {

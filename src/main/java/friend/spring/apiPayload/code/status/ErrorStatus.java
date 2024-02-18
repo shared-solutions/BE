@@ -27,6 +27,7 @@ ErrorStatus implements BaseErrorCode {
     INCORRECT_CODE(HttpStatus.UNAUTHORIZED, "USER4005", "인증 코드가 일치하지 않습니다."),
     EMPTY_JWT(HttpStatus.BAD_REQUEST, "USER4006", "JWT를 입력해주세요."),
     INVALID_JWT(HttpStatus.UNAUTHORIZED, "USER4007", "유효하지 않은 JWT입니다."),
+    INVALID_PASSWORD_FORMAT(HttpStatus.NOT_ACCEPTABLE,"USER4077","비밀번호 형식에 맞지 않습니다."),
     PASSWORD_INCORRECT(HttpStatus.NOT_FOUND, "USER4008", "비밀번호가 틀렸습니다."),
     PASSWORD_CHECK_INCORRECT(HttpStatus.NOT_FOUND, "USER4009", "확인 비밀번호가 일치하지 않습니다."),
     RTK_INCORREXT(HttpStatus.UNAUTHORIZED,"USER4100","RefreshToken값을 확인해주세요."),

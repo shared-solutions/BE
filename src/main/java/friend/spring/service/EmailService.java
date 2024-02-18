@@ -102,6 +102,7 @@ public class EmailService {
         return Integer.toString(authNumber);
     }
 
+
     public void voteFinishEmail(Post post){
         String setFrom = "gominchingu@gmail.com"; // email-config에 설정한 자신의 이메일 주소를 입력
         String toMail = post.getUser().getEmail();
