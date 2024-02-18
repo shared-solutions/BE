@@ -923,6 +923,14 @@ public class PostConverter {
                                 return (int) ((double) selectionCount / totalVotes * 100);
                             })
                             .collect(Collectors.toList());
+                    allCandidatePercent=post.getGeneralPoll().getCandidateList().stream()
+                            .map(candidate -> {
+                                Long candidateId=candidate.getId();
+                                long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                                return (int) ((double) selectionCount / totalVotes * 100);
+                            })
+                            .collect(Collectors.toList());
+
                     return PostResponseDTO.PollPostGetResponse.builder()
                             .onGoing(true)
                             .isVoted(true)
@@ -946,6 +954,48 @@ public class PostConverter {
                             .build();
 
                 }
+
+                // 총 투표수 계산
+                long totalVotes = post.getGeneralPoll().getGeneralVoteList().stream()
+                        .flatMap(vote -> vote.getSelect_list().stream())
+                        .count();
+                // 각 후보별 선택된 횟수 계산
+                Map<Long, Long> candidateSelectionCounts = post.getGeneralPoll().getGeneralVoteList().stream()
+                        .flatMap(vote -> vote.getSelect_list().stream())
+                        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+                //1등 투표 계산
+                // 투표수가 가장 많은 후보의 선택률 계산
+                OptionalDouble hightestCandidate = candidateSelectionCounts.entrySet().stream()
+                        .mapToDouble(entry -> (double) entry.getValue() / totalVotes)
+                        .max();
+
+                // 선택률이 가장 높은 후보의 ID들 찾기
+                List<Long> mostVotedCandidateIds = candidateSelectionCounts.entrySet().stream()
+                        .filter(entry -> entry.getValue() == hightestCandidate.getAsDouble() * totalVotes)
+                        .map(Map.Entry::getKey)
+                        .collect(Collectors.toList());
+
+                // 가장 높은 투표를 받은 후보들을 userChoiceList에 담기
+                topCandidateList = post.getGeneralPoll().getCandidateList().stream()
+                        .filter(candidate -> mostVotedCandidateIds.contains(candidate.getId()))
+                        .map(PostConverter::toPollOptionResDTO)
+                        .collect(Collectors.toList());
+
+                topCandidatePercent = mostVotedCandidateIds.stream()
+                        .map(candidateId -> {
+                            long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                            return (int) ((double) selectionCount / totalVotes * 100);
+                        })
+                        .collect(Collectors.toList());
+                allCandidatePercent=post.getGeneralPoll().getCandidateList().stream()
+                        .map(candidate -> {
+                            Long candidateId=candidate.getId();
+                            long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                            return (int) ((double) selectionCount / totalVotes * 100);
+                        })
+                        .collect(Collectors.toList());
+
                 return PostResponseDTO.PollPostGetResponse.builder()
                         .onGoing(true)
                         .isVoted(false)
@@ -957,6 +1007,9 @@ public class PostConverter {
                         .content(post.getContent())
                         .uploadDate(post.getCreatedAt())
                         .pollOption(pollOptionDTOList)
+                        .topCandidate(topCandidateList)
+                        .topCandidatePercent(topCandidatePercent)
+                        .allCandidatePercent(allCandidatePercent)
                         .like(likeCount)
                         .comment(commentCount)
                         .isLike(isLike)
@@ -1221,6 +1274,15 @@ public class PostConverter {
                             return (int) ((double) selectionCount / totalVotes * 100);
                         })
                         .collect(Collectors.toList());
+
+                allCandidatePercent=post.getCardPoll().getCandidateList().stream()
+                        .map(candidate -> {
+                            Long candidateId=candidate.getId();
+                            long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                            return (int) ((double) selectionCount / totalVotes * 100);
+                        })
+                        .collect(Collectors.toList());
+
                 return PostResponseDTO.PollPostGetResponse.builder()
                         .onGoing(true)
                         .isVoted(true)
@@ -1244,6 +1306,49 @@ public class PostConverter {
                         .build();
 
             }
+
+            // 총 투표수 계산
+            long totalVotes = post.getCardPoll().getCardVoteList().stream()
+                    .flatMap(vote -> vote.getSelect_list().stream())
+                    .count();
+            // 각 후보별 선택된 횟수 계산
+            Map<Long, Long> candidateSelectionCounts = post.getCardPoll().getCardVoteList().stream()
+                    .flatMap(vote -> vote.getSelect_list().stream())
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+            //1등 투표 계산
+            // 투표수가 가장 많은 후보의 선택률 계산
+            OptionalDouble hightestCandidate = candidateSelectionCounts.entrySet().stream()
+                    .mapToDouble(entry -> (double) entry.getValue() / totalVotes)
+                    .max();
+
+            // 선택률이 가장 높은 후보의 ID들 찾기
+            List<Long> mostVotedCandidateIds = candidateSelectionCounts.entrySet().stream()
+                    .filter(entry -> entry.getValue() == hightestCandidate.getAsDouble() * totalVotes)
+                    .map(Map.Entry::getKey)
+                    .collect(Collectors.toList());
+
+            // 가장 높은 투표를 받은 후보들을 userChoiceList에 담기
+            topCandidateList = post.getCardPoll().getCandidateList().stream()
+                    .filter(candidate -> mostVotedCandidateIds.contains(candidate.getId()))
+                    .map(PostConverter::toPollOptionResDTO)
+                    .collect(Collectors.toList());
+
+            topCandidatePercent = mostVotedCandidateIds.stream()
+                    .map(candidateId -> {
+                        long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                        return (int) ((double) selectionCount / totalVotes * 100);
+                    })
+                    .collect(Collectors.toList());
+
+            allCandidatePercent=post.getCardPoll().getCandidateList().stream()
+                    .map(candidate -> {
+                        Long candidateId=candidate.getId();
+                        long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                        return (int) ((double) selectionCount / totalVotes * 100);
+                    })
+                    .collect(Collectors.toList());
+
             return PostResponseDTO.PollPostGetResponse.builder()
                     .onGoing(true)
                     .isVoted(false)
@@ -1255,6 +1360,9 @@ public class PostConverter {
                     .content(post.getContent())
                     .uploadDate(post.getCreatedAt())
                     .pollOption(pollOptionDTOList)
+                    .topCandidate(topCandidateList)
+                    .topCandidatePercent(topCandidatePercent)
+                    .allCandidatePercent(allCandidatePercent)
                     .like(likeCount)
                     .comment(commentCount)
                     .isLike(isLike)
