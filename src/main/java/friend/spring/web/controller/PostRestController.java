@@ -11,8 +11,6 @@ import friend.spring.service.PostService;
 import friend.spring.web.dto.*;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -22,12 +20,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -55,14 +51,14 @@ public class PostRestController {
 
     })
     public ApiResponse<PostResponseDTO.AddPostResultDTO> join(@RequestPart(value = "request") @Valid PostRequestDTO.AddPostDTO request,
-                                                              @RequestPart(value = "file", required = false) List<MultipartFile> file,
+//                                                              @RequestPart(value = "file", required = false) List<MultipartFile> file,
                                                               @RequestHeader("atk") String atk,
                                                               HttpServletRequest request2){
-        Post post= postService.joinPost(request,request2, file);
+        Post post= postService.joinPost(request,request2);
         return ApiResponse.onSuccess(PostConverter.toAddPostResultDTO(post));
     }
 
-    @PostMapping(value = "/{post-id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{post-id}")
     @Operation(summary = "후보 생성 API", description = "후보를 생성합니다.(글 작성 API 호출 후 postId 응답 받으시면, 후보 개수 만큼 바로 호출해주세요!)")
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
@@ -70,11 +66,10 @@ public class PostRestController {
     })
     public ApiResponse<CandidateResponseDTO.AddCandidateResultDTO> createCandidate(
             @PathVariable(name="post-id") Long postId,
-            @RequestParam String optionString,
-            @RequestParam(required = false) MultipartFile optionImg,
+            @RequestBody CandidateRequestDTO.AddCandidateRequestDTO request,
             @RequestHeader("atk") String atk,
-            HttpServletRequest request2) {
-        Candidate candidate = postService.createCandidate(postId, optionString, optionImg,request2);
+            HttpServletRequest request2) throws IOException {
+        Candidate candidate = postService.createCandidate(postId, request, request2);
         return ApiResponse.onSuccess(CandidateConverter.toAddCandidateResultDTO(candidate));
     }
 

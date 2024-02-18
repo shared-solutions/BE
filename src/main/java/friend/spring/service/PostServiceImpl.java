@@ -18,9 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import javax.servlet.http.HttpServletRequest;
@@ -94,7 +93,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public Post joinPost(PostRequestDTO.AddPostDTO request, HttpServletRequest request2, List<MultipartFile> file) {
+    public Post joinPost(PostRequestDTO.AddPostDTO request, HttpServletRequest request2) {
         Long userId = jwtTokenProvider.getCurrentUser(request2);
 
         Post newPost= PostConverter.toPost(request);
@@ -103,8 +102,8 @@ public class PostServiceImpl implements PostService{
         newPost.setUser(user);
 
         // 글 첨부파일 사진 저장
-        if (file != null) {
-            s3Service.uploadPostImages(file, S3ImageType.POST, newPost);
+        if (request.getFileBase64List() != null) {
+            s3Service.uploadPostImagesBase64(request.getFileBase64List(), S3ImageType.POST, newPost);
         }
         LocalDateTime deadline=request.getDeadline();
         if(request.getDeadline()==null){
@@ -218,7 +217,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public Candidate createCandidate(Long postId, String optionString, MultipartFile optionImg, HttpServletRequest request2) {
+    public Candidate createCandidate(Long postId, CandidateRequestDTO.AddCandidateRequestDTO request, HttpServletRequest request2) throws IOException {
         Post newPost = postRepository.findById(postId).orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
 
         Long userId = jwtTokenProvider.getCurrentUser(request2);
@@ -227,18 +226,18 @@ public class PostServiceImpl implements PostService{
             this.checkPostWriterUser(false);
         }
 
-        if (!(!optionString.isEmpty() && optionString.length() < 30)) { // 이 글을 쓴 사용자인지 검증
+        if (!(!request.getOptionString().isEmpty() && request.getOptionString().length() < 30)) {
             throw new GeneralException(CANDIDATE_TEXT_LIMIT);
         }
 
         Candidate candidate = Candidate.builder()
-                .name(optionString)
+                .name(request.getOptionString())
                 .build();
 
         candidateRepository.save(candidate);
 
-        if (optionImg != null) {
-            File candidateFile = s3Service.uploadSingleImage(optionImg, S3ImageType.CANDIDATE, null, candidate);
+        if (request.getOptionImg() != null) {
+            File candidateFile = s3Service.uploadSingleImageBase64(request.getOptionImg(), S3ImageType.CANDIDATE, null, candidate);
             candidate.setFile(candidateFile);
         }
 

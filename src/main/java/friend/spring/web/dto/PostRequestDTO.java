@@ -1,8 +1,5 @@
 package friend.spring.web.dto;
 
-
-import friend.spring.domain.Category;
-import friend.spring.domain.Post;
 import friend.spring.validation.annotation.ContentTextLimit;
 import friend.spring.validation.annotation.DeadlineLimit;
 import friend.spring.validation.annotation.TitleTextLimit;
@@ -10,13 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.bytebuddy.asm.Advice;
-import org.apache.tomcat.jni.Poll;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,6 +29,7 @@ public class PostRequestDTO {
         @DeadlineLimit
         LocalDateTime deadline;
         Integer point;
+        List<String> fileBase64List;
     }
     @Getter
     public static class ReviewPostGetDTO{

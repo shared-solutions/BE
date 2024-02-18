@@ -6,16 +6,13 @@ import friend.spring.domain.Post;
 import friend.spring.domain.User;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
-import friend.spring.web.dto.PollOptionDTO;
+import friend.spring.web.dto.CandidateRequestDTO;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.io.IOException;
 
 public interface PostService {
     void checkPost(Boolean flag);
@@ -25,9 +22,9 @@ public interface PostService {
 
     void checkPostLike(Boolean flag);
 
-    Post joinPost(PostRequestDTO.AddPostDTO request, HttpServletRequest request2, List<MultipartFile> file);
+    Post joinPost(PostRequestDTO.AddPostDTO request, HttpServletRequest request2);
 
-    Candidate createCandidate(Long postId, String optionString, MultipartFile optionImg, HttpServletRequest request2);
+    Candidate createCandidate(Long postId, CandidateRequestDTO.AddCandidateRequestDTO request, HttpServletRequest request2) throws IOException;
 
     Boolean checkPoint(PostRequestDTO.AddPostDTO request, User user);
 
