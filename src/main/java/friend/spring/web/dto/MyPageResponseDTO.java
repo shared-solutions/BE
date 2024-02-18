@@ -19,6 +19,7 @@ public class MyPageResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CategoryResDTO{
+        Long categoryId;
         String category;
     }
 
