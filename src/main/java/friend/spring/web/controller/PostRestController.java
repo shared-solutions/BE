@@ -34,7 +34,7 @@ public class PostRestController {
     private final PostQueryService postQueryService;
     private final PostRepository postRepository;
     private final JwtTokenService jwtTokenService;
-    @PostMapping(value = "/")
+    @PostMapping(value = "/", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "글 작성 API", description = "글을 추가 합니다.")
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
