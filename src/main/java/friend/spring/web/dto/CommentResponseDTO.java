@@ -62,6 +62,7 @@ public class CommentResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class myCommentRes {
+        Long postId;
         String nickName;
         LocalDateTime createdAt;
         String content;

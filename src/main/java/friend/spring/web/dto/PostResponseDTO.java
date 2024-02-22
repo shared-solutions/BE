@@ -126,6 +126,7 @@ public class PostResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class MyPostDTO {
+        Long postId;
         String nickName;
         LocalDateTime createdAt;
         String title;

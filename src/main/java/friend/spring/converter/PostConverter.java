@@ -1546,6 +1546,7 @@ public class PostConverter {
 
     public static PostResponseDTO.MyPostDTO toMyPostResDTO(Post post){
         return PostResponseDTO.MyPostDTO.builder()
+                .postId(post.getId())
                 .nickName(post.getUser().getNickname())
                 .createdAt(post.getCreatedAt())
                 .title(post.getTitle())

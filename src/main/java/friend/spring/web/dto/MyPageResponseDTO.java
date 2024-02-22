@@ -106,6 +106,7 @@ public class MyPageResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SavedPostCategoryDetailRes{
+        Long postId;
         Long ago;
         String title;
         String content;
