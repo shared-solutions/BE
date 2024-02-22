@@ -36,6 +36,7 @@ public class MyPageResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SavedPostResDTO{
+        Long postId;
         Long ago;
         String title;
         String content;
