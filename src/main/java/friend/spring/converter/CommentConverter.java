@@ -106,6 +106,7 @@ public class CommentConverter {
     }
     public static CommentResponseDTO.myCommentRes toMyCommentResDTO(Comment comment){
         return CommentResponseDTO.myCommentRes.builder()
+                .postId(comment.getPost().getId())
                 .nickName(comment.getUser().getNickname())
                 .createdAt(comment.getCreatedAt())
                 .content(comment.getContent())

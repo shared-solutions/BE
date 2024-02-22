@@ -115,6 +115,7 @@ public class MyPageConverter {
         long diffTime = post.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.DAYS); // now보다 이후면 +, 전이면 -
 
         return MyPageResponseDTO.SavedPostCategoryDetailRes.builder()
+                .postId(post.getId())
                 .ago(diffTime)
                 .title(post.getTitle())
                 .content(post.getContent())
