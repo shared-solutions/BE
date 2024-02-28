@@ -13,9 +13,10 @@ import java.util.Set;
 
 public interface MyPageService {
     void checkPost(Boolean flag);
+
     List<Category> getCategoryList(Long userId);
 
-    Page<Post> getAllPostList(Long userId,  Integer page, Integer sort);
+    Page<Post> getAllPostList(Long userId, Integer page, Integer sort);
 
     void editUserImage(MultipartFile file, HttpServletRequest request);
 
@@ -24,12 +25,15 @@ public interface MyPageService {
     User editUserName(Long userId, MyPageRequestDTO.ProfileEditNameReq profileEditNameReq);
 
     User editUserEmail(Long userId, MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq);
+
     User editUserPhone(Long userId, MyPageRequestDTO.ProfileEditPhoneReq profileEditPhoneReq);
 
     User editUserPassword(Long userId, MyPageRequestDTO.ProfileEditPasswordReq profileEditPasswordReq);
+
     User editUserSecurity(Long userId, MyPageRequestDTO.ProfileEditSecurityReq profileEditSecurityReq);
 
     Inquiry createInquiry(Long userId, MyPageRequestDTO.MyInquiryReq myInquiryReq);
+
     Page<Post> getCategoryDetailList(Long userId, Long categoryId, Integer page);
 
     Category getCategory(Long categoryId);

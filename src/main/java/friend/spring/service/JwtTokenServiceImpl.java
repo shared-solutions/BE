@@ -9,11 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 
 @Service
 @RequiredArgsConstructor
-public class JwtTokenServiceImpl implements JwtTokenService{
+public class JwtTokenServiceImpl implements JwtTokenService {
     private final JwtTokenProvider jwtTokenProvider;
+
     @Override
     @Transactional
-    public Long JwtToId(HttpServletRequest request){
+    public Long JwtToId(HttpServletRequest request) {
         return jwtTokenProvider.getCurrentUser(request);
     }
 

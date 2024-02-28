@@ -16,8 +16,8 @@ public class SseController {
 
     @GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public SseEmitter subscribe(
-        @RequestHeader(name = "atk") String atk,
-        HttpServletRequest request
+            @RequestHeader(name = "atk") String atk,
+            HttpServletRequest request
     ) {
         return notificationService.subscribe(request);
     }

@@ -122,7 +122,8 @@ public class UserRequestDTO {
         private String name;
         private String authNum;
     }
-//비밀번호 변경
+
+    //비밀번호 변경
     @NoArgsConstructor
     @AllArgsConstructor
     @Getter

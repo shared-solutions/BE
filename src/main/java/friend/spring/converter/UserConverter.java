@@ -199,12 +199,13 @@ public class UserConverter {
     }
 
     public static User KakaoUser(
-            KakaoProfile kakaoProfile){
+            KakaoProfile kakaoProfile) {
         return User.builder()
                 .email(kakaoProfile.getKakao_account().getEmail()).build();
 
     }
-    public static UserResponseDTO.PasswordUpdateRes toUpdatePassword(User user){
+
+    public static UserResponseDTO.PasswordUpdateRes toUpdatePassword(User user) {
         return UserResponseDTO.PasswordUpdateRes.builder()
                 .newPassword(user.getPassword())
                 .build();

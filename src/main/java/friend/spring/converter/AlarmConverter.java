@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 public class AlarmConverter {
 
     //알림
-    public static AlarmResponseDTO.AlarmResDTO toAlarmResDTO(Alarm alarm){
+    public static AlarmResponseDTO.AlarmResDTO toAlarmResDTO(Alarm alarm) {
         Long commentId = null;
         String commentContent = null;
         String userNickname = null;
@@ -42,7 +42,7 @@ public class AlarmConverter {
                 .build();
     }
 
-    public static AlarmResponseDTO.AlarmListResDTO toAlarmListResDTO(Page<Alarm> alarmList){
+    public static AlarmResponseDTO.AlarmListResDTO toAlarmListResDTO(Page<Alarm> alarmList) {
         List<AlarmResponseDTO.AlarmResDTO> alarmResDTOList = alarmList.stream()
                 .map(AlarmConverter::toAlarmResDTO).collect(Collectors.toList());
         return AlarmResponseDTO.AlarmListResDTO.builder()

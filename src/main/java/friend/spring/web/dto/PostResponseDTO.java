@@ -1,4 +1,5 @@
 package friend.spring.web.dto;
+
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
 import lombok.AllArgsConstructor;
@@ -62,15 +63,16 @@ public class PostResponseDTO {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PollPostGetListDTO{
+    public static class PollPostGetListDTO {
         List<PollPostGetResponse> pollPostList;
         private Boolean isEnd;
     }
+
     @Builder
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PollPostGetResponse{
+    public static class PollPostGetResponse {
         Boolean onGoing;
         Boolean isVoted;
         Long postId;
@@ -99,15 +101,16 @@ public class PostResponseDTO {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ReviewPostGetListDTO{
+    public static class ReviewPostGetListDTO {
         List<ReviewPostGetResponse> reviewPostList;
         private Boolean isEnd;
     }
+
     @Builder
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ReviewPostGetResponse{
+    public static class ReviewPostGetResponse {
         Long postId;
         String nickname;
         String userImg;

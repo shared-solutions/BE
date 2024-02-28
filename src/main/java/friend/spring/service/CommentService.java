@@ -12,11 +12,15 @@ import java.util.List;
 
 public interface CommentService {
     void checkComment(Boolean flag);
+
     void checkCommentLike(Boolean flag);
+
     void checkCommentChoice(Boolean flag);
+
     void checkSelectCommentAnotherUser(Boolean flag);
 
     void checkCommentWriterUser(Boolean flag);
+
     public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq requestBody, HttpServletRequest request);
 
     Comment_like likeComment(Long postId, Long commentId, HttpServletRequest request);

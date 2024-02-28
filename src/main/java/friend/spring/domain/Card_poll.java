@@ -8,6 +8,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -23,15 +24,15 @@ public class Card_poll extends BaseEntity {
 
     @Column(nullable = true)
     @Builder.Default
-    private Boolean multipleChoice=true;
+    private Boolean multipleChoice = true;
 
     @Column(nullable = true)
     @Builder.Default
-    private LocalDateTime deadline= LocalDateTime.now().plusHours(1); // 디폴트 시간 1시간 설정.
+    private LocalDateTime deadline = LocalDateTime.now().plusHours(1); // 디폴트 시간 1시간 설정.
 
     @Column(nullable = false)
     @Builder.Default
-    private Boolean VoteOnGoing=true;
+    private Boolean VoteOnGoing = true;
 
     @Builder.Default
     @OneToMany(mappedBy = "cardPoll", cascade = CascadeType.ALL)
@@ -42,20 +43,22 @@ public class Card_poll extends BaseEntity {
     private Post post;
 
     @Builder.Default
-    @OneToMany(mappedBy = "cardPoll",cascade = CascadeType.ALL)
-    private List<Candidate> candidateList=new ArrayList<>();
+    @OneToMany(mappedBy = "cardPoll", cascade = CascadeType.ALL)
+    private List<Candidate> candidateList = new ArrayList<>();
 
     public void setPost(Post post) {
         this.post = post;
     }
 
-    public void setDeadline(LocalDateTime deadline){
-        this.deadline=deadline;
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
     }
-    public void setVoteOnGoing(Boolean voteOnGoing){
-        this.VoteOnGoing=voteOnGoing;
+
+    public void setVoteOnGoing(Boolean voteOnGoing) {
+        this.VoteOnGoing = voteOnGoing;
     }
-    public void setMultipleChoice(Boolean multipleChoice){
-        this.multipleChoice=multipleChoice;
+
+    public void setMultipleChoice(Boolean multipleChoice) {
+        this.multipleChoice = multipleChoice;
     }
 }

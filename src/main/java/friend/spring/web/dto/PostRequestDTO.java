@@ -14,7 +14,7 @@ import java.util.List;
 
 public class PostRequestDTO {
     @Getter
-    public static class AddPostDTO{
+    public static class AddPostDTO {
         @TitleTextLimit
         String title;
         @ContentTextLimit
@@ -31,8 +31,9 @@ public class PostRequestDTO {
         Integer point;
         List<String> fileBase64List;
     }
+
     @Getter
-    public static class ReviewPostGetDTO{
+    public static class ReviewPostGetDTO {
         Integer arrange; //조회순 :0, 최신순:1
     }
 

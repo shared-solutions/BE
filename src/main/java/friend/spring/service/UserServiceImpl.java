@@ -197,13 +197,14 @@ public class UserServiceImpl implements UserService {
             throw new GeneralException(ErrorStatus.PASSWORD_CHECK_INCORRECT);
         }
 
-                // 새로운 비밀번호가 null이 아닌 경우, 사용자의 비밀번호를 새로운 값으로 업데이트
+        // 새로운 비밀번호가 null이 아닌 경우, 사용자의 비밀번호를 새로운 값으로 업데이트
         if (newPassword != null) {
             user.setPassword(encoder.encode(newPassword));
         }
         userRepository.save(user);
         return user;
     }
+
     // Request 의 Header 에서 email 값 추출 "email" : "gominchingu@gmail.com"
     public String getEmail(HttpServletRequest request) {
         return request.getHeader("email");
