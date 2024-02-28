@@ -10,7 +10,7 @@ public interface AlarmService {
 
     void checkAlarm(boolean flag);
 
-    Page<Alarm> getAlarmList(Long userId, Integer page);
+    Page<Alarm> getAlarmList(HttpServletRequest request, Integer page);
 
     AlarmResponseDTO.AlarmLeftResDTO getRemainingAlarm(HttpServletRequest request);
 

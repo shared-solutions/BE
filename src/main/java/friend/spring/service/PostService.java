@@ -33,7 +33,7 @@ public interface PostService {
 
     void deletePost(Long postId, Long userId);
 
-    Page<Post> getMyPostList(Long userId, Integer page);
+    Page<Post> getMyPostList(HttpServletRequest request, Integer page);
 
     Post_like likePost(Long postId, HttpServletRequest request);
 

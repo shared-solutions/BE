@@ -14,10 +14,10 @@ public interface UserService {
 
     User joinUser(UserRequestDTO.UserJoinRequest userJoinRequest);
     List<TokenDTO> login(UserRequestDTO.UserLoginRequest userLoginRequest);
-    User findMyPage(Long id);
+    User findMyPage(HttpServletRequest httpServletRequest);
     void checkUser(Boolean flag);
     Integer pointCheck(Long id);
-    Level nextLevel(Long id);
+    Level nextLevel(HttpServletRequest request);
     String logout(HttpServletRequest request);
     List<TokenDTO> reissue(HttpServletRequest request);
     User updatePassword(String email, UserRequestDTO.PasswordUpdateReq passwordUpdateReq);

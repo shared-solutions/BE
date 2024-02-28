@@ -370,7 +370,8 @@ public class CommentServiceImpl implements CommentService {
 
     //한 유저의 모든 댓글
     @Override
-    public Page<Comment> getMyCommentList(Long userId, Integer page) {
+    public Page<Comment> getMyCommentList(HttpServletRequest request, Integer page) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()){
             userService.checkUser(false);

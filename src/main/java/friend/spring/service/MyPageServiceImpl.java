@@ -58,7 +58,8 @@ public class MyPageServiceImpl implements MyPageService{
     }
     //저장한 게시물
     @Override
-    public List<Category> getCategoryList(Long userId) {
+    public List<Category> getCategoryList(HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<Post_scrap> scrapList = user.getPostScrapList();
         if (scrapList.isEmpty()) {
@@ -71,7 +72,8 @@ public class MyPageServiceImpl implements MyPageService{
         }
 
     @Override
-    public Page<Post> getAllPostList(Long userId, Integer page, Integer sort) {
+    public Page<Post> getAllPostList(HttpServletRequest request, Integer page, Integer sort) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         if (sort == 0){
             Page<Post> scrapListByView = postScrapRepository.findPostsByUserIdOrderByPostViewDesc(userId, PageRequest.of(page, 10));
             return scrapListByView;
@@ -106,20 +108,23 @@ public class MyPageServiceImpl implements MyPageService{
     }
 
     @Override
-    public User getEditUserPage(Long userId) {
+    public User getEditUserPage(HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         return user;
     }
 
     @Override
-    public User editUserName(Long userId, MyPageRequestDTO.ProfileEditNameReq profileEditNameReq) {
+    public User editUserName(HttpServletRequest request, MyPageRequestDTO.ProfileEditNameReq profileEditNameReq) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         user.setNickname(profileEditNameReq.getNickName());
         return user;
     }
 
     @Override
-    public User editUserEmail(Long userId, MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq) {
+    public User editUserEmail(HttpServletRequest request, MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<User> all = userRepository.findAll();
         all.forEach(eachUser -> {
@@ -132,14 +137,16 @@ public class MyPageServiceImpl implements MyPageService{
     }
 
     @Override
-    public User editUserPhone(Long userId, MyPageRequestDTO.ProfileEditPhoneReq profileEditPhoneReq) {
+    public User editUserPhone(HttpServletRequest request, MyPageRequestDTO.ProfileEditPhoneReq profileEditPhoneReq) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         user.setPhone(profileEditPhoneReq.getPhone());
         return user;
     }
 
     @Override
-    public User editUserPassword(Long userId, MyPageRequestDTO.ProfileEditPasswordReq profileEditPasswordReq) {
+    public User editUserPassword(HttpServletRequest request, MyPageRequestDTO.ProfileEditPasswordReq profileEditPasswordReq) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         if (!encoder.matches(profileEditPasswordReq.getCurPassword(), user.getPassword())){
             throw new GeneralException(ErrorStatus.PASSWORD_INCORRECT);
@@ -153,7 +160,8 @@ public class MyPageServiceImpl implements MyPageService{
     }
 
     @Override
-    public User editUserSecurity(Long userId, MyPageRequestDTO.ProfileEditSecurityReq profileEditSecurityReq) {
+    public User editUserSecurity(HttpServletRequest request ,MyPageRequestDTO.ProfileEditSecurityReq profileEditSecurityReq) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<User> all = userRepository.findAll();
         all.forEach(eachUser -> {
@@ -166,14 +174,16 @@ public class MyPageServiceImpl implements MyPageService{
     }
 
     @Override
-    public Inquiry createInquiry(Long userId, MyPageRequestDTO.MyInquiryReq myInquiryReq) {
+    public Inquiry createInquiry(HttpServletRequest request, MyPageRequestDTO.MyInquiryReq myInquiryReq) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         Inquiry inquiry = MyPageConverter.toInquiry(myInquiryReq, user);
         return inquiryRepository.save(inquiry);
     }
 
     @Override
-    public Page<Post> getCategoryDetailList(Long userId, Long categoryId, Integer page) {
+    public Page<Post> getCategoryDetailList(HttpServletRequest request, Long categoryId, Integer page) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_CATGORY_NOT_FOUND));
         Page<Post> detailList = postRepository.findCategoryDetail(userId, categoryId, PageRequest.of(page, 10));

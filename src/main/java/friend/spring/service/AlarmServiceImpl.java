@@ -34,7 +34,8 @@ public class AlarmServiceImpl implements AlarmService{
     }
 
     @Override
-    public Page<Alarm> getAlarmList(Long userId, Integer page) {
+    public Page<Alarm> getAlarmList(HttpServletRequest request, Integer page) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         Optional<User> optionalUser = userRepository.findById(userId);
         if (optionalUser.isEmpty()) {
             userService.checkUser(false);

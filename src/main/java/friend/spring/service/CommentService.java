@@ -29,7 +29,7 @@ public interface CommentService {
 
     void editComment(Long postId, Long commentId, CommentRequestDTO.commentEditReq requestBody, HttpServletRequest request);
 
-    Page<Comment> getMyCommentList(Long userId, Integer page);
+    Page<Comment> getMyCommentList(HttpServletRequest request, Integer page);
 
     void deleteComment(Long postId, Long commentId, HttpServletRequest request);
 }

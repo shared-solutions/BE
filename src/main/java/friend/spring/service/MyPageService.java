@@ -13,24 +13,24 @@ import java.util.Set;
 
 public interface MyPageService {
     void checkPost(Boolean flag);
-    List<Category> getCategoryList(Long userId);
+    List<Category> getCategoryList(HttpServletRequest request);
 
-    Page<Post> getAllPostList(Long userId,  Integer page, Integer sort);
+    Page<Post> getAllPostList(HttpServletRequest request,  Integer page, Integer sort);
 
     void editUserImage(MultipartFile file, HttpServletRequest request);
 
-    User getEditUserPage(Long userId);
+    User getEditUserPage(HttpServletRequest request);
 
-    User editUserName(Long userId, MyPageRequestDTO.ProfileEditNameReq profileEditNameReq);
+    User editUserName(HttpServletRequest request, MyPageRequestDTO.ProfileEditNameReq profileEditNameReq);
 
-    User editUserEmail(Long userId, MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq);
-    User editUserPhone(Long userId, MyPageRequestDTO.ProfileEditPhoneReq profileEditPhoneReq);
+    User editUserEmail(HttpServletRequest request, MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq);
+    User editUserPhone(HttpServletRequest request, MyPageRequestDTO.ProfileEditPhoneReq profileEditPhoneReq);
 
-    User editUserPassword(Long userId, MyPageRequestDTO.ProfileEditPasswordReq profileEditPasswordReq);
-    User editUserSecurity(Long userId, MyPageRequestDTO.ProfileEditSecurityReq profileEditSecurityReq);
+    User editUserPassword(HttpServletRequest request, MyPageRequestDTO.ProfileEditPasswordReq profileEditPasswordReq);
+    User editUserSecurity(HttpServletRequest request, MyPageRequestDTO.ProfileEditSecurityReq profileEditSecurityReq);
 
-    Inquiry createInquiry(Long userId, MyPageRequestDTO.MyInquiryReq myInquiryReq);
-    Page<Post> getCategoryDetailList(Long userId, Long categoryId, Integer page);
+    Inquiry createInquiry(HttpServletRequest request, MyPageRequestDTO.MyInquiryReq myInquiryReq);
+    Page<Post> getCategoryDetailList(HttpServletRequest request, Long categoryId, Integer page);
 
     Category getCategory(Long categoryId);
 

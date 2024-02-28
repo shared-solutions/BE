@@ -11,6 +11,7 @@ import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.TokenDTO;
 import friend.spring.web.dto.UserRequestDTO;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,8 @@ public class UserServiceImpl implements UserService {
     BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
-    public User findMyPage(Long id) {
+    public User findMyPage(HttpServletRequest request) {
+        Long id = jwtTokenProvider.getCurrentUser(request);
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new UserHandler(USER_NOT_FOUND);
@@ -77,7 +79,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Level nextLevel(Long id) {
+    public Level nextLevel(HttpServletRequest request) {
+        Long id = jwtTokenProvider.getCurrentUser(request);
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new UserHandler(USER_NOT_FOUND);
