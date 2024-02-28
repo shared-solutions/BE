@@ -31,4 +31,6 @@ public interface UserService {
     User updatePassword(String email, UserRequestDTO.PasswordUpdateReq passwordUpdateReq);
 
     String getEmail(HttpServletRequest request);
+
+    String deactivateUser(HttpServletRequest request);
 }

@@ -134,4 +134,12 @@ public class UserRequestDTO {
         private String newPassword;
         private String newPasswordCheck;
     }
+    //회원 탈퇴
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class Delete {
+        private String email;
+    }
 }

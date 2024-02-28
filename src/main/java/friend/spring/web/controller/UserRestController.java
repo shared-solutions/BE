@@ -247,4 +247,17 @@ public class UserRestController {
 
     }
 
+    // 회원 탈퇴
+    @DeleteMapping("/delete")
+    @Operation(summary = "회원 탈퇴 API", description = "회원을 탈퇴시키는 API")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 회원정보가 존재하지 않습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 회원 탈퇴할 회원의 accessToken"),
+    })
+    public ApiResponse<String> deactivateUser(@RequestHeader(name = "atk") String atk, HttpServletRequest request) throws GeneralException {
+        return ApiResponse.onSuccess(userService.deactivateUser(request));
+    }
 }
