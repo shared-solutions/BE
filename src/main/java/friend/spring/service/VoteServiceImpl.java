@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class VoteServiceImpl implements VoteService{
+public class VoteServiceImpl implements VoteService {
     private final UserRepository userRepository;
     private final General_VoteRepository generalVoteRepository;
     private final Gauge_VoteRepository gaugeVoteRepository;
@@ -27,6 +27,7 @@ public class VoteServiceImpl implements VoteService{
     private final PostRepository postRepository;
     private final PointRepository pointRepository;
     private final Gauge_PollRepository gaugePollRepository;
+
     @Override
     @Transactional
     public General_vote castGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request, Long PostId, Long userId) {
@@ -35,14 +36,14 @@ public class VoteServiceImpl implements VoteService{
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         newGeneralVote.setUser(user);
 
-        Post post=postRepository.findById(PostId)
-                .orElseThrow(()-> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Post post = postRepository.findById(PostId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
-        if(post.getGeneralPoll().getGeneralVoteList().stream().anyMatch(generalVote -> generalVote.getUser().getId().equals(userId))){
+        if (post.getGeneralPoll().getGeneralVoteList().stream().anyMatch(generalVote -> generalVote.getUser().getId().equals(userId))) {
             throw new GeneralException(ErrorStatus.ALREADY_VOTE);
         }
 
-        General_poll generalPoll=post.getGeneralPoll();
+        General_poll generalPoll = post.getGeneralPoll();
         newGeneralVote.setGeneralPoll(generalPoll);
 
         List<Long> selectedCandidateIds = request.getSelectList();
@@ -62,14 +63,14 @@ public class VoteServiceImpl implements VoteService{
         LocalDateTime now = LocalDateTime.now();
         long nanosUntilDeadline = ChronoUnit.NANOS.between(now, post.getGeneralPoll().getDeadline());
         Boolean voteOnGoing = nanosUntilDeadline > 0;
-        if(!voteOnGoing){
+        if (!voteOnGoing) {
             throw new GeneralException(ErrorStatus.DEADLINE_OVER);
         }
 
         user.setPoint(user.getPoint() + 5);
-        Point newPoint=Point.builder()
+        Point newPoint = Point.builder()
                 .amount(5)
-                .content("일반 투표에 대한 "+5+" 포인트 획득")
+                .content("일반 투표에 대한 " + 5 + " 포인트 획득")
                 .build();
         newPoint.setUser(user);
         pointRepository.save(newPoint);
@@ -79,64 +80,64 @@ public class VoteServiceImpl implements VoteService{
 
     @Override
     @Transactional
-    public Gauge_vote castGaugeVote(VoteRequestDTO.GaugeVoteRequestDTO request, Long PostId, Long userId){
+    public Gauge_vote castGaugeVote(VoteRequestDTO.GaugeVoteRequestDTO request, Long PostId, Long userId) {
         Gauge_vote newGaugeVote = VoteConverter.toGaugeVote(request);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         newGaugeVote.setUser(user);
 
-        Post post=postRepository.findById(PostId)
-                .orElseThrow(()-> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Post post = postRepository.findById(PostId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
 
-        if(post.getGaugePoll().getGaugeVoteList().stream().anyMatch(gaugeVote -> gaugeVote.getUser().getId().equals(userId))){
+        if (post.getGaugePoll().getGaugeVoteList().stream().anyMatch(gaugeVote -> gaugeVote.getUser().getId().equals(userId))) {
             throw new GeneralException(ErrorStatus.ALREADY_VOTE);
         }
-        Gauge_poll gaugePoll=post.getGaugePoll();
+        Gauge_poll gaugePoll = post.getGaugePoll();
         newGaugeVote.setGaugePoll(gaugePoll);
-
 
 
         //나노초 단위로 마감 여부 확인
         LocalDateTime now = LocalDateTime.now();
         long nanosUntilDeadline = ChronoUnit.NANOS.between(now, post.getGaugePoll().getDeadline());
         Boolean voteOnGoing = nanosUntilDeadline > 0;
-        if(!voteOnGoing){
+        if (!voteOnGoing) {
             throw new GeneralException(ErrorStatus.DEADLINE_OVER);
         }
 
         user.setPoint(user.getPoint() + 5);
-        Point newPoint=Point.builder()
+        Point newPoint = Point.builder()
                 .amount(5)
-                .content("게이지 투표에 대한 "+5+" 포인트 획득")
+                .content("게이지 투표에 대한 " + 5 + " 포인트 획득")
                 .build();
         newPoint.setUser(user);
         pointRepository.save(newPoint);
 
-        Integer value=request.getValue();
+        Integer value = request.getValue();
         gaugePollRepository.findById(PostId);
-        Optional<Post> optionalPost=postRepository.findById(PostId);
-        Post gaugePost=optionalPost.get();
-        Integer currentGauge=gaugePost.getGaugePoll().getGauge();
-        Integer engagedUser=gaugePost.getGaugePoll().getGaugeVoteList().size();
-        int result1=(int)Math.round((currentGauge*(engagedUser-1.0)+value)/(engagedUser));
-        Integer result=(Integer)result1;
+        Optional<Post> optionalPost = postRepository.findById(PostId);
+        Post gaugePost = optionalPost.get();
+        Integer currentGauge = gaugePost.getGaugePoll().getGauge();
+        Integer engagedUser = gaugePost.getGaugePoll().getGaugeVoteList().size();
+        int result1 = (int) Math.round((currentGauge * (engagedUser - 1.0) + value) / (engagedUser));
+        Integer result = (Integer) result1;
         gaugePost.getGaugePoll().setGauge(result);
         return gaugeVoteRepository.save(newGaugeVote);
     }
+
     @Override
     @Transactional
-    public Card_vote castCardVote(VoteRequestDTO.CardVoteRequestDTO request,Long PostId, Long userId){
+    public Card_vote castCardVote(VoteRequestDTO.CardVoteRequestDTO request, Long PostId, Long userId) {
         Card_vote newCardVote = VoteConverter.toCardVote(request);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         newCardVote.setUser(user);
 
-        Post post=postRepository.findById(PostId)
-                .orElseThrow(()-> new GeneralException(ErrorStatus.POST_NOT_FOUND));
-        if(post.getCardPoll().getCardVoteList().stream().anyMatch(cardVote -> cardVote.getUser().getId().equals(userId))){
+        Post post = postRepository.findById(PostId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        if (post.getCardPoll().getCardVoteList().stream().anyMatch(cardVote -> cardVote.getUser().getId().equals(userId))) {
             throw new GeneralException(ErrorStatus.ALREADY_VOTE);
         }
-        Card_poll cardPoll=post.getCardPoll();
+        Card_poll cardPoll = post.getCardPoll();
         newCardVote.setCardPoll(cardPoll);
 
         List<Long> selectedCandidateIds = request.getSelectList();
@@ -157,14 +158,14 @@ public class VoteServiceImpl implements VoteService{
         LocalDateTime now = LocalDateTime.now();
         long nanosUntilDeadline = ChronoUnit.NANOS.between(now, post.getCardPoll().getDeadline());
         Boolean voteOnGoing = nanosUntilDeadline > 0;
-        if(!voteOnGoing){
+        if (!voteOnGoing) {
             throw new GeneralException(ErrorStatus.DEADLINE_OVER);
         }
 
         user.setPoint(user.getPoint() + 5);
-        Point newPoint=Point.builder()
+        Point newPoint = Point.builder()
                 .amount(5)
-                .content("카드 투표에 대한 "+5+" 포인트 획득")
+                .content("카드 투표에 대한 " + 5 + " 포인트 획득")
                 .build();
         newPoint.setUser(user);
         pointRepository.save(newPoint);

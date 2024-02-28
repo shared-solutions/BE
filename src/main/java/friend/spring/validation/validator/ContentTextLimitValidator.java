@@ -10,7 +10,7 @@ import javax.validation.ConstraintValidatorContext;
 
 @Component
 @RequiredArgsConstructor
-public class ContentTextLimitValidator implements ConstraintValidator<ContentTextLimit,String> {
+public class ContentTextLimitValidator implements ConstraintValidator<ContentTextLimit, String> {
     @Override
     public void initialize(ContentTextLimit constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);
@@ -18,8 +18,8 @@ public class ContentTextLimitValidator implements ConstraintValidator<ContentTex
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        boolean isValid= value.length() >= 5 && value.length() < 1000;
-        if(!isValid){
+        boolean isValid = value.length() >= 5 && value.length() < 1000;
+        if (!isValid) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(ErrorStatus.CONTENT_TEXT_LIMIT.getMessage()).addConstraintViolation();
         }

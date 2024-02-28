@@ -38,7 +38,7 @@ public class ParentPostDTO {
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ParentPostGetListDTO{
+    public static class ParentPostGetListDTO {
         List<CandidatePostDTO> candidatePostDTOList;
         private Boolean isEnd;
     }

@@ -17,22 +17,23 @@ import java.util.stream.Collectors;
 import static java.util.Calendar.HOUR;
 import static java.util.Calendar.SECOND;
 import static java.util.Calendar.MINUTE;
+
 public class MyPageConverter {
-    public static MyPageResponseDTO.CategoryResDTO toCategoryResDTO(Category category){
+    public static MyPageResponseDTO.CategoryResDTO toCategoryResDTO(Category category) {
         return MyPageResponseDTO.CategoryResDTO.builder()
                 .categoryId(category.getId())
                 .category(category.getName())
                 .build();
     }
 
-    public static MyPageResponseDTO.SavedCategoryResDTO toSavedCategoryResDTO(List<Category> categoryList){
+    public static MyPageResponseDTO.SavedCategoryResDTO toSavedCategoryResDTO(List<Category> categoryList) {
         List<MyPageResponseDTO.CategoryResDTO> categoryNameList = categoryList.stream()
                 .map(MyPageConverter::toCategoryResDTO).collect(Collectors.toList());
         return MyPageResponseDTO.SavedCategoryResDTO.builder()
                 .postCategoryList(categoryNameList).build();
     }
 
-    public static MyPageResponseDTO.SavedPostResDTO toSavedPostResDTO(Post post){
+    public static MyPageResponseDTO.SavedPostResDTO toSavedPostResDTO(Post post) {
         long diffTime = post.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.DAYS); // now보다 이후면 +, 전이면 -
 
         return MyPageResponseDTO.SavedPostResDTO.builder()
@@ -44,15 +45,15 @@ public class MyPageConverter {
                 .comment(post.getCommentList().size()).build();
     }
 
-    public static MyPageResponseDTO.SavedAllPostResDTO toSavedAllPostResDTO(Page<Post> postList){
+    public static MyPageResponseDTO.SavedAllPostResDTO toSavedAllPostResDTO(Page<Post> postList) {
         List<MyPageResponseDTO.SavedPostResDTO> savedAllPostList = postList.stream().map(MyPageConverter::toSavedPostResDTO).collect(Collectors.toList());
         return MyPageResponseDTO.SavedAllPostResDTO.builder()
                 .postList(savedAllPostList).build();
     }
 
-    public static MyPageResponseDTO.MyProfileResDTO toMyProfileResDTO(User user){
+    public static MyPageResponseDTO.MyProfileResDTO toMyProfileResDTO(User user) {
         String userPhoto = null;
-        if(user.getFile() != null){
+        if (user.getFile() != null) {
             userPhoto = user.getFile().getUrl();
         }
         return MyPageResponseDTO.MyProfileResDTO.builder()
@@ -63,42 +64,43 @@ public class MyPageConverter {
                 .build();
     }
 
-    public static User toUserName(MyPageRequestDTO.ProfileEditNameReq profileEditNameReq){
+    public static User toUserName(MyPageRequestDTO.ProfileEditNameReq profileEditNameReq) {
         return User.builder()
                 .nickname(profileEditNameReq.getNickName())
                 .build();
     }
-    public static MyPageResponseDTO.ProfileEditNameRes toProfileEditNameResDTO(User user){
+
+    public static MyPageResponseDTO.ProfileEditNameRes toProfileEditNameResDTO(User user) {
         return MyPageResponseDTO.ProfileEditNameRes.builder()
                 .nickName(user.getNickname())
                 .build();
     }
 
-    public static MyPageResponseDTO.ProfileEditEmailRes toProfileEditEmailResDTO(User user){
+    public static MyPageResponseDTO.ProfileEditEmailRes toProfileEditEmailResDTO(User user) {
         return MyPageResponseDTO.ProfileEditEmailRes.builder()
                 .changeEmail(user.getEmail())
                 .build();
     }
 
-    public static User toUserEmail(MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq){
+    public static User toUserEmail(MyPageRequestDTO.ProfileEditEmailReq profileEditEmailReq) {
         return User.builder()
                 .email(profileEditEmailReq.getChangeEmail())
                 .build();
     }
 
-    public static MyPageResponseDTO.ProfileEditPhoneRes toProfileEditPhoneResDTO(User user){
+    public static MyPageResponseDTO.ProfileEditPhoneRes toProfileEditPhoneResDTO(User user) {
         return MyPageResponseDTO.ProfileEditPhoneRes.builder()
                 .phone(user.getPhone())
                 .build();
     }
 
-    public static MyPageResponseDTO.ProfileEditPasswordRes toProfileEditPasswordResDTO(User user){
+    public static MyPageResponseDTO.ProfileEditPasswordRes toProfileEditPasswordResDTO(User user) {
         return MyPageResponseDTO.ProfileEditPasswordRes.builder()
                 .changePassword(user.getPassword())
                 .build();
     }
 
-    public static Inquiry toInquiry(MyPageRequestDTO.MyInquiryReq myInquiryReq, User user){
+    public static Inquiry toInquiry(MyPageRequestDTO.MyInquiryReq myInquiryReq, User user) {
         return Inquiry.builder()
                 .category(myInquiryReq.getInquiryCategory())
                 .content(myInquiryReq.getContent())
@@ -106,13 +108,13 @@ public class MyPageConverter {
                 .build();
     }
 
-    public static MyPageResponseDTO.MyInquiryRes toMyInquiryRes(Inquiry inquiry){
+    public static MyPageResponseDTO.MyInquiryRes toMyInquiryRes(Inquiry inquiry) {
         return MyPageResponseDTO.MyInquiryRes.builder()
                 .inquiry_id(inquiry.getId())
                 .build();
     }
 
-    public static MyPageResponseDTO.SavedPostCategoryDetailRes toSavedPostCategoryDetailRes(Post post){
+    public static MyPageResponseDTO.SavedPostCategoryDetailRes toSavedPostCategoryDetailRes(Post post) {
         long diffTime = post.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.DAYS); // now보다 이후면 +, 전이면 -
 
         return MyPageResponseDTO.SavedPostCategoryDetailRes.builder()
@@ -125,7 +127,7 @@ public class MyPageConverter {
                 .build();
     }
 
-    public static MyPageResponseDTO.SavedPostCategoryDetailListRes toSavedPostCategoryDetailListRes(Page<Post> postList, Category category){
+    public static MyPageResponseDTO.SavedPostCategoryDetailListRes toSavedPostCategoryDetailListRes(Page<Post> postList, Category category) {
         List<MyPageResponseDTO.SavedPostCategoryDetailRes> postCategoryDetailResList = postList.stream().map(MyPageConverter::toSavedPostCategoryDetailRes).collect(Collectors.toList());
         return MyPageResponseDTO.SavedPostCategoryDetailListRes.builder()
                 .name(category.getName())
@@ -133,11 +135,11 @@ public class MyPageConverter {
                 .build();
     }
 
-    public static MyPageResponseDTO.NoticeRes toNoticeRes(Notice notice){
+    public static MyPageResponseDTO.NoticeRes toNoticeRes(Notice notice) {
         long diffTime = notice.getCreatedAt().until(LocalDateTime.now(), ChronoUnit.DAYS); // now보다 이후면 +, 전이면 -
 
         String adminImage = null;
-        if (notice.getUser().getFile() != null){
+        if (notice.getUser().getFile() != null) {
             adminImage = notice.getUser().getFile().getUrl();
         }
         return MyPageResponseDTO.NoticeRes.builder()
@@ -148,16 +150,16 @@ public class MyPageConverter {
                 .build();
     }
 
-    public static MyPageResponseDTO.NoticeListRes toNoticeListRes(Page<Notice> noticeList){
+    public static MyPageResponseDTO.NoticeListRes toNoticeListRes(Page<Notice> noticeList) {
         List<MyPageResponseDTO.NoticeRes> noticeResList = noticeList.stream().map(MyPageConverter::toNoticeRes).collect(Collectors.toList());
         return MyPageResponseDTO.NoticeListRes.builder()
                 .noticeList(noticeResList)
                 .build();
     }
 
-    public static MyPageResponseDTO.NoticeDetailRes toNoticeDetailRes(Notice notice){
+    public static MyPageResponseDTO.NoticeDetailRes toNoticeDetailRes(Notice notice) {
         String adminImage = null;
-        if (notice.getUser().getFile() != null){
+        if (notice.getUser().getFile() != null) {
             adminImage = notice.getUser().getFile().getUrl();
         }
         return MyPageResponseDTO.NoticeDetailRes.builder()
@@ -169,13 +171,13 @@ public class MyPageConverter {
                 .build();
     }
 
-    public static MyPageResponseDTO.TermRes toTermRes(Term term){
+    public static MyPageResponseDTO.TermRes toTermRes(Term term) {
         return MyPageResponseDTO.TermRes.builder()
                 .content(term.getTerm())
                 .build();
     }
 
-    public static MyPageResponseDTO.PrivacyRes toPrivacyRes(Term term){
+    public static MyPageResponseDTO.PrivacyRes toPrivacyRes(Term term) {
         return MyPageResponseDTO.PrivacyRes.builder()
                 .content(term.getPrivacy())
                 .build();

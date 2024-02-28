@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter  extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter  extends OncePerRequestFilter {
         String token = jwtTokenProvider.resolveToken(request);
 
         // validateToken으로 토큰 유효성 검사
-        if(token != null && jwtTokenProvider.validateToken(token)) {
+        if (token != null && jwtTokenProvider.validateToken(token)) {
 
             // Redis에 해당 access token logout여부를 확인
             String isLogout = (String) redisTemplate.opsForValue().get(token);

@@ -63,7 +63,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(nullable = true)
     @Builder.Default
-    private Integer point=0;
+    private Integer point = 0;
 
     @Column(nullable = true)
     private String kakao;
@@ -178,12 +178,20 @@ public class User extends BaseEntity implements UserDetails {
         this.file = file;
     }
 
-    public void setNickname(String nickname){ this.nickname = nickname; }
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
-    public void setEmail(String email){this.email = email;}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public void setPhone(String  phone){this.phone = phone;}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-    public void setPassword(String password){this.password = password;}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
 

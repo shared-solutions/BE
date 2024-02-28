@@ -33,7 +33,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class MyPageServiceImpl implements MyPageService{
+public class MyPageServiceImpl implements MyPageService {
 
     private final UserRepository userRepository;
     private final PostService postService;
@@ -56,6 +56,7 @@ public class MyPageServiceImpl implements MyPageService{
             throw new PostHandler(ErrorStatus.POST_CATGORY_NOT_FOUND);
         }
     }
+
     //저장한 게시물
     @Override
     public List<Category> getCategoryList(Long userId) {
@@ -68,19 +69,17 @@ public class MyPageServiceImpl implements MyPageService{
                 .map(Post_scrap::getPost).filter(Objects::nonNull)
                 .map(Post::getCategory).filter(Objects::nonNull).distinct().collect(Collectors.toList());
         return categoryList;
-        }
+    }
 
     @Override
     public Page<Post> getAllPostList(Long userId, Integer page, Integer sort) {
-        if (sort == 0){
+        if (sort == 0) {
             Page<Post> scrapListByView = postScrapRepository.findPostsByUserIdOrderByPostViewDesc(userId, PageRequest.of(page, 10));
             return scrapListByView;
-        }
-        else if (sort == 1){
+        } else if (sort == 1) {
             Page<Post> scrapListByRecent = postScrapRepository.findPostsByUserIdOrderByCreatedAtDesc(userId, PageRequest.of(page, 10));
             return scrapListByRecent;
-        }
-        else return null;
+        } else return null;
     }
 
     @Override
@@ -123,10 +122,10 @@ public class MyPageServiceImpl implements MyPageService{
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
         List<User> all = userRepository.findAll();
         all.forEach(eachUser -> {
-                    if (eachUser.getEmail().equals(profileEditEmailReq.getChangeEmail())) {
-                        throw new GeneralException(ErrorStatus.USER_EXISTS_EMAIL);
-                    }
-                });
+            if (eachUser.getEmail().equals(profileEditEmailReq.getChangeEmail())) {
+                throw new GeneralException(ErrorStatus.USER_EXISTS_EMAIL);
+            }
+        });
         user.setEmail(profileEditEmailReq.getChangeEmail());
         return user;
     }
@@ -141,10 +140,10 @@ public class MyPageServiceImpl implements MyPageService{
     @Override
     public User editUserPassword(Long userId, MyPageRequestDTO.ProfileEditPasswordReq profileEditPasswordReq) {
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        if (!encoder.matches(profileEditPasswordReq.getCurPassword(), user.getPassword())){
+        if (!encoder.matches(profileEditPasswordReq.getCurPassword(), user.getPassword())) {
             throw new GeneralException(ErrorStatus.PASSWORD_INCORRECT);
         }
-        if (!profileEditPasswordReq.getChangePassword().equals(profileEditPasswordReq.getCheckPassword())){
+        if (!profileEditPasswordReq.getChangePassword().equals(profileEditPasswordReq.getCheckPassword())) {
             throw new GeneralException(ErrorStatus.PASSWORD_CHECK_INCORRECT);
         }
         String encode = encoder.encode(profileEditPasswordReq.getChangePassword());
@@ -196,7 +195,7 @@ public class MyPageServiceImpl implements MyPageService{
     @Override
     public User checkAdmin(Long adminId) {
         User user = userRepository.findById(adminId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        if (user.getRole() == RoleType.USER){
+        if (user.getRole() == RoleType.USER) {
             throw new GeneralException(ErrorStatus.NOT_ADMIN);
         }
         return user;

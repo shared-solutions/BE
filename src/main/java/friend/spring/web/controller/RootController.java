@@ -10,5 +10,4 @@ public class RootController {
         return "I'm healthy!";
     }
 
-
 }

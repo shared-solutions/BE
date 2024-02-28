@@ -14,14 +14,14 @@ import java.util.TimeZone;
 @EnableScheduling
 public class Application {
 
-	@PostConstruct
-	public void started() {
-		TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
-	}
+    @PostConstruct
+    public void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Seoul"));
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-		System.out.println("현재시간 " + LocalDateTime.now());
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+        System.out.println("현재시간 " + LocalDateTime.now());
+    }
 
 }

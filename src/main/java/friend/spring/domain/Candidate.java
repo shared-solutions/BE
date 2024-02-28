@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+
 @Entity
 @Getter
 @Builder
@@ -31,14 +32,14 @@ public class Candidate extends BaseEntity {
     private File file;
 
     public void setGeneralPoll(General_poll generalPoll) {
-    this.generalPoll = generalPoll;
-    if (this.generalPoll != null) {
-        Hibernate.initialize(this.generalPoll);
-        if (this.generalPoll.getCandidateList() != null) {
-            this.generalPoll.getCandidateList().add(this);
+        this.generalPoll = generalPoll;
+        if (this.generalPoll != null) {
+            Hibernate.initialize(this.generalPoll);
+            if (this.generalPoll.getCandidateList() != null) {
+                this.generalPoll.getCandidateList().add(this);
+            }
         }
     }
-}
 
     public void setCardPoll(Card_poll cardPoll) {
         this.cardPoll = cardPoll;

@@ -10,7 +10,7 @@ import javax.validation.ConstraintValidatorContext;
 
 @Component
 @RequiredArgsConstructor
-public class TitleTextLimitValidator implements ConstraintValidator<TitleTextLimit,String> {
+public class TitleTextLimitValidator implements ConstraintValidator<TitleTextLimit, String> {
 
     @Override
     public void initialize(TitleTextLimit constraintAnnotation) {
@@ -19,8 +19,8 @@ public class TitleTextLimitValidator implements ConstraintValidator<TitleTextLim
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        boolean isValid= value.length() >= 5 && value.length() < 30;
-        if(!isValid){
+        boolean isValid = value.length() >= 5 && value.length() < 30;
+        if (!isValid) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(ErrorStatus.TITLE_TEXT_LIMIT.getMessage()).addConstraintViolation();
         }

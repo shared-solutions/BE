@@ -57,6 +57,7 @@ public class CommentResponseDTO {
         Long commentChoiceId;
         Integer point;
     }
+
     @Builder
     @Getter
     @NoArgsConstructor

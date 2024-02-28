@@ -10,13 +10,14 @@ import java.util.Optional;
 
 public interface PostQueryService {
     Post getPostDetail(Long postId);
+
     Boolean checkEngage(Long userId, Long postId);
 
     Post ParentPost(Long parentid);
 
     Optional<Post> findPost(Long postId);
 
-    Page<Post> getPostList(Integer page,Integer size, String category);
+    Page<Post> getPostList(Integer page, Integer size, String category);
 
     Page<Post> getReviewList(Integer page, Integer size, Integer arrange);
 

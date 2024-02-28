@@ -45,7 +45,7 @@ public class Post extends BaseEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Integer view=0;
+    private Integer view = 0;
 
 
     @Column(nullable = true)
@@ -53,7 +53,7 @@ public class Post extends BaseEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Integer isFixed=0;
+    private Integer isFixed = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -103,7 +103,7 @@ public class Post extends BaseEntity {
     private Card_poll cardPoll;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="gaugePoll_id")
+    @JoinColumn(name = "gaugePoll_id")
     private Gauge_poll gaugePoll;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -111,25 +111,24 @@ public class Post extends BaseEntity {
     private General_poll generalPoll;
 
 
-
-    public void setUser(User user){
-        if(this.user != null)
+    public void setUser(User user) {
+        if (this.user != null)
             user.getPostList().remove(this);
         this.user = user;
         user.getPostList().add(this);
     }
 
-    public void setParentPost(Post parent){
-        if(this.parentPost != null)
+    public void setParentPost(Post parent) {
+        if (this.parentPost != null)
             parent.getReviewPostList().remove(this);
-        this.parentPost=parent;
+        this.parentPost = parent;
         parent.getReviewPostList().add(this);
     }
 
-    public void setCategory(Category category){
-        if(this.category != null)
+    public void setCategory(Category category) {
+        if (this.category != null)
             category.getPostList().remove(this);
-        this.category =category;
+        this.category = category;
         category.getPostList().add(this);
     }
 
@@ -159,20 +158,20 @@ public class Post extends BaseEntity {
         }
     }
 
-    public void setTitle(String title){
-        this.title=title;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public void setContent(String content){
-        this.content=content;
+    public void setContent(String content) {
+        this.content = content;
     }
 
-    public void setIsFixed(Integer isFixed){
-        this.isFixed=isFixed;
+    public void setIsFixed(Integer isFixed) {
+        this.isFixed = isFixed;
     }
 
-    public void setStateDel(){
-        this.state=PostState.DELETED;
+    public void setStateDel() {
+        this.state = PostState.DELETED;
     }
 
 }
