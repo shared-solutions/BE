@@ -205,9 +205,4 @@ public class UserConverter {
 
     }
 
-    public static UserResponseDTO.PasswordUpdateRes toUpdatePassword(User user) {
-        return UserResponseDTO.PasswordUpdateRes.builder()
-                .newPassword(user.getPassword())
-                .build();
-    }
 }

@@ -2,7 +2,6 @@ package friend.spring.web.controller;
 
 import friend.spring.apiPayload.ApiResponse;
 import friend.spring.apiPayload.GeneralException;
-import friend.spring.converter.MyPageConverter;
 import friend.spring.converter.UserConverter;
 import friend.spring.domain.Comment;
 import friend.spring.domain.Level;
@@ -228,7 +227,7 @@ public class UserRestController {
         return ApiResponse.onSuccess(authService.kakaoLogin(code));
     }
 
-
+    //비밀번호 재설정
     @PatchMapping(value = "/updatePassword")
     @Operation(summary = "비밀번호 재설정 API", description = "(비밀번호 재설정 이메일 인증후) 비밀번호를 변경하는 API")
     @ApiResponses({
@@ -237,15 +236,27 @@ public class UserRestController {
     @Parameters({
             @Parameter(name = "email", description = "RequestHeader - 비밀번호를 바꾸고자 하는 사용자의 email")
     })
-    public ApiResponse<UserResponseDTO.PasswordUpdateRes> updatePassword(
+    public ApiResponse<Void> updatePassword(
             @RequestHeader(name = "email") String mail,
             HttpServletRequest request,
             @RequestBody @Valid UserRequestDTO.PasswordUpdateReq passwordUpdateReq) {
-        String email = userService.getEmail(request);
-        User updPassword = userService.updatePassword(email, passwordUpdateReq);
+        userService.updatePassword(userService.getEmail(request),passwordUpdateReq );
 
-        return ApiResponse.onSuccess(UserConverter.toUpdatePassword(updPassword));
+        return ApiResponse.onSuccess(null);
 
     }
 
+    // 회원 탈퇴
+    @DeleteMapping("/delete")
+    @Operation(summary = "회원 탈퇴 API", description = "회원을 탈퇴시키는 API")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 회원정보가 존재하지 않습니다."),
+    })
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 회원 탈퇴할 회원의 accessToken"),
+    })
+    public ApiResponse<String> deactivateUser(@RequestHeader(name = "atk") String atk, HttpServletRequest request) throws GeneralException {
+        return ApiResponse.onSuccess(userService.deactivateUser(request));
+    }
 }

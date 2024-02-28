@@ -11,7 +11,6 @@ import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.TokenDTO;
 import friend.spring.web.dto.UserRequestDTO;
-import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,7 +25,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static friend.spring.apiPayload.code.status.ErrorStatus.*;
-import static java.util.regex.Pattern.matches;
 
 @Slf4j
 @Service
@@ -185,7 +183,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //비밀번호 변경
-    public User updatePassword(String email, UserRequestDTO.PasswordUpdateReq passwordUpdateReq) throws GeneralException {
+    public void updatePassword(String email, UserRequestDTO.PasswordUpdateReq passwordUpdateReq) throws GeneralException {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         String newPassword = passwordUpdateReq.getNewPassword();
@@ -202,17 +200,41 @@ public class UserServiceImpl implements UserService {
             user.setPassword(encoder.encode(newPassword));
         }
         userRepository.save(user);
-        return user;
+
     }
 
     // Request 의 Header 에서 email 값 추출 "email" : "gominchingu@gmail.com"
     public String getEmail(HttpServletRequest request) {
         return request.getHeader("email");
     }
+
+    // 회원 탈퇴 - userIdx
+    @Transactional
+    public String deactivateUser(HttpServletRequest request) throws GeneralException {
+        Long userIdx = jwtTokenProvider.getCurrentUser(request);
+
+        System.out.println("getCurrentUser()로 가져온 userIdx : "+userIdx);
+        User user = userRepository.findById(userIdx)
+                .orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
+
+        // Redis에 로그인되어있는 토큰 삭제
+        // Redis 에서 해당 User email 로 저장된 Refresh Token 이 있는지 여부를 확인 후 있을 경우 삭제
+        if (redisTemplate.opsForValue().get("RT:" + user.getEmail()) != null) {
+            // Refresh Token 삭제
+            redisTemplate.delete("RT:" + user.getEmail());
+        }
+        String accessToken = jwtTokenProvider.resolveAccessToken(request);
+        // 탈퇴한 토큰을 차단 (deactivateUser 토큰 블랙리스트)
+        Long expiration = jwtTokenProvider.getExpireTime(accessToken).getTime();
+        // Redis 에 --accesstoken--(key) : logout(value) 로 저장, token 만료시간 지나면 자동 삭제
+        redisTemplate.opsForValue().set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
+
+//        userRepository.deleteById(user.getId());
+        user.setIsDeleted(true);
+        userRepository.save(user);
+
+        return "회원 탈퇴 성공";
+    }
 }
-//
-//    // Request 의 Header 에서 access token 값 추출 "atk" : "token--"
-//    public String resolveAccessToken(HttpServletRequest request) {
-//        return request.getHeader("atk");
-//    }
+
 
