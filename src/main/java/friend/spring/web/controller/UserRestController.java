@@ -2,7 +2,6 @@ package friend.spring.web.controller;
 
 import friend.spring.apiPayload.ApiResponse;
 import friend.spring.apiPayload.GeneralException;
-import friend.spring.converter.MyPageConverter;
 import friend.spring.converter.UserConverter;
 import friend.spring.domain.Comment;
 import friend.spring.domain.Level;
@@ -228,7 +227,7 @@ public class UserRestController {
         return ApiResponse.onSuccess(authService.kakaoLogin(code));
     }
 
-
+    //비밀번호 재설정
     @PatchMapping(value = "/updatePassword")
     @Operation(summary = "비밀번호 재설정 API", description = "(비밀번호 재설정 이메일 인증후) 비밀번호를 변경하는 API")
     @ApiResponses({
@@ -244,7 +243,7 @@ public class UserRestController {
         String email = userService.getEmail(request);
         User updPassword = userService.updatePassword(email, passwordUpdateReq);
 
-        return ApiResponse.onSuccess(UserConverter.toUpdatePassword(updPassword));
+        return ApiResponse.onSuccess(null);
 
     }
 

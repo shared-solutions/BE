@@ -210,9 +210,5 @@ public class UserServiceImpl implements UserService {
         return request.getHeader("email");
     }
 }
-//
-//    // Request 의 Header 에서 access token 값 추출 "atk" : "token--"
-//    public String resolveAccessToken(HttpServletRequest request) {
-//        return request.getHeader("atk");
-//    }
+
 
