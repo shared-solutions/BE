@@ -24,15 +24,15 @@ public class Gauge_poll extends BaseEntity {
 
     @Builder.Default
     @Column(nullable = false)
-    private Integer gauge =0;
+    private Integer gauge = 0;
 
     @Builder.Default
     @Column(nullable = true)
-    private LocalDateTime deadline= LocalDateTime.now().plusHours(1); // 디폴트 시간 1시간 설정.
+    private LocalDateTime deadline = LocalDateTime.now().plusHours(1); // 디폴트 시간 1시간 설정.
 
     @Column(nullable = false)
     @Builder.Default
-    private Boolean VoteOnGoing=true;
+    private Boolean VoteOnGoing = true;
 
     @OneToOne(mappedBy = "gaugePoll", cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
@@ -46,12 +46,12 @@ public class Gauge_poll extends BaseEntity {
         this.post = post;
     }
 
-    public void setDeadline(LocalDateTime deadline){
-        this.deadline=deadline;
+    public void setDeadline(LocalDateTime deadline) {
+        this.deadline = deadline;
     }
 
-    public void setVoteOnGoing(Boolean voteOnGoing){
-        this.VoteOnGoing=voteOnGoing;
+    public void setVoteOnGoing(Boolean voteOnGoing) {
+        this.VoteOnGoing = voteOnGoing;
     }
 
     public void setGauge(Integer gauge) {

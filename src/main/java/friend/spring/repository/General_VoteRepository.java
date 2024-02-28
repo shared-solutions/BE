@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface General_VoteRepository  extends JpaRepository<General_vote, Long> {
+public interface General_VoteRepository extends JpaRepository<General_vote, Long> {
     List<General_vote> findByUserId(Long user_id);
 }

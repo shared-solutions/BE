@@ -27,7 +27,7 @@ public class SseResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class VoteFinishResDTO{
+    public static class VoteFinishResDTO {
         String alarmContent;
         String alarmType;
         Long postId;

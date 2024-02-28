@@ -22,7 +22,7 @@ public class DeadlineLimitValidator implements ConstraintValidator<DeadlineLimit
         long daysUntilDeadline = ChronoUnit.DAYS.between(now, deadline);
 
         boolean isValid = minutesUntilDeadline >= 1 && daysUntilDeadline <= 30;
-        if(!isValid){
+        if (!isValid) {
             context.disableDefaultConstraintViolation();
             context.buildConstraintViolationWithTemplate(ErrorStatus.DEADLINE_LIMIT.getMessage()).addConstraintViolation();
         }

@@ -41,7 +41,7 @@ public class UserRestController {
     private final CommentService commentService;
     private final JwtTokenService jwtTokenService;
     private final AuthService authService;
-
+  
     //마이 페이지 조회
     @GetMapping("/my-page")
     public ApiResponse<UserResponseDTO.MyPageResDTO> getMyPage(
@@ -51,38 +51,37 @@ public class UserRestController {
         return ApiResponse.onSuccess(UserConverter.toMypageResDTO(myPage));
     }
 
-    @PostMapping("/mailSend")//이메일 인증 코드 전송
-    @Operation(summary = "이메일 인증 코드 전송 API", description = "이메일 인증 코드 전송하는 API입니다.")
+    @PostMapping ("/mailSend")//이메일 인증 코드 전송
+    @Operation(summary = "이메일 인증 코드 전송 API",description = "이메일 인증 코드 전송하는 API입니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
     })
-    @Parameters({})
-    public ApiResponse<UserResponseDTO.EmailSendRes> mailSend(@RequestBody @Valid UserRequestDTO.EmailSendReq emailDto) {
+    @Parameters({ })
+    public ApiResponse<UserResponseDTO.EmailSendRes> mailSend(@RequestBody @Valid UserRequestDTO.EmailSendReq emailDto){
         System.out.println("이메일 인증 요청이 들어옴");
-        System.out.println("이메일 인증 이메일 :" + emailDto.getEmail());
+        System.out.println("이메일 인증 이메일 :"+emailDto.getEmail());
 
         String code = mailService.joinEmail(emailDto.getEmail());
         return ApiResponse.onSuccess(UserConverter.toEmailSendRes(code));
     }
-
     @PostMapping("/mailauthCheck")//이메일 코드 확인
-    @Operation(summary = "이메일 코드 확인 API", description = "이메일 코드 확인하는 API입니다.")
+    @Operation(summary = "이메일 코드 확인 API",description = "이메일 코드 확인하는 API입니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005", description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005",description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
     })
-    @Parameters({})
-    public ApiResponse<Void> mailauthCheck(@RequestBody @Valid UserRequestDTO.EmailSendCheckReq emailSendCheckReq) {
+    @Parameters({ })
+    public ApiResponse<Void> mailauthCheck(@RequestBody @Valid UserRequestDTO.EmailSendCheckReq emailSendCheckReq){
         mailService.CheckAuthNum(emailSendCheckReq.getEmail(), emailSendCheckReq.getAuthNum());
         return ApiResponse.onSuccess(null);
     }
 
     //나의 Q&A 질문 조회
     @GetMapping("/my-page/profile/question")
-    @Operation(summary = "나의 Q&A 질문 조회 API", description = "사용자의 나의 Q&A 질문 조회 API 이며, 페이징을 포함합니다. query String 으로 page 번호를 주세요")
+    @Operation(summary = "나의 Q&A 질문 조회 API",description = "사용자의 나의 Q&A 질문 조회 API 이며, 페이징을 포함합니다. query String 으로 page 번호를 주세요")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001", description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
 
     })
     @Parameters({
@@ -102,10 +101,10 @@ public class UserRestController {
 
     //나의 Q&A 답변 조회
     @GetMapping("/my-page/profile/answer")
-    @Operation(summary = "나의 Q&A 답변 조회 API", description = "사용자의 Q&A 답변 조회 API 이며, 페이징을 포함합니다. query String 으로 page 번호를 주세요")
+    @Operation(summary = "나의 Q&A 답변 조회 API",description = "사용자의 Q&A 답변 조회 API 이며, 페이징을 포함합니다. query String 으로 page 번호를 주세요")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001", description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001",description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
 
     })
     @Parameters({
@@ -121,67 +120,64 @@ public class UserRestController {
         Page<Comment> myCommentList = commentService.getMyCommentList(request, page);
         return ApiResponse.onSuccess(UserConverter.toAnswerResDTO(myPage, nxtLevel, myCommentList));
     }
-
     @PostMapping("/join")//회원가입
-    @Operation(summary = "회원가입 API", description = "회원가입하는 API입니다.")
+    @Operation(summary = "회원가입 API",description = "회원가입하는 API입니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002", description = "NOT_ACCEPTABLE, 이미 존재하는 메일 주소입니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4002",description = "NOT_ACCEPTABLE, 이미 존재하는 메일 주소입니다."),
     })
-    @Parameters({})
+    @Parameters({ })
     public ApiResponse<UserResponseDTO.JoinResultDTO> join(@RequestBody @Valid UserRequestDTO.UserJoinRequest userJoinRequest) {
 
-        User user = userService.joinUser(userJoinRequest);
-        return ApiResponse.onSuccess(UserConverter.joinResultDTO(user));
+       User user = userService.joinUser(userJoinRequest);
+       return ApiResponse.onSuccess(UserConverter.joinResultDTO(user));
 
     }
-
-    @PostMapping("/passwordMailSend")//비밀번호 재설정 인증 코드 전송
-    @Operation(summary = "비밀번호 재설정 인증 코드 전송 API", description = "비밀번호 재설정 인증 코드 전송하는 API입니다.")
+    @PostMapping ("/passwordMailSend")//비밀번호 재설정 인증 코드 전송
+    @Operation(summary = "비밀번호 재설정 인증 코드 전송 API",description = "비밀번호 재설정 인증 코드 전송하는 API입니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
     })
-    @Parameters({})
-    public ApiResponse<UserResponseDTO.EmailSendRes> mailSend(@RequestBody @Valid UserRequestDTO.PasswordEmailSendReq emailDto) {
+    @Parameters({ })
+    public ApiResponse<UserResponseDTO.EmailSendRes> mailSend(@RequestBody @Valid UserRequestDTO.PasswordEmailSendReq emailDto){
         System.out.println("비밀번호 재설정 인증 요청이 들어옴");
-        System.out.println("비밀번호 재설정 인증 이메일 :" + emailDto.getEmail());
+        System.out.println("비밀번호 재설정 인증 이메일 :"+emailDto.getEmail());
 
         String code = mailService.passwordEmail(emailDto.getEmail());
         return ApiResponse.onSuccess(UserConverter.toEmailSendRes(code));
     }
-
     @PostMapping("/passwordMailauthCheck")//이메일 코드 확인
-    @Operation(summary = "비밀번호 재설정 코드 확인 API", description = "비밀번호 재설정 코드 확인하는 API입니다.")
+    @Operation(summary = "비밀번호 재설정 코드 확인 API",description = "비밀번호 재설정 코드 확인하는 API입니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005", description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005",description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
     })
-    @Parameters({})
-    public ApiResponse<Void> mailauthCheck(@RequestBody @Valid UserRequestDTO.PasswordEmailSendCheckReq emailSendCheckReq) {
+    @Parameters({ })
+    public ApiResponse<Void> mailauthCheck(@RequestBody @Valid UserRequestDTO.PasswordEmailSendCheckReq emailSendCheckReq){
         mailService.CheckAuthNum(emailSendCheckReq.getEmail(), emailSendCheckReq.getAuthNum());
         return ApiResponse.onSuccess(null);
     }
 
     //로그인
     @PostMapping("/login")
-    @Operation(summary = "로그인 API", description = "로그인하는 API입니다.")
+    @Operation(summary = "로그인 API",description = "로그인하는 API입니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4010", description = "NOT_FOUND, 가입 가능한 이메일입니다.(이메일 정보가 존재하지 않습니다.)"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4008", description = "NOT_FOUND, 비밀번호가 틀렸습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4010",description = "NOT_FOUND, 가입 가능한 이메일입니다.(이메일 정보가 존재하지 않습니다.)"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4008",description = "NOT_FOUND, 비밀번호가 틀렸습니다."),
     })
-    public ApiResponse<List<TokenDTO>> login(@RequestBody UserRequestDTO.UserLoginRequest userLoginRequest) throws GeneralException {
+    public ApiResponse<List<TokenDTO>> login(@RequestBody UserRequestDTO.UserLoginRequest userLoginRequest)throws GeneralException{
         List<TokenDTO> tokenDTOList = userService.login(userLoginRequest);
         return ApiResponse.onSuccess(tokenDTOList);
     }
 
     // 토큰 재발급
     @PostMapping("/reissue")
-    @Operation(summary = "토큰 재발급 API", description = "토큰 재발급하는 API입니다.")
+    @Operation(summary = "토큰 재발급 API",description = "토큰 재발급하는 API입니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4007", description = "UNAUTHORIZED, 유효하지 않은 JWT입니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4100", description = "UNAUTHORIZED, RefreshToken값을 확인해주세요."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4007",description = "UNAUTHORIZED, 유효하지 않은 JWT입니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4100",description = "UNAUTHORIZED, RefreshToken값을 확인해주세요."),
     })
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
@@ -193,24 +189,24 @@ public class UserRestController {
 
     // 로그아웃
     @PostMapping("/logout")
-    @Operation(summary = "로그아웃 API", description = "로그아웃하는 API입니다.")
+    @Operation(summary = "로그아웃 API",description = "로그아웃하는 API입니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 회원정보가 존재하지 않습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 회원정보가 존재하지 않습니다."),
     })
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
-    public ApiResponse<String> logout(@RequestHeader(name = "atk") String atk, HttpServletRequest request) {
+    public ApiResponse<String> logout(@RequestHeader(name = "atk") String atk, HttpServletRequest request)  {
         return ApiResponse.onSuccess(userService.logout(request));
     }
 
     @GetMapping("/point")
     @Operation(summary = "포인트 조회 API", description = "유저의 포인트 내역을 조회하는 API입니다")
     public ApiResponse<UserResponseDTO.PointViewDTO> myPoint(@RequestHeader("atk") String atk,
-                                                             HttpServletRequest request2) {
+                                                              HttpServletRequest request2) {
 
-        Long userId = jwtTokenService.JwtToId(request2);
+        Long userId=jwtTokenService.JwtToId(request2);
         Integer point = userService.pointCheck(userId);
         return ApiResponse.onSuccess(UserConverter.toPointViewResDTO(point));
     }

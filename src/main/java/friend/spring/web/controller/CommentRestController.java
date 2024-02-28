@@ -34,10 +34,10 @@ public class CommentRestController {
     @PostMapping("/{post-id}/comment")
     @Operation(summary = "댓글 작성 API", description = "댓글 작성하는 API입니다. ex) /posts/1/comment")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001",description = "NOT_FOUND, (부모 루트) 댓글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001", description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001", description = "NOT_FOUND, (부모 루트) 댓글을 찾을 수 없습니다."),
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
@@ -57,10 +57,10 @@ public class CommentRestController {
     @PostMapping("/{post-id}/comment/{comment-id}/like")
     @Operation(summary = "댓글 추천(좋아요) 생성 API", description = "댓글 추천(좋아요) 생성하는 API입니다. ex) /posts/1/comment/1/like")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001",description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001", description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001", description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
@@ -81,11 +81,11 @@ public class CommentRestController {
     @DeleteMapping("/{post-id}/comment/{comment-id}/like/del")
     @Operation(summary = "댓글 추천(좋아요) 해제 API", description = "댓글 추천(좋아요) 해제하는 API입니다. ex) /posts/1/comment/1/like/del")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001",description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4002",description = "NOT_FOUND, 댓글에 대한 좋아요 데이터를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001", description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001", description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4002", description = "NOT_FOUND, 댓글에 대한 좋아요 데이터를 찾을 수 없습니다."),
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
@@ -106,8 +106,8 @@ public class CommentRestController {
     @GetMapping("/{post-id}/comments")
     @Operation(summary = "댓글 조회 API", description = "댓글을 조회하는 API입니다. ex) /posts/111/comments")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001", description = "NOT_FOUND, 글을 찾을 수 없습니다."),
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디")
@@ -124,13 +124,13 @@ public class CommentRestController {
     @PostMapping("/{post-id}/comment/{comment-id}/choice")
     @Operation(summary = "댓글 채택 API", description = "댓글 채택 데이터를 생성하는 API입니다. ex) /posts/1/comment/1/choice")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4002",description = "BAD_REQUEST, 올바른 사용자(글 작성자)가 아닙니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001",description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4003",description = "BAD_REQUEST, 댓글 채택은 1개 댓글에 대해서만 가능합니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4004",description = "BAD_REQUEST, 자기 자신은 채택할 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001", description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4002", description = "BAD_REQUEST, 올바른 사용자(글 작성자)가 아닙니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001", description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4003", description = "BAD_REQUEST, 댓글 채택은 1개 댓글에 대해서만 가능합니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4004", description = "BAD_REQUEST, 자기 자신은 채택할 수 없습니다."),
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
@@ -151,11 +151,11 @@ public class CommentRestController {
     @PatchMapping("/{post-id}/comment/{comment-id}/edit")
     @Operation(summary = "댓글 수정 API", description = "댓글 수정하는 API입니다. ex) /posts/1/comment/1/edit")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001",description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4005",description = "올바른 사용자(댓글 작성자)가 아닙니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001", description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001", description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4005", description = "올바른 사용자(댓글 작성자)가 아닙니다."),
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
@@ -177,11 +177,11 @@ public class CommentRestController {
     @PatchMapping("/{post-id}/comment/{comment-id}/del")
     @Operation(summary = "댓글 삭제 API", description = "댓글 삭제하는 API입니다. ex) /posts/1/comment/1/del")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "NOT_FOUND, 글을 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001",description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4005",description = "올바른 사용자(댓글 작성자)가 아닙니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001", description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4001", description = "NOT_FOUND, 댓글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4005", description = "올바른 사용자(댓글 작성자)가 아닙니다."),
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),

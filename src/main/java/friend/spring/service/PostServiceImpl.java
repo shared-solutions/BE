@@ -32,7 +32,7 @@ import static friend.spring.domain.enums.PostVoteType.*;
 
 @Service
 @RequiredArgsConstructor
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final General_PollRepository generalPollRepository;
@@ -67,7 +67,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public Boolean checkPoint(PostRequestDTO.AddPostDTO request, User user) {
-        if(request.getPoint()>user.getPoint()){
+        if (request.getPoint() > user.getPoint()) {
             return Boolean.FALSE;
         }
         return Boolean.TRUE;
@@ -96,36 +96,36 @@ public class PostServiceImpl implements PostService{
     public Post joinPost(PostRequestDTO.AddPostDTO request, HttpServletRequest request2) {
         Long userId = jwtTokenProvider.getCurrentUser(request2);
 
-        Post newPost= PostConverter.toPost(request);
-        User user=userRepository.findById(userId)
-                .orElseThrow(()->new GeneralException(USER_NOT_FOUND));
+        Post newPost = PostConverter.toPost(request);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
         newPost.setUser(user);
 
         // 글 첨부파일 사진 저장
         if (request.getFileBase64List() != null) {
             s3Service.uploadPostImagesBase64(request.getFileBase64List(), S3ImageType.POST, newPost);
         }
-        LocalDateTime deadline=request.getDeadline();
-        if(request.getDeadline()==null){
-            deadline=LocalDateTime.now().plusHours(1);
+        LocalDateTime deadline = request.getDeadline();
+        if (request.getDeadline() == null) {
+            deadline = LocalDateTime.now().plusHours(1);
         }
 
         //일반 투표 api
-        if(newPost.getPostType()==VOTE){
+        if (newPost.getPostType() == VOTE) {
             newPost.setCategory(categoryRepository.findByName(request.getCategory()));
 
         }
 
-        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GENERAL){
+        if (newPost.getPostType() == VOTE && newPost.getVoteType() == GENERAL) {
             //포인트 차감 관련 코드
-            if(request.getPoint()!=null) {
+            if (request.getPoint() != null) {
                 if (!checkPoint(request, user)) {
                     throw new GeneralException(NOT_ENOUGH_POINT);
                 }
                 user.setPoint(user.getPoint() - request.getPoint());
-                Point newPoint=Point.builder()
+                Point newPoint = Point.builder()
                         .amount(request.getPoint() * -1) // 차감이므로 -1 곱해서 음수로 변환
-                        .content("일반 투표 작성에 대한 "+request.getPoint()+" 포인트 차감")
+                        .content("일반 투표 작성에 대한 " + request.getPoint() + " 포인트 차감")
                         .build();
                 newPoint.setUser(user);
                 pointRepository.save(newPoint);
@@ -135,7 +135,7 @@ public class PostServiceImpl implements PostService{
                     .pollTitle(request.getPollTitle())
                     .deadline(deadline)
                     .build();
-            if(request.getMultipleChoice()!=null){
+            if (request.getMultipleChoice() != null) {
                 generalPoll.setMultipleChoice(request.getMultipleChoice());
             }
             newPost.setGeneralPoll(generalPoll);
@@ -143,22 +143,22 @@ public class PostServiceImpl implements PostService{
 
         }
 //카드 투표 api
-        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==CARD){
+        if (newPost.getPostType() == VOTE && newPost.getVoteType() == CARD) {
             //포인트 차감 관련 코드
-            if(request.getPoint()!=null) {
+            if (request.getPoint() != null) {
                 if (!checkPoint(request, user)) {
                     throw new GeneralException(NOT_ENOUGH_POINT);
                 }
                 user.setPoint(user.getPoint() - request.getPoint());
-                Point newPoint=Point.builder()
+                Point newPoint = Point.builder()
                         .amount(request.getPoint() * -1)
-                        .content("게이지 투표 등록에 대한 "+request.getPoint()+" 포인트 차감")
+                        .content("게이지 투표 등록에 대한 " + request.getPoint() + " 포인트 차감")
                         .build();
                 newPoint.setUser(user);
                 pointRepository.save(newPoint);
             }
 
-            if(!checkPoint(request, user)&&request.getPoint()!=null){
+            if (!checkPoint(request, user) && request.getPoint() != null) {
                 throw new GeneralException(NOT_ENOUGH_POINT);
             }
 
@@ -166,29 +166,29 @@ public class PostServiceImpl implements PostService{
                     .pollTitle(request.getPollTitle())
                     .deadline(deadline)
                     .build();
-            if(request.getMultipleChoice()!=null){
+            if (request.getMultipleChoice() != null) {
                 cardPoll.setMultipleChoice(request.getMultipleChoice());
             }
             newPost.setCardPoll(cardPoll);
             cardPollRepository.save(cardPoll);
         }
 //게이지 투표 api
-        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GAUGE){
+        if (newPost.getPostType() == VOTE && newPost.getVoteType() == GAUGE) {
             //포인트 차감 관련 코드
-            if(request.getPoint()!=null) {
+            if (request.getPoint() != null) {
                 if (!checkPoint(request, user)) {
                     throw new GeneralException(NOT_ENOUGH_POINT);
                 }
                 user.setPoint(user.getPoint() - request.getPoint());
-                Point newPoint=Point.builder()
+                Point newPoint = Point.builder()
                         .amount(request.getPoint() * -1)
-                        .content("카드 투표 등록에 대한 "+request.getPoint()+" 포인트 차감")
+                        .content("카드 투표 등록에 대한 " + request.getPoint() + " 포인트 차감")
                         .build();
                 newPoint.setUser(user);
                 pointRepository.save(newPoint);
             }
 
-            if(!checkPoint(request, user)&&request.getPoint()!=null){
+            if (!checkPoint(request, user) && request.getPoint() != null) {
                 throw new GeneralException(NOT_ENOUGH_POINT);
             }
 
@@ -202,10 +202,10 @@ public class PostServiceImpl implements PostService{
             gaugePollRepository.save(gaugePoll);
         }
 
-        if(newPost.getPostType()==REVIEW&&request.getParent_id()!=null){
-            Post parent=postRepository.findById(request.getParent_id())
-                            .orElseThrow(()->new GeneralException(POST_NOT_FOUND));
-            if(!userId.equals(parent.getUser().getId())){
+        if (newPost.getPostType() == REVIEW && request.getParent_id() != null) {
+            Post parent = postRepository.findById(request.getParent_id())
+                    .orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
+            if (!userId.equals(parent.getUser().getId())) {
                 throw new GeneralException(POST_NOT_CORRECT_USER);
             }
             newPost.setParentPost(parent);
@@ -242,7 +242,7 @@ public class PostServiceImpl implements PostService{
         }
 
         // 일반 투표
-        if(newPost.getPostType()==VOTE&&newPost.getVoteType()==GENERAL) {
+        if (newPost.getPostType() == VOTE && newPost.getVoteType() == GENERAL) {
             General_poll generalPoll = generalPollRepository.findById(newPost.getGeneralPoll().getId()).orElseThrow(() -> new GeneralException(POST_GENERAL_POLL_NOT_FOUND));
             candidate.setGeneralPoll(generalPoll);
         }
@@ -257,16 +257,16 @@ public class PostServiceImpl implements PostService{
 
     @Override
     @Transactional
-    public void editPost(Long postId,PostRequestDTO.PostEditReq request, Long userId){
+    public void editPost(Long postId, PostRequestDTO.PostEditReq request, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
-        if(!user.getId().equals(post.getUser().getId())){
+        Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
+        if (!user.getId().equals(post.getUser().getId())) {
             throw new GeneralException(POST_NOT_CORRECT_USER);
         }
-        if(post.getIsFixed()>=2){
+        if (post.getIsFixed() >= 2) {
             throw new GeneralException(TOO_MUCH_FIXED);
         }
-        if(!(request.getDeadline()==null)) {
+        if (!(request.getDeadline() == null)) {
             LocalDateTime currentDeadLine;
             if (post.getVoteType() == GENERAL) {
                 currentDeadLine = post.getGeneralPoll().getDeadline();
@@ -285,7 +285,7 @@ public class PostServiceImpl implements PostService{
                 if (request.getDeadline().isBefore(LocalDateTime.now())) {
                     throw new GeneralException(DEADLINE_LIMIT);
                 }
-                if (!(daysUntilDeadline <= 30)){
+                if (!(daysUntilDeadline <= 30)) {
                     throw new GeneralException(DEADLINE_LIMIT);
                 }
                 post.getCardPoll().setDeadline(request.getDeadline());
@@ -302,7 +302,7 @@ public class PostServiceImpl implements PostService{
                 post.getGaugePoll().setDeadline(request.getDeadline());
             }
         }
-        if(!request.getVoteOnGoing()){
+        if (!request.getVoteOnGoing()) {
             if (post.getVoteType() == GENERAL) {
                 post.getGeneralPoll().setVoteOnGoing(false);
             }
@@ -315,15 +315,15 @@ public class PostServiceImpl implements PostService{
         }
         post.setTitle(request.getTitle());
         post.setContent(request.getContent());
-        post.setIsFixed(post.getIsFixed()+1);
+        post.setIsFixed(post.getIsFixed() + 1);
     }
 
     @Override
     @Transactional
     public void deletePost(Long postId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        Post post=postRepository.findById(postId).orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
-        if(!user.getId().equals(post.getUser().getId())){
+        Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(POST_NOT_FOUND));
+        if (!user.getId().equals(post.getUser().getId())) {
             throw new GeneralException(POST_NOT_CORRECT_USER);
         }
         post.setStateDel();
@@ -332,9 +332,10 @@ public class PostServiceImpl implements PostService{
 
     //한 유저의 모든 질문글
     @Override
-    public Page<Post> getMyPostList(Long userId, Integer page) {
+    public Page<Post> getMyPostList(HttpServletRequest request, Integer page) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
         Optional<User> user = userRepository.findById(userId);
-        if(user.isEmpty()){
+        if (user.isEmpty()) {
             throw new UserHandler(ErrorStatus.USER_NOT_FOUND);
         }
 
@@ -405,7 +406,7 @@ public class PostServiceImpl implements PostService{
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "point"));
         Page<Post> bestPostPage = postRepository.findByPostTypeAndStateAndCreatedAtAfter(PostType.VOTE, PostState.POSTING, minusDays, pageable);
 
-        return PostConverter.pollPostGetListDTO(bestPostPage,userId);
+        return PostConverter.pollPostGetListDTO(bestPostPage, userId);
     }
 
     @Override
@@ -419,7 +420,7 @@ public class PostServiceImpl implements PostService{
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Post> recentPostPage = postRepository.findByPostTypeAndState(PostType.VOTE, PostState.POSTING, pageable);
 
-        return PostConverter.pollPostGetListDTO(recentPostPage,userId);
+        return PostConverter.pollPostGetListDTO(recentPostPage, userId);
     }
 
     @Override

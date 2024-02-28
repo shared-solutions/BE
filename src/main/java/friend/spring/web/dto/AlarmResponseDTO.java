@@ -14,14 +14,15 @@ public class AlarmResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AlarmListResDTO{
+    public static class AlarmListResDTO {
         List<AlarmResDTO> alarmList;
     }
+
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AlarmResDTO{
+    public static class AlarmResDTO {
         Long alarmId;
         String userNickname;
         String userPhoto;
@@ -38,7 +39,7 @@ public class AlarmResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AlarmLeftResDTO{
+    public static class AlarmLeftResDTO {
         Boolean isAlarmLeft;
     }
 }

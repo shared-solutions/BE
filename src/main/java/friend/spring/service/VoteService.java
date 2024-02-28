@@ -7,8 +7,9 @@ import friend.spring.web.dto.VoteRequestDTO;
 
 public interface VoteService {
 
-    General_vote castGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request,Long PostId, Long userId);
-    Gauge_vote castGaugeVote(VoteRequestDTO.GaugeVoteRequestDTO request,Long PostId, Long userId);
+    General_vote castGeneralVote(VoteRequestDTO.GeneralVoteRequestDTO request, Long PostId, Long userId);
+
+    Gauge_vote castGaugeVote(VoteRequestDTO.GaugeVoteRequestDTO request, Long PostId, Long userId);
 
     Card_vote castCardVote(VoteRequestDTO.CardVoteRequestDTO request, Long PostId, Long userId);
 

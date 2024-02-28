@@ -26,6 +26,7 @@ public class SchedulerService {
     private final EmailService emailService;
     private final SseService notificationService;
     private final AlarmRepository alarmRepository;
+
     // 투표 마감
     // (1시간마다 검사해서 투표 마감 날짜가 지나면 닫히도록 할 예정)
     @Transactional
@@ -33,7 +34,7 @@ public class SchedulerService {
     @Scheduled(cron = "0 0/1 * * * *", zone = "Asia/Seoul") // 매 분마다 실행 -> 매 시간마다 실행으로 변경 예정
     public void deleteVote() {
         List<Post> postList = postRepository.findAll();
-        if (postList.isEmpty()){
+        if (postList.isEmpty()) {
             throw new GeneralException(ErrorStatus.POST_NOT_FOUND);
         }
         LocalDateTime now = LocalDateTime.now();

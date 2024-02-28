@@ -17,9 +17,13 @@ import java.time.LocalDateTime;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findByPostTypeAndState(PostType postType, PostState state, Pageable pageable);
-    Page<Post> findByPostTypeAndStateAndCategory(PostType postType, PostState state,Category category,Pageable pageable);
+
+    Page<Post> findByPostTypeAndStateAndCategory(PostType postType, PostState state, Category category, Pageable pageable);
+
     Page<Post> findByUserIdAndPostTypeAndState(Long userId, PostType postType, PostState state, Pageable pageable);
+
     Page<Post> findAllByUser(User user, PageRequest pageRequest);
+
     Page<Post> findByPostTypeAndStateAndCreatedAtAfter(PostType postType, PostState state, LocalDateTime sevenDaysAgo, Pageable pageable);
 
     @Query(value = "SELECT p FROM Post p JOIN p.postScrapList s JOIN p.category c WHERE s.user.id = :userId and c.id = :categoryId")

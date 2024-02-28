@@ -29,7 +29,7 @@ public interface PostService {
     Boolean checkPoint(PostRequestDTO.AddPostDTO request, User user);
 
 
-    void editPost(Long postId,PostRequestDTO.PostEditReq request, Long userId);
+    void editPost(Long postId, PostRequestDTO.PostEditReq request, Long userId);
 
     void deletePost(Long postId, Long userId);
 

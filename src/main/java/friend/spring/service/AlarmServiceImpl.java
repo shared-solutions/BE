@@ -20,15 +20,16 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class AlarmServiceImpl implements AlarmService{
+public class AlarmServiceImpl implements AlarmService {
 
     private final UserRepository userRepository;
     private final AlarmRepository alarmRepository;
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
+
     @Override
     public void checkAlarm(boolean flag) {
-        if (!flag){
+        if (!flag) {
             throw new AlarmHandler(ErrorStatus.ALARM_NOT_FOUND);
         }
     }

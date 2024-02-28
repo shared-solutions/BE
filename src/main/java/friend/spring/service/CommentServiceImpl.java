@@ -253,7 +253,6 @@ public class CommentServiceImpl implements CommentService {
     }
 
 
-
     @Override
     public void dislikeComment(Long postId, Long commentId, HttpServletRequest request) {
         Long userId = jwtTokenProvider.getCurrentUser(request);
@@ -373,7 +372,7 @@ public class CommentServiceImpl implements CommentService {
     public Page<Comment> getMyCommentList(HttpServletRequest request, Integer page) {
         Long userId = jwtTokenProvider.getCurrentUser(request);
         Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             userService.checkUser(false);
         }
         User user = optionalUser.get();

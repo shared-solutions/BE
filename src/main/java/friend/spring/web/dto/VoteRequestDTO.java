@@ -8,17 +8,17 @@ import java.util.List;
 
 public class VoteRequestDTO {
     @Getter
-    public static class GeneralVoteRequestDTO{
+    public static class GeneralVoteRequestDTO {
         List<Long> selectList;
     }
 
     @Getter
-    public static class GaugeVoteRequestDTO{
+    public static class GaugeVoteRequestDTO {
         Integer value;
     }
 
     @Getter
-    public static class CardVoteRequestDTO{
+    public static class CardVoteRequestDTO {
         List<Long> selectList;
     }
 }

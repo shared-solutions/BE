@@ -6,7 +6,7 @@ import friend.spring.domain.enums.AlarmType;
 import friend.spring.web.dto.SseResponseDTO;
 
 public class SseConverter {
-    public static SseResponseDTO.CommentCreateResDTO toCommentCreateResDTO (Comment comment, AlarmType alarmType) {
+    public static SseResponseDTO.CommentCreateResDTO toCommentCreateResDTO(Comment comment, AlarmType alarmType) {
         String userPhoto = null;
         if (comment.getUser().getFile() != null) {
             userPhoto = comment.getUser().getFile().getUrl();
@@ -31,7 +31,7 @@ public class SseConverter {
                 .build();
     }
 
-    public static SseResponseDTO.VoteFinishResDTO toVoteFinishResDTO(Post post, AlarmType alarmType){
+    public static SseResponseDTO.VoteFinishResDTO toVoteFinishResDTO(Post post, AlarmType alarmType) {
         return SseResponseDTO.VoteFinishResDTO.builder()
                 .postId(post.getId())
                 .alarmContent(post.getContent())

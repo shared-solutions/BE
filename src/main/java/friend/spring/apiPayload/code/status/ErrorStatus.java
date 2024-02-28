@@ -14,23 +14,23 @@ ErrorStatus implements BaseErrorCode {
 
     // 가장 일반적인 응답
     _INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "COMMON5000", "서버 에러, 관리자에게 문의 바랍니다."),
-    _BAD_REQUEST(HttpStatus.BAD_REQUEST,"COMMON4000","잘못된 요청입니다."),
-    _UNAUTHORIZED(HttpStatus.UNAUTHORIZED,"COMMON4001","인증이 필요합니다."),
+    _BAD_REQUEST(HttpStatus.BAD_REQUEST, "COMMON4000", "잘못된 요청입니다."),
+    _UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "COMMON4001", "인증이 필요합니다."),
     _FORBIDDEN(HttpStatus.FORBIDDEN, "COMMON4003", "금지된 요청입니다."),
 
     // 멤버 관련 응답
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USER4001", "회원정보가 존재하지 않습니다."),
-    USERS_NOT_FOUND_EMAIL(HttpStatus.NOT_FOUND,"USER4010","가입 가능한 이메일입니다."),
-    USER_EXISTS_EMAIL(HttpStatus.NOT_ACCEPTABLE,"USER4002","이미 존재하는 메일 주소입니다"),
+    USERS_NOT_FOUND_EMAIL(HttpStatus.NOT_FOUND, "USER4010", "가입 가능한 이메일입니다."),
+    USER_EXISTS_EMAIL(HttpStatus.NOT_ACCEPTABLE, "USER4002", "이미 존재하는 메일 주소입니다"),
     UNABLE_TO_SEND_EMAIL(HttpStatus.BAD_REQUEST, "USER4003", "이메일을 발송하지 못했습니다."),
     ERR_MAKE_CODE(HttpStatus.BAD_REQUEST, "USER4004", "인증 코드 생성에 오류가 있습니다."),
     INCORRECT_CODE(HttpStatus.UNAUTHORIZED, "USER4005", "인증 코드가 일치하지 않습니다."),
     EMPTY_JWT(HttpStatus.BAD_REQUEST, "USER4006", "JWT를 입력해주세요."),
     INVALID_JWT(HttpStatus.UNAUTHORIZED, "USER4007", "유효하지 않은 JWT입니다."),
-    INVALID_PASSWORD_FORMAT(HttpStatus.NOT_ACCEPTABLE,"USER4077","비밀번호 형식에 맞지 않습니다."),
+    INVALID_PASSWORD_FORMAT(HttpStatus.NOT_ACCEPTABLE, "USER4077", "비밀번호 형식에 맞지 않습니다."),
     PASSWORD_INCORRECT(HttpStatus.NOT_FOUND, "USER4008", "비밀번호가 틀렸습니다."),
     PASSWORD_CHECK_INCORRECT(HttpStatus.NOT_FOUND, "USER4009", "확인 비밀번호가 일치하지 않습니다."),
-    RTK_INCORREXT(HttpStatus.UNAUTHORIZED,"USER4100","RefreshToken값을 확인해주세요."),
+    RTK_INCORREXT(HttpStatus.UNAUTHORIZED, "USER4100", "RefreshToken값을 확인해주세요."),
     NOT_ADMIN(HttpStatus.BAD_REQUEST, "USER4101", "관리자가 아닙니다."),
 
     // Auth 관련
@@ -50,17 +50,17 @@ ErrorStatus implements BaseErrorCode {
     POST_SCRAP_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4004", "글에 대한 스크랩 데이터를 찾을 수 없습니다."),
     POST_GENERAL_POLL_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4005", "글에 대한 일반 투표 데이터를 찾을 수 없습니다."),
     POST_CARD_POLL_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4006", "글에 대한 카드 투표 데이터를 찾을 수 없습니다."),
-    TITLE_TEXT_LIMIT(HttpStatus.BAD_REQUEST,"POST4007","최소 5자 이상, 30자 미만 입력해 주세요"),
-    CONTENT_TEXT_LIMIT(HttpStatus.BAD_REQUEST,"POST4008","최소 5자 이상, 1000자 미만 입력해 주세요"),
-    CANDIDATE_TEXT_LIMIT(HttpStatus.BAD_REQUEST,"POST4009","최소 1자 이상, 30자 미만 입력해 주세요"),
-    DEADLINE_LIMIT(HttpStatus.BAD_REQUEST,"POST4010","최소 1분~최대30일로 입력해 주세요"),
-    CANDIDATE_NOT_FOUND(HttpStatus.NOT_FOUND,"POST4011","후보를 찾을 수 없습니다"),
-    TOO_MUCH_FIXED(HttpStatus.NOT_FOUND,"POST4012","이미 2회 이상 수정 했습니다"),
-    NOT_ENOUGH_POINT(HttpStatus.BAD_REQUEST,"POST4013","해당 유저의 포인트가 부족 합니다"),
+    TITLE_TEXT_LIMIT(HttpStatus.BAD_REQUEST, "POST4007", "최소 5자 이상, 30자 미만 입력해 주세요"),
+    CONTENT_TEXT_LIMIT(HttpStatus.BAD_REQUEST, "POST4008", "최소 5자 이상, 1000자 미만 입력해 주세요"),
+    CANDIDATE_TEXT_LIMIT(HttpStatus.BAD_REQUEST, "POST4009", "최소 1자 이상, 30자 미만 입력해 주세요"),
+    DEADLINE_LIMIT(HttpStatus.BAD_REQUEST, "POST4010", "최소 1분~최대30일로 입력해 주세요"),
+    CANDIDATE_NOT_FOUND(HttpStatus.NOT_FOUND, "POST4011", "후보를 찾을 수 없습니다"),
+    TOO_MUCH_FIXED(HttpStatus.NOT_FOUND, "POST4012", "이미 2회 이상 수정 했습니다"),
+    NOT_ENOUGH_POINT(HttpStatus.BAD_REQUEST, "POST4013", "해당 유저의 포인트가 부족 합니다"),
     POST_LIKE_DUPLICATE(HttpStatus.BAD_REQUEST, "POST4014", "글에 대한 좋아요 데이터가 이미 존재합니다."),
     POST_SCRAP_DUPLICATE(HttpStatus.BAD_REQUEST, "POST4015", "글에 대한 스크랩 데이터가 이미 존재합니다."),
-    DEADLINE_OVER(HttpStatus.BAD_REQUEST,"POST4016","투표 마감 시간이 지났습니다"),
-    ALREADY_VOTE(HttpStatus.BAD_REQUEST,"POST4017","이미 투표 하셨습니다."),
+    DEADLINE_OVER(HttpStatus.BAD_REQUEST, "POST4016", "투표 마감 시간이 지났습니다"),
+    ALREADY_VOTE(HttpStatus.BAD_REQUEST, "POST4017", "이미 투표 하셨습니다."),
 //    USER_VOTE(HttpStatus.BAD_REQUEST,"POST4017","작성자는 투표가 불가능 합니다 하셨습니다."),
 
     // 댓글 관련 응답
@@ -77,8 +77,7 @@ ErrorStatus implements BaseErrorCode {
 
 
     // 공지사항 관련 응답
-    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICE4001", "공지사항이 없습니다.")
-    ;
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICE4001", "공지사항이 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

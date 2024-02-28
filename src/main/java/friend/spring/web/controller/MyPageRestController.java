@@ -36,11 +36,11 @@ public class MyPageRestController {
 
     //저장한 게시물(내 카테고리) 조회
     @GetMapping("/post")
-    @Operation(summary = "사용자 글 카테고리 조회 API", description = "사용자의 저장 글 카테고리 목록을 집합으로 조회하는 API입니다.")
+    @Operation(summary = "사용자 글 카테고리 조회 API",description = "사용자의 저장 글 카테고리 목록을 집합으로 조회하는 API입니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "회원정보가 존재하지 않습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4004", description = "카테고리를 찾을 수 없습니다.")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "회원정보가 존재하지 않습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4004",description = "카테고리를 찾을 수 없습니다.")
 
     })
     @Parameters({
@@ -55,12 +55,12 @@ public class MyPageRestController {
 
     //저장한 게시물(모든게시물)
     @GetMapping("/post/all")
-    @Operation(summary = "저장한 게시물(모든게시물) 조회 API", description = "사용자의 전체 저장 글을 조회하는 API입니다.")
+    @Operation(summary = "저장한 게시물(모든게시물) 조회 API",description = "사용자의 전체 저장 글을 조회하는 API입니다.")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "회원정보가 존재하지 않습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001", description = "글을 찾을 수 없습니다.."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4005", description = "저장한 글이 없습니다.")
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 성공"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "회원정보가 존재하지 않습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001",description = "글을 찾을 수 없습니다.."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4005",description = "저장한 글이 없습니다.")
 
     })
     @Parameters({
@@ -101,8 +101,8 @@ public class MyPageRestController {
     @GetMapping(value = "/profile/modify")
     @Operation(summary = "회원정보 수정 페이지 API", description = "회원정보 수정 페이지를 조회하는 API입니다. ex) /user/my-page/profile/modify")
     @ApiResponses({
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200",description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
     })
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
@@ -137,7 +137,7 @@ public class MyPageRestController {
     @Operation(summary = "회원정보 이메일 수정 API", description = "회원정보 이메일을 수정하는 API입니다. ex) /user/my-page/profile/modify/email")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005", description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005",description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
     })
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
@@ -155,7 +155,7 @@ public class MyPageRestController {
     @Operation(summary = "회원정보 번호 수정 API", description = "회원정보 번호를 수정하는 API입니다. ex) /user/my-page/profile/modify/phone")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005", description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4005",description = "UNAUTHORIZED, 인증 코드가 일치하지 않습니다."),
     })
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
@@ -173,8 +173,8 @@ public class MyPageRestController {
     @Operation(summary = "회원정보 비밀번호 수정 API", description = "회원정보 비밀번호를 수정하는 API입니다. ex) /user/my-page/profile/modify/password")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4008", description = "NOT_FOUND, 비밀번호가 틀렸습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4009", description = "NOT_FOUND, 확인 비밀번호가 일치하지 않습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4008",description = "NOT_FOUND, 비밀번호가 틀렸습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4009",description = "NOT_FOUND, 확인 비밀번호가 일치하지 않습니다."),
     })
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken")
@@ -228,8 +228,8 @@ public class MyPageRestController {
     @Operation(summary = "사용자 글 카테고리 상세보기 조회 API", description = "카테고리별로 상세화면을 조회하는 API입니다. ex) /user/my-page/post/{category-id}")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4004", description = "NOT_FOUND, 글에 대한 스크랩 데이터를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001",description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4004",description = "NOT_FOUND, 글에 대한 스크랩 데이터를 찾을 수 없습니다."),
 
     })
     @Parameters({
@@ -251,13 +251,13 @@ public class MyPageRestController {
     @Operation(summary = "공지사항 리스트 조회 API", description = "전체 공지사항의 리스트를 조회하는 API입니다. ex) /user/my-page/setting/notice")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "NOTICE4001", description = "NOT_FOUND, 공지사항이 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "NOTICE4001",description = "NOT_FOUND, 공지사항이 없습니다."),
     })
     @Parameters({
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 (0부터 시작)"),
     })
     public ApiResponse<MyPageResponseDTO.NoticeListRes> getNoticeList(
-            @RequestParam(name = "page", defaultValue = "0") Integer page) {
+            @RequestParam(name = "page", defaultValue = "0") Integer page){
         Page<Notice> noticeList = myPageService.getNoticeList(30L, page);
         return ApiResponse.onSuccess(MyPageConverter.toNoticeListRes(noticeList));
     }
@@ -266,14 +266,14 @@ public class MyPageRestController {
     @Operation(summary = "공지사항 상세 조회 API", description = "전체 공지사항 상세내용을 조회하는 API입니다. ex) /user/my-page/setting/notice/{notice-id}")
     @ApiResponses({
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다. "),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "NOTICE4001", description = "NOT_FOUND, 공지사항이 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "NOTICE4001",description = "NOT_FOUND, 공지사항이 없습니다."),
     })
     @Parameters({
             @Parameter(name = "notice-id", description = "path variable - 공지사항 아이디"),
     })
     public ApiResponse<MyPageResponseDTO.NoticeDetailRes> getNoticeDetail(
             @PathVariable("notice-id") Long noticeId
-    ) {
+            ){
         Notice noticeDetail = myPageService.getNoticeDetail(noticeId);
         return ApiResponse.onSuccess(MyPageConverter.toNoticeDetailRes(noticeDetail));
     }
@@ -286,7 +286,7 @@ public class MyPageRestController {
     @Parameters({
     })
     public ApiResponse<MyPageResponseDTO.TermRes> getTerm(
-    ) {
+    ){
         Term term = myPageService.getTerm(30L);
         return ApiResponse.onSuccess(MyPageConverter.toTermRes(term));
     }
@@ -299,7 +299,7 @@ public class MyPageRestController {
     @Parameters({
     })
     public ApiResponse<MyPageResponseDTO.PrivacyRes> getPrivacy(
-    ) {
+    ){
         Term term = myPageService.getPrivacy(30L);
         return ApiResponse.onSuccess(MyPageConverter.toPrivacyRes(term));
     }

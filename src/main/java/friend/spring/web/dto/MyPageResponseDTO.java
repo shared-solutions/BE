@@ -18,7 +18,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class CategoryResDTO{
+    public static class CategoryResDTO {
         Long categoryId;
         String category;
     }
@@ -27,7 +27,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SavedCategoryResDTO{
+    public static class SavedCategoryResDTO {
         List<CategoryResDTO> postCategoryList;
     }
 
@@ -35,7 +35,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SavedPostResDTO{
+    public static class SavedPostResDTO {
         Long postId;
         Long ago;
         String title;
@@ -48,7 +48,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SavedAllPostResDTO{
+    public static class SavedAllPostResDTO {
         List<SavedPostResDTO> postList;
     }
 
@@ -56,7 +56,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MyProfileResDTO{
+    public static class MyProfileResDTO {
         String userImage;
         String nickName;
         String email;
@@ -67,7 +67,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProfileEditNameRes{
+    public static class ProfileEditNameRes {
         String nickName;
     }
 
@@ -75,7 +75,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProfileEditEmailRes{
+    public static class ProfileEditEmailRes {
         String changeEmail;
     }
 
@@ -83,7 +83,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProfileEditPhoneRes{
+    public static class ProfileEditPhoneRes {
         String phone;
     }
 
@@ -91,7 +91,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class ProfileEditPasswordRes{
+    public static class ProfileEditPasswordRes {
         String changePassword;
     }
 
@@ -99,14 +99,15 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class MyInquiryRes{
+    public static class MyInquiryRes {
         Long inquiry_id;
     }
+
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SavedPostCategoryDetailRes{
+    public static class SavedPostCategoryDetailRes {
         Long postId;
         Long ago;
         String title;
@@ -114,11 +115,12 @@ public class MyPageResponseDTO {
         Integer postLike;
         Integer comment;
     }
+
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class SavedPostCategoryDetailListRes{
+    public static class SavedPostCategoryDetailListRes {
         String name;
         List<SavedPostCategoryDetailRes> postList;
     }
@@ -128,14 +130,15 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class NoticeListRes{
+    public static class NoticeListRes {
         List<NoticeRes> noticeList;
     }
+
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class NoticeRes{
+    public static class NoticeRes {
         String adminImage;
         Long ago;
         String title;
@@ -146,7 +149,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class NoticeDetailRes{
+    public static class NoticeDetailRes {
         String adminImage;
         String adminName;
         LocalDateTime createdAt;
@@ -158,7 +161,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class TermRes{
+    public static class TermRes {
         String content;
     }
 
@@ -166,7 +169,7 @@ public class MyPageResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PrivacyRes{
+    public static class PrivacyRes {
         String content;
     }
 }

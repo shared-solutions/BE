@@ -46,7 +46,6 @@ public class UserResponseDTO {
     }
 
 
-
     @Builder
     @Getter
     @NoArgsConstructor
@@ -97,7 +96,7 @@ public class UserResponseDTO {
         Double adoptCommentPercent;
         List<CommentResponseDTO.myCommentRes> commentList;
     }
-  
+
     @Builder
     @Getter
     @NoArgsConstructor
@@ -139,7 +138,7 @@ public class UserResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class PasswordUpdateRes{
+    public static class PasswordUpdateRes {
         String newPassword;
     }
 }
