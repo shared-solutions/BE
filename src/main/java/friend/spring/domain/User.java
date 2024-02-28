@@ -58,7 +58,7 @@ public class User extends BaseEntity implements UserDetails {
     @Column(nullable = true)
     private Boolean agree_info;
 
-    @Column(nullable = true)//잠시 true로 수정
+    @Column(nullable = true)
     private Boolean is_deleted;
 
     @Column(nullable = true)
@@ -192,6 +192,10 @@ public class User extends BaseEntity implements UserDetails {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setIsDeleted(boolean deleted) {
+        this.is_deleted = deleted;
     }
 }
 

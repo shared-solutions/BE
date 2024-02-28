@@ -236,12 +236,11 @@ public class UserRestController {
     @Parameters({
             @Parameter(name = "email", description = "RequestHeader - 비밀번호를 바꾸고자 하는 사용자의 email")
     })
-    public ApiResponse<UserResponseDTO.PasswordUpdateRes> updatePassword(
+    public ApiResponse<Void> updatePassword(
             @RequestHeader(name = "email") String mail,
             HttpServletRequest request,
             @RequestBody @Valid UserRequestDTO.PasswordUpdateReq passwordUpdateReq) {
-        String email = userService.getEmail(request);
-        User updPassword = userService.updatePassword(email, passwordUpdateReq);
+        userService.updatePassword(userService.getEmail(request),passwordUpdateReq );
 
         return ApiResponse.onSuccess(null);
 

@@ -11,7 +11,6 @@ import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.TokenDTO;
 import friend.spring.web.dto.UserRequestDTO;
-import io.jsonwebtoken.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,7 +25,6 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static friend.spring.apiPayload.code.status.ErrorStatus.*;
-import static java.util.regex.Pattern.matches;
 
 @Slf4j
 @Service
@@ -185,7 +183,7 @@ public class UserServiceImpl implements UserService {
     }
 
     //비밀번호 변경
-    public User updatePassword(String email, UserRequestDTO.PasswordUpdateReq passwordUpdateReq) throws GeneralException {
+    public void updatePassword(String email, UserRequestDTO.PasswordUpdateReq passwordUpdateReq) throws GeneralException {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
 
         String newPassword = passwordUpdateReq.getNewPassword();
@@ -202,7 +200,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(encoder.encode(newPassword));
         }
         userRepository.save(user);
-        return user;
+
     }
 
     // Request 의 Header 에서 email 값 추출 "email" : "gominchingu@gmail.com"
@@ -231,7 +229,9 @@ public class UserServiceImpl implements UserService {
         // Redis 에 --accesstoken--(key) : logout(value) 로 저장, token 만료시간 지나면 자동 삭제
         redisTemplate.opsForValue().set(accessToken, "logout", expiration, TimeUnit.MILLISECONDS);
 
-        userRepository.deleteById(user.getId());
+//        userRepository.deleteById(user.getId());
+        user.setIsDeleted(true);
+        userRepository.save(user);
 
         return "회원 탈퇴 성공";
     }
