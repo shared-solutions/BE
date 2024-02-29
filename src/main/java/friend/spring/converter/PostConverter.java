@@ -338,8 +338,25 @@ public class PostConverter {
             //투표 후보 리스트
             List<PollOptionDTO.PollOptionRes> pollOptionDTOList = post.getGeneralPoll().getCandidateList().stream()
                     .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
-    //투표 마감시
+
+            //////////////////////////////////////////////////////////////////////////////////////////////
+            long totalVotes = post.getGeneralPoll().getGeneralVoteList().stream()
+                    .flatMap(vote -> vote.getSelect_list().stream())
+                    .count();
+            Map<Long, Long> candidateSelectionCounts = post.getGeneralPoll().getGeneralVoteList().stream()
+                    .flatMap(vote -> vote.getSelect_list().stream())
+                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+            allCandidatePercent = post.getGeneralPoll().getCandidateList().stream()
+                    .map(candidate -> {
+                        Long candidateId = candidate.getId();
+                        long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                        return (int) ((double) selectionCount / totalVotes * 100);
+                    })
+                    .collect(Collectors.toList());
+            //////////////////////////////////////////////////////
+    //투표 마감x
             if (post.getGeneralPoll().getDeadline().isAfter(LocalDateTime.now())) {
+
                 if (engage) {
                     //투표한 후보에 대한 정보
                     Set<Long> selectedOptionIds = post.getGeneralPoll().getGeneralVoteList().stream()
@@ -359,14 +376,14 @@ public class PostConverter {
                             .collect(Collectors.toList());
 
                     // 총 투표수 계산
-                    long totalVotes = post.getGeneralPoll().getGeneralVoteList().stream()
-                            .flatMap(vote -> vote.getSelect_list().stream())
-                            .count();
+//                    long totalVotes = post.getGeneralPoll().getGeneralVoteList().stream()
+//                            .flatMap(vote -> vote.getSelect_list().stream())
+//                            .count();
 
-                    // 각 후보별 선택된 횟수 계산
-                    Map<Long, Long> candidateSelectionCounts = post.getGeneralPoll().getGeneralVoteList().stream()
-                            .flatMap(vote -> vote.getSelect_list().stream())
-                            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+//                    // 각 후보별 선택된 횟수 계산
+//                    Map<Long, Long> candidateSelectionCounts = post.getGeneralPoll().getGeneralVoteList().stream()
+//                            .flatMap(vote -> vote.getSelect_list().stream())
+//                            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
                     // 사용자가 선택한 후보의 선택률 계산
                     userVotePercent = userSelectedCandidateIds.stream()
@@ -459,14 +476,15 @@ public class PostConverter {
                     .filter(vote -> vote.getUser().getId().equals(userId))
                     .flatMap(vote -> vote.getSelect_list().stream())
                     .collect(Collectors.toList());
-            // 총 투표수 계산
-            long totalVotes = post.getGeneralPoll().getGeneralVoteList().stream()
-                    .flatMap(vote -> vote.getSelect_list().stream())
-                    .count();
-            // 각 후보별 선택된 횟수 계산
-            Map<Long, Long> candidateSelectionCounts = post.getGeneralPoll().getGeneralVoteList().stream()
-                    .flatMap(vote -> vote.getSelect_list().stream())
-                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+//            // 총 투표수 계산
+//            long totalVotes = post.getGeneralPoll().getGeneralVoteList().stream()
+//                    .flatMap(vote -> vote.getSelect_list().stream())
+//                    .count();
+//            // 각 후보별 선택된 횟수 계산
+//            Map<Long, Long> candidateSelectionCounts = post.getGeneralPoll().getGeneralVoteList().stream()
+//                    .flatMap(vote -> vote.getSelect_list().stream())
+//                    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
             // 사용자가 선택한 후보의 선택률 계산
             userVotePercent = userSelectedCandidateIds.stream()
                     .map(candidateId -> {
@@ -591,6 +609,32 @@ public class PostConverter {
         //투표 후보 리스트
         List<PollOptionDTO.PollOptionRes> pollOptionDTOList = post.getCardPoll().getCandidateList().stream()
                 .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
+
+        // 사용자가 투표한 후보의 ID
+        List<Long> userSelectedCandidateIds = post.getCardPoll().getCardVoteList().stream()
+                .filter(vote -> vote.getUser().getId().equals(userId))
+                .flatMap(vote -> vote.getSelect_list().stream())
+                .collect(Collectors.toList());
+
+        // 총 투표수 계산
+        long totalVotes = post.getCardPoll().getCardVoteList().stream()
+                .flatMap(vote -> vote.getSelect_list().stream())
+                .count();
+
+
+        // 각 후보별 선택된 횟수 계산
+        Map<Long, Long> candidateSelectionCounts = post.getCardPoll().getCardVoteList().stream()
+                .flatMap(vote -> vote.getSelect_list().stream())
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+        allCandidatePercent = post.getCardPoll().getCandidateList().stream()
+                .map(candidate -> {
+                    Long candidateId = candidate.getId();
+                    long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                    return (int) ((double) selectionCount / totalVotes * 100);
+                })
+                .collect(Collectors.toList());
+
         if (post.getCardPoll().getDeadline().isAfter(LocalDateTime.now())) {
             if (engage) {
                 //투표한 후보에 대한 정보
@@ -604,21 +648,21 @@ public class PostConverter {
                         .collect(Collectors.toList());
 
                 // 총 투표수 계산
-                // 사용자가 투표한 후보의 ID
-                List<Long> userSelectedCandidateIds = post.getCardPoll().getCardVoteList().stream()
-                        .filter(vote -> vote.getUser().getId().equals(userId))
-                        .flatMap(vote -> vote.getSelect_list().stream())
-                        .collect(Collectors.toList());
-
-                // 총 투표수 계산
-                long totalVotes = post.getCardPoll().getCardVoteList().stream()
-                        .flatMap(vote -> vote.getSelect_list().stream())
-                        .count();
-
-                // 각 후보별 선택된 횟수 계산
-                Map<Long, Long> candidateSelectionCounts = post.getCardPoll().getCardVoteList().stream()
-                        .flatMap(vote -> vote.getSelect_list().stream())
-                        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+//                // 사용자가 투표한 후보의 ID
+//                List<Long> userSelectedCandidateIds = post.getCardPoll().getCardVoteList().stream()
+//                        .filter(vote -> vote.getUser().getId().equals(userId))
+//                        .flatMap(vote -> vote.getSelect_list().stream())
+//                        .collect(Collectors.toList());
+//
+//                // 총 투표수 계산
+//                long totalVotes = post.getCardPoll().getCardVoteList().stream()
+//                        .flatMap(vote -> vote.getSelect_list().stream())
+//                        .count();
+//
+//                // 각 후보별 선택된 횟수 계산
+//                Map<Long, Long> candidateSelectionCounts = post.getCardPoll().getCardVoteList().stream()
+//                        .flatMap(vote -> vote.getSelect_list().stream())
+//                        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
                 // 사용자가 선택한 후보의 선택률 계산
                 userVotePercent = userSelectedCandidateIds.stream()
@@ -706,19 +750,19 @@ public class PostConverter {
                 .filter(candidate -> selectedOptionIds.contains(candidate.getId()))
                 .map(PostConverter::toPollOptionResDTO)
                 .collect(Collectors.toList());
-        // 사용자가 투표한 후보의 ID
-        List<Long> userSelectedCandidateIds = post.getCardPoll().getCardVoteList().stream()
-                .filter(vote -> vote.getUser().getId().equals(userId))
-                .flatMap(vote -> vote.getSelect_list().stream())
-                .collect(Collectors.toList());
-        // 총 투표수 계산
-        long totalVotes = post.getCardPoll().getCardVoteList().stream()
-                .flatMap(vote -> vote.getSelect_list().stream())
-                .count();
-        // 각 후보별 선택된 횟수 계산
-        Map<Long, Long> candidateSelectionCounts = post.getCardPoll().getCardVoteList().stream()
-                .flatMap(vote -> vote.getSelect_list().stream())
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+//        // 사용자가 투표한 후보의 ID
+//        List<Long> userSelectedCandidateIds = post.getCardPoll().getCardVoteList().stream()
+//                .filter(vote -> vote.getUser().getId().equals(userId))
+//                .flatMap(vote -> vote.getSelect_list().stream())
+//                .collect(Collectors.toList());
+//        // 총 투표수 계산
+//        long totalVotes = post.getCardPoll().getCardVoteList().stream()
+//                .flatMap(vote -> vote.getSelect_list().stream())
+//                .count();
+//        // 각 후보별 선택된 횟수 계산
+//        Map<Long, Long> candidateSelectionCounts = post.getCardPoll().getCardVoteList().stream()
+//                .flatMap(vote -> vote.getSelect_list().stream())
+//                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
         // 사용자가 선택한 후보의 선택률 계산
         userVotePercent = userSelectedCandidateIds.stream()
                 .map(candidateId -> {
@@ -752,13 +796,13 @@ public class PostConverter {
                 })
                 .collect(Collectors.toList());
 
-        allCandidatePercent = post.getCardPoll().getCandidateList().stream()
-                .map(candidate -> {
-                    Long candidateId = candidate.getId();
-                    long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
-                    return (int) ((double) selectionCount / totalVotes * 100);
-                })
-                .collect(Collectors.toList());
+//        allCandidatePercent = post.getCardPoll().getCandidateList().stream()
+//                .map(candidate -> {
+//                    Long candidateId = candidate.getId();
+//                    long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+//                    return (int) ((double) selectionCount / totalVotes * 100);
+//                })
+//                .collect(Collectors.toList());
         userVoteResult = userSelectedCandidateIds.stream()
                 .map(candidateId -> {
                     long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
@@ -935,6 +979,7 @@ public class PostConverter {
                                 return (int) ((double) selectionCount / totalVotes * 100);
                             })
                             .collect(Collectors.toList());
+
 
                     return PostResponseDTO.PollPostGetResponse.builder()
                             .onGoing(true)
