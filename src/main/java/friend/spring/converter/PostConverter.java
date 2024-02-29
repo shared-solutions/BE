@@ -263,7 +263,7 @@ public class PostConverter {
             userFile = userFileOptional.get();
             userImg = userFile.getUrl();
         }
-
+//리뷰글
         if (post.getPostType() == REVIEW) {
             return PostResponseDTO.PostDetailResponse.builder()
                     .postType(REVIEW)
@@ -283,6 +283,7 @@ public class PostConverter {
                     .myPost(myPost)
                     .build();
         }
+//게이지 투표
         if (post.getVoteType() == PostVoteType.GAUGE) {
             //나노초 단위로 마감 여부 확인
 
@@ -327,6 +328,7 @@ public class PostConverter {
                     .myPost(myPost)
                     .build();
         }
+//일반 투표
         if (post.getVoteType() == PostVoteType.GENERAL) {
             //나노초 단위로 마감 여부 확인
             LocalDateTime now = LocalDateTime.now();
@@ -336,6 +338,7 @@ public class PostConverter {
             //투표 후보 리스트
             List<PollOptionDTO.PollOptionRes> pollOptionDTOList = post.getGeneralPoll().getCandidateList().stream()
                     .map(PostConverter::toPollOptionResDTO).collect(Collectors.toList());
+    //투표 마감시
             if (post.getGeneralPoll().getDeadline().isAfter(LocalDateTime.now())) {
                 if (engage) {
                     //투표한 후보에 대한 정보
@@ -556,6 +559,7 @@ public class PostConverter {
                     .postVoteType(PostVoteType.GENERAL)
                     .nickname(post.getUser().getNickname())
                     .userImg(userImg)
+                    .createdAt(post.getCreatedAt())
                     .title(post.getTitle())
                     .content(post.getContent())
                     .file(FileConverter.toFileDTO(post.getFileList()))
@@ -692,7 +696,7 @@ public class PostConverter {
                     .myPost(myPost)
                     .build();
         }
-//일반 투표 마감 후
+//카드 투표 마감 후
         //투표한 후보에 대한 정보
         Set<Long> selectedOptionIds = post.getCardPoll().getCardVoteList().stream()
                 .filter(cardVote -> cardVote.getUser().getId().equals(userId))
@@ -807,6 +811,7 @@ public class PostConverter {
                 .postVoteType(PostVoteType.CARD)
                 .nickname(post.getUser().getNickname())
                 .userImg(userImg)
+                .createdAt(post.getCreatedAt())
                 .title(post.getTitle())
                 .content(post.getContent())
                 .file(FileConverter.toFileDTO(post.getFileList()))
