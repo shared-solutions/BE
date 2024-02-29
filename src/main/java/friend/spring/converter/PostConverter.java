@@ -64,6 +64,8 @@ public class PostConverter {
 
         if (parentPost.getVoteType() == PostVoteType.GAUGE) {
             return ParentPostDTO.builder()
+                    .postId(parentPost.getId())
+                    .postVoteType(parentPost.getVoteType())
                     .nickname(parentPost.getUser().getNickname())
                     .userImg(userImg)
                     .title(parentPost.getTitle())
@@ -123,6 +125,8 @@ public class PostConverter {
 
 
             return ParentPostDTO.builder()
+                    .postId(parentPost.getId())
+                    .postVoteType(parentPost.getVoteType())
                     .nickname(parentPost.getUser().getNickname())
                     .userImg(userImg)
                     .title(parentPost.getTitle())
@@ -179,6 +183,8 @@ public class PostConverter {
 
 
         return ParentPostDTO.builder()
+                .postId(parentPost.getId())
+                .postVoteType(parentPost.getVoteType())
                 .nickname(parentPost.getUser().getNickname())
                 .userImg(userImg)
                 .title(parentPost.getTitle())
@@ -1535,43 +1541,6 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostResponseDTO.ReviewPostGetResponse reviewPostGetResponse(Post post, Long userId) {
-        Integer likeCount = post.getPostLikeList().size();
-        Integer commentCount = post.getCommentList().size();
-        Boolean isLike = !post.getPostLikeList().stream().filter(like -> like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
-        Boolean isComment = !post.getCommentList().stream().filter(like -> like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
-        File userFile = null;
-        String userImg = null;
-        Optional<File> userFileOptional = Optional.ofNullable(post.getUser().getFile());
-
-        if (userFileOptional.isPresent()) {
-            userFile = userFileOptional.get();
-            userImg = userFile.getUrl();
-        }
-        return PostResponseDTO.ReviewPostGetResponse.builder()
-                .postId(post.getId())
-                .nickname(post.getUser().getNickname())
-                .userImg(userImg)
-                .title(post.getTitle())
-                .content(post.getContent())
-                .ReviewPicList(FileConverter.toFileDTO(post.getFileList()))
-                .uploadDate(post.getCreatedAt())
-                .like(likeCount)
-                .comment(commentCount)
-                .isLike(isLike)
-                .isComment(isComment)
-                .build();
-    }
-
-    public static PostResponseDTO.ReviewPostGetListDTO reviewPostGetListDTO(Page<Post> postList, Long userId) {
-        List<PostResponseDTO.ReviewPostGetResponse> reviewPostGetListDTO = postList.stream()
-                .map(post -> reviewPostGetResponse(post, userId)).collect(Collectors.toList());
-        return PostResponseDTO.ReviewPostGetListDTO.builder()
-                .reviewPostList(reviewPostGetListDTO)
-                .isEnd(postList.isLast())
-                .build();
-    }
-
     public static ParentPostDTO.CandidatePostDTO candidatePostDTO(Post post) {
         Integer likeCount = post.getPostLikeList().size();
         Integer commentCount = post.getCommentList().size();
@@ -1590,6 +1559,44 @@ public class PostConverter {
                 .map(post -> candidatePostDTO(post)).collect(Collectors.toList());
         return ParentPostDTO.ParentPostGetListDTO.builder()
                 .candidatePostDTOList(parentPostGetListDTO)
+                .isEnd(postList.isLast())
+                .build();
+    }
+    public static PostResponseDTO.ReviewPostGetResponse reviewPostGetResponse(Post post, Long userId) {
+        Integer likeCount = post.getPostLikeList().size();
+        Integer commentCount = post.getCommentList().size();
+        Boolean isLike = !post.getPostLikeList().stream().filter(like -> like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        Boolean isComment = !post.getCommentList().stream().filter(like -> like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        File userFile = null;
+        String userImg = null;
+        Optional<File> userFileOptional = Optional.ofNullable(post.getUser().getFile());
+        Post parentPost= post.getParentPost();
+
+        if (userFileOptional.isPresent()) {
+            userFile = userFileOptional.get();
+            userImg = userFile.getUrl();
+        }
+        return PostResponseDTO.ReviewPostGetResponse.builder()
+                .postId(post.getId())
+                .nickname(post.getUser().getNickname())
+                .userImg(userImg)
+                .title(post.getTitle())
+                .content(post.getContent())
+                .ReviewPicList(FileConverter.toFileDTO(post.getFileList()))
+                .uploadDate(post.getCreatedAt())
+                .like(likeCount)
+                .comment(commentCount)
+                .isLike(isLike)
+                .isComment(isComment)
+                .parentPostDTO(candidatePostDTO(parentPost))
+                .build();
+    }
+
+    public static PostResponseDTO.ReviewPostGetListDTO reviewPostGetListDTO(Page<Post> postList, Long userId) {
+        List<PostResponseDTO.ReviewPostGetResponse> reviewPostGetListDTO = postList.stream()
+                .map(post -> reviewPostGetResponse(post, userId)).collect(Collectors.toList());
+        return PostResponseDTO.ReviewPostGetListDTO.builder()
+                .reviewPostList(reviewPostGetListDTO)
                 .isEnd(postList.isLast())
                 .build();
     }

@@ -1,5 +1,7 @@
 package friend.spring.web.dto;
 
+import friend.spring.domain.enums.PostType;
+import friend.spring.domain.enums.PostVoteType;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ParentPostDTO {
+    Long postId;
+    PostVoteType postVoteType;
     String nickname;
     String userImg;
     String title;

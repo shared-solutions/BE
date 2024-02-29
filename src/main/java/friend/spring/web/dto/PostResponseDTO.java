@@ -122,6 +122,7 @@ public class PostResponseDTO {
         Integer comment;
         Boolean isLike;
         Boolean isComment;
+        ParentPostDTO.CandidatePostDTO parentPostDTO;
     }
 
     @Builder
