@@ -585,6 +585,12 @@ public class PostConverter {
         List<Integer> userVotePercent = null;
         List<Integer> topCandidatePercent = null;
         List<Integer> allCandidatePercent = null;
+        List<String> topVoteResult = null;
+        Boolean myPost=false;
+        if (post.getUser().getId().equals(userId)) {
+            myPost = true;
+        }
+
 
         if (userFileOptional.isPresent()) {
             userFile = userFileOptional.get();
@@ -651,6 +657,13 @@ public class PostConverter {
                     })
                     .collect(Collectors.toList());
 
+            topVoteResult = mostVotedCandidateIds.stream()
+                    .map(candidateId -> {
+                        long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                        return String.format("%d/%d", selectionCount, totalVotes);
+                    })
+                    .collect(Collectors.toList());
+
             if (engage) {
                 // 사용자가 투표한 후보의 ID
                 List<Long> userSelectedCandidateIds = post.getGeneralPoll().getGeneralVoteList().stream()
@@ -676,6 +689,7 @@ public class PostConverter {
             }
 
             return PostResponseDTO.PollPostGetResponse.builder()
+                    .myPost(myPost)
                     .onGoing(voteOnGoing)
                     .isVoted(isVoted)
                     .postId(post.getId())
@@ -691,6 +705,7 @@ public class PostConverter {
                     .userVotePercent(userVotePercent)
                     .topCandidatePercent(topCandidatePercent)
                     .allCandidatePercent(allCandidatePercent)
+                    .topVoteResult(topVoteResult)
                     .like(likeCount)
                     .comment(commentCount)
                     .isLike(isLike)
@@ -713,6 +728,7 @@ public class PostConverter {
                 userGauge = userGaugeVoteOptional.get().getValue();
             }
             return PostResponseDTO.PollPostGetResponse.builder()
+                    .myPost(myPost)
                     .onGoing(voteOnGoing)
                     .isVoted(engage)
                     .postId(post.getId())
@@ -732,7 +748,7 @@ public class PostConverter {
                     .build();
         }
 
-//카드 투표 마감 전
+//카드 투표
         if (!post.getCardPoll().getCardVoteList().stream().filter(cardVote -> cardVote.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty()) {
             engage = true;
         }
@@ -781,6 +797,12 @@ public class PostConverter {
                     return (int) ((double) selectionCount / totalVotes * 100);
                 })
                 .collect(Collectors.toList());
+        topVoteResult = mostVotedCandidateIds.stream()
+                .map(candidateId -> {
+                    long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                    return String.format("%d/%d", selectionCount, totalVotes);
+                })
+                .collect(Collectors.toList());
 
         if (engage) {
             // 사용자가 투표한 후보의 ID
@@ -803,10 +825,12 @@ public class PostConverter {
                         return (int) ((double) selectionCount / totalVotes * 100);
                     })
                     .collect(Collectors.toList());
+
             isVoted = true;
         }
 
         return PostResponseDTO.PollPostGetResponse.builder()
+                .myPost(myPost)
                 .onGoing(voteOnGoing)
                 .isVoted(isVoted)
                 .postId(post.getId())
@@ -822,6 +846,7 @@ public class PostConverter {
                 .userVotePercent(userVotePercent)
                 .topCandidatePercent(topCandidatePercent)
                 .allCandidatePercent(allCandidatePercent)
+                .topVoteResult(topVoteResult)
                 .like(likeCount)
                 .comment(commentCount)
                 .isLike(isLike)
