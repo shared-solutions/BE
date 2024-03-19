@@ -1,6 +1,43 @@
-# BE <고민친구>
+# 🗳️ 고민친구
+<img src="https://github.com/shared-solutions/BE/assets/55652102/f809c74d-8080-403e-8322-2c55596fc9cd" height=700 width=700> <br/>
 
-### 커밋 규칙
+고민친구 백엔드 리포지토리
+
+<br>
+
+## 🧑‍🤝‍🧑 프로젝트 개요
+투표 기반 의사결정 지원 웹 서비스
+
+<img src="https://github.com/shared-solutions/BE/assets/55652102/67200bef-fa34-49cc-b6c6-3356ebf7f4b1" height=1000 width=700> <br/>
+<img src="https://github.com/shared-solutions/BE/assets/55652102/05231260-29aa-458d-9f7e-b1cc3b9636ff" height=500 width=700> <br/>
+
+
+
+## 🔎 주요 기능
+- 로그인 / 회원가입
+- 고민 투표 & 고민 후기 글/댓글 관리
+- 마이페이지 내 정보 관리
+- 댓글 작성 및 투표 마감 실시간 알림
+
+<br>
+
+## 🔭 기술 스택
+- Java, Springboot
+- AWS EB, ElastiCache(Redis), RDS, VPC
+- Spring Security
+- SSE 실시간 알림
+
+<br>
+
+## 👨‍👩‍👧‍👦 팀원 소개
+- PM 1명
+- Design 1명
+- Front-End(Web) 4명
+- Back-End 4명
+
+<br>
+
+## 📖 커밋 규칙
 
 #{이슈번호} {type}: [작업한 내용]
 
@@ -11,7 +48,6 @@ ex) #200 Feat: 사용자 뮤트 기능 추가
 |-------|-----------|
 | Feat | 새로운 기능 추가 |
 | Fix | 버그 수정     |
-| Docs | 문서 수정     |
 | Docs | 문서 수정     |
 | Style | 코드 formatting, 세미콜론 누락, 코드 자체의 변경이 없는 경우 |
 | Refactor | 코드 리팩토링 |
