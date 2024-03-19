@@ -1,5 +1,5 @@
 # 🗳️ 고민친구
-<img src="https://github.com/shared-solutions/BE/assets/55652102/f809c74d-8080-403e-8322-2c55596fc9cd" height=700 width=700> <br/>
+<img src="https://github.com/shared-solutions/BE/assets/55652102/f809c74d-8080-403e-8322-2c55596fc9cd" width=700> <br/>
 
 고민친구 백엔드 리포지토리
 
@@ -8,8 +8,8 @@
 ## 🧑‍🤝‍🧑 프로젝트 개요
 투표 기반 의사결정 지원 웹 서비스
 
-<img src="https://github.com/shared-solutions/BE/assets/55652102/67200bef-fa34-49cc-b6c6-3356ebf7f4b1" height=1000 width=700> <br/>
-<img src="https://github.com/shared-solutions/BE/assets/55652102/05231260-29aa-458d-9f7e-b1cc3b9636ff" height=500 width=700> <br/>
+<img src="https://github.com/shared-solutions/BE/assets/55652102/67200bef-fa34-49cc-b6c6-3356ebf7f4b1" width=700> <br/>
+<img src="https://github.com/shared-solutions/BE/assets/55652102/05231260-29aa-458d-9f7e-b1cc3b9636ff" width=700> <br/>
 
 
 
