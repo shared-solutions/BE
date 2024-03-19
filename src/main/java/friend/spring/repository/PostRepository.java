@@ -38,9 +38,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             "AND p.createdAt >= :minusDays " +
             // 투표 마감 안 된 글들만 필터링
             "AND (" +
-            "   (gp.deadline >= CURRENT_TIMESTAMP AND ggp.deadline IS NULL AND cp.deadline IS NULL) OR " +
-            "   (gp.deadline IS NULL AND ggp.deadline >= CURRENT_TIMESTAMP AND cp.deadline IS NULL) OR " +
-            "   (gp.deadline IS NULL AND ggp.deadline IS NULL AND cp.deadline >= CURRENT_TIMESTAMP)" +
+            "   (gp.VoteOnGoing = true) OR " +
+            "   (ggp.VoteOnGoing = true) OR " +
+            "   (cp.VoteOnGoing = true)" +
             ") " +
             // 로그인한 사용자가 투표 안 한 글들만 필터링
             "AND (" +
