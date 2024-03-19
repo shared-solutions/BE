@@ -411,15 +411,21 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostResponseDTO.PollPostGetListDTO getRecentPosts(Integer page, Integer size, HttpServletRequest request) {
         Long userId = jwtTokenProvider.getCurrentUser(request);
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()) {
-            userService.checkUser(false);
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Post> recentPostPage = postRepository.findByPostTypeAndState(PostType.VOTE, PostState.POSTING, pageable);
+        LocalDateTime minusDays = LocalDateTime.now().minusDays(7); // 7일 이내(임시)
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> recentPostPage = postRepository.findPostsOrderByVoteCount(PostType.VOTE, PostState.POSTING, minusDays, user.getId(), pageable);
 
-        return PostConverter.pollPostGetListDTO(recentPostPage, userId);
+        // 랜덤으로 섞기
+        List<Post> postList = new ArrayList<>(recentPostPage.getContent());
+        // 리스트를 랜덤하게 섞기
+        Collections.shuffle(postList);
+        // 섞인 리스트를 페이지로 다시 변환
+        Page<Post> shuffledPage = new PageImpl<>(postList, recentPostPage.getPageable(), postList.size());
+
+        return PostConverter.pollPostGetListDTO(shuffledPage, userId);
     }
 
     @Override
