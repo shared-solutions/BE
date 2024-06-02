@@ -29,6 +29,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query(value = "SELECT p FROM Post p JOIN p.postScrapList s JOIN p.category c WHERE s.user.id = :userId and c.id = :categoryId")
     Page<Post> findCategoryDetail(Long userId, Long categoryId, PageRequest pageRequest);
 
+    @Query(value = "SELECT p FROM Post p WHERE p.title LIKE CONCAT('%',:search,'%') OR p.content LIKE CONCAT('%',:search,'%')")
+    Page<Post> findByKeyWord(String search, Pageable pageable);
+
     @Query("SELECT p FROM Post p " +
             "LEFT JOIN General_poll gp ON p.generalPoll.id = gp.id " +
             "LEFT JOIN Gauge_poll ggp ON p.gaugePoll.id = ggp.id " +

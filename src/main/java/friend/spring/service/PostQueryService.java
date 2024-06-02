@@ -22,4 +22,6 @@ public interface PostQueryService {
     Page<Post> getReviewList(Integer page, Integer size, Integer arrange);
 
     Page<Post> getParentPostList(Integer page, Integer size, HttpServletRequest request);
+    Page<Post> getPostSearch(Integer page, Integer size, String search);
+
 }
