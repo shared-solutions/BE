@@ -2,6 +2,7 @@ package friend.spring.security;
 
 import ch.qos.logback.core.status.ErrorStatus;
 import friend.spring.apiPayload.GeneralException;
+import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.domain.User;
 import friend.spring.repository.UserRepository;
 import friend.spring.web.dto.TokenDTO;
@@ -26,7 +27,7 @@ import java.util.Base64;
 import java.util.Date;
 import java.util.Optional;
 
-import static friend.spring.apiPayload.code.status.ErrorStatus.INVALID_JWT;
+import static friend.spring.apiPayload.code.status.ErrorStatus.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -53,16 +54,14 @@ public class JwtTokenProvider {
     // JWT Access 토큰 생성
     public TokenDTO createAccessToken(String email) {
         // 토큰 유효시간 30분
-        long tokenValidTime = 30 * 60 * 1000L;
+        long tokenValidTime = 48 * 60 * 60 * 1000L;
 
         Optional<User> user = userRepository.findByEmail(email);
 
         Claims claims = Jwts.claims().setSubject(email); // JWT payload에 저장되는 정보단위
 
-        if(user.isPresent()) {
+        user.ifPresent(value -> claims.put("id", value.getId()));
 
-            claims.put("email", user.get().getEmail());
-        }
 
         Date now = new Date();
         Date expiresTime = new Date(now.getTime() + tokenValidTime);
@@ -75,15 +74,19 @@ public class JwtTokenProvider {
                 //.claim("userIdx",user.get().getUserIdx())
                 //.claim("role", user.get().getRole())
                 .compact();
+
         return new TokenDTO(String.valueOf(TokenType.atk), token, expiresTime);
     }
 
     // JWT Refresh 토큰 생성
     public TokenDTO createRefreshToken(String email) {
         // Refresh 토큰 유효시간 2주
-        long tokenValidTime = 60 * 60 * 24 * 14 * 1000L;
+        long tokenValidTime = 2 * 7 * 24 * 60 * 60 * 1000L;
+        Optional<User> user = userRepository.findByEmail(email);
 
         Claims claims = Jwts.claims().setSubject(email); // JWT payload에 저장되는 정보단위
+
+        user.ifPresent(value -> claims.put("id", value.getId()));
 
         Date now = new Date();
         Date expiresTime = new Date(now.getTime() + tokenValidTime); // 토큰 만료 시간
@@ -94,7 +97,7 @@ public class JwtTokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey) // 사용할 암호화 알고리즘과 signature 에 들어갈 secretkey 값 설정
                 .claim("types", "rtk")
                 .compact();
-        return new TokenDTO(String.valueOf(TokenType.rtk),token, expiresTime);
+        return new TokenDTO(String.valueOf(TokenType.rtk), token, expiresTime);
     }
 
     // JWT 토큰에서 인증 정보 조회
@@ -115,7 +118,7 @@ public class JwtTokenProvider {
 
     // 토큰 재발급 때 Header에 rtk를 넣어 요청, 나머지 경우 atk 사용
     public String resolveToken(HttpServletRequest request) {
-        if (request.getHeader("rtk") != null){
+        if (request.getHeader("rtk") != null) {
             return request.getHeader("rtk");
         } else {
             return request.getHeader("atk");
@@ -126,7 +129,7 @@ public class JwtTokenProvider {
     public boolean validateToken(String jwtToken) {
         try {
             Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken); // 토큰의  payload(claim)            // Access 토큰의 경우 redis 까지 검사
-            if  (claims.getBody().get("types").equals("atk"))  {
+            if (claims.getBody().get("types").equals("atk")) {
                 Object isLogOut = redisTemplate.opsForValue().get(jwtToken); // token 을 key 로 value 가져옴 (null 이면 유효 토큰, logout 이면 유효하지 않은 토큰)
                 // 로그인 시 redis 에 email : refreshtoken 형태로 저장
                 // 로그아웃 시 redis 에 accesstoken : logout 형태로 저장
@@ -138,7 +141,7 @@ public class JwtTokenProvider {
                 // Refresh 토큰 유효성 검사
                 return !claims.getBody().getExpiration().before(new Date()); // 만료안됐으면 true, 만료됐으면 false
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -149,17 +152,25 @@ public class JwtTokenProvider {
         return claims.getBody().getExpiration();
     }
 
-//    // 토큰에서 회원정보 추출 - userIdx 추출
-//    public Long getCurrentUser(HttpServletRequest request) throws GeneralException { // userIdx 가져오기
-//        String jwtToken = resolveAccessToken(request); // Request의 header에서 Access 토큰 추출
-//        if(!validateToken(jwtToken)) {
-//            throw new  (INVALID_JWT);
-//        }
-//        Long userIdx = Long.valueOf(String.valueOf(Jwts.parser()
-//                .setSigningKey(secretKey)
-//                .parseClaimsJws(jwtToken)
-//                .getBody()
-//                .get("userIdx")));
-//        return userIdx;
+    // 토큰에서 회원정보 추출 - userIdx 추출
+    public Long getCurrentUser(HttpServletRequest request) throws GeneralException { // userIdx 가져오기
+        String jwtToken = resolveAccessToken(request); // Request의 header에서 Access 토큰 추출
+        if (!validateToken(jwtToken)) {
+            throw new GeneralException(INVALID_JWT);
+        }
+
+        Long userIdx = Long.valueOf(String.valueOf(Jwts.parser()
+                .setSigningKey(secretKey)
+                .parseClaimsJws(jwtToken)
+                .getBody()
+                .get("id")));
+
+        return userIdx;
+    }
+//    public String getemail(String token) {
+//        return getClaims(token).getBody().get("id", String.class);
+//    }
+//    private Jws<Claims> getClaims(String token) {
+//        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
 //    }
 }

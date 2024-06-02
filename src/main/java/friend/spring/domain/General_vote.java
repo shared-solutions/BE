@@ -20,7 +20,7 @@ public class General_vote extends BaseEntity {
     @ElementCollection
     @Builder.Default
     @Column(nullable = true, length = 100)
-    private List<Long> select_list=new ArrayList<Long>();
+    private List<Long> select_list = new ArrayList<Long>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -37,14 +37,16 @@ public class General_vote extends BaseEntity {
             this.select_list.clear();
         }
     }
-    public void setGeneralPoll(General_poll generalPoll){
-        if(this.generalPoll != null)
+
+    public void setGeneralPoll(General_poll generalPoll) {
+        if (this.generalPoll != null)
             generalPoll.getGeneralVoteList().remove(this);
         this.generalPoll = generalPoll;
         generalPoll.getGeneralVoteList().add(this);
     }
-    public void setUser(User user){
-        if(this.user != null)
+
+    public void setUser(User user) {
+        if (this.user != null)
             user.getGeneralVoteList().remove(this);
         this.user = user;
         user.getGeneralVoteList().add(this);

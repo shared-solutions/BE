@@ -20,7 +20,7 @@ public class Card_vote extends BaseEntity {
     @ElementCollection
     @Builder.Default
     @Column(nullable = true, length = 100)
-    private List<Long> select_list=new ArrayList<Long>();
+    private List<Long> select_list = new ArrayList<Long>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -37,14 +37,16 @@ public class Card_vote extends BaseEntity {
             this.select_list.clear();
         }
     }
-    public void setCardPoll(Card_poll cardPoll){
-        if(this.cardPoll != null)
+
+    public void setCardPoll(Card_poll cardPoll) {
+        if (this.cardPoll != null)
             cardPoll.getCardVoteList().remove(this);
         this.cardPoll = cardPoll;
         cardPoll.getCardVoteList().add(this);
     }
-    public void setUser(User user){
-        if(this.user != null)
+
+    public void setUser(User user) {
+        if (this.user != null)
             user.getCardVoteList().remove(this);
         this.user = user;
         user.getCardVoteList().add(this);

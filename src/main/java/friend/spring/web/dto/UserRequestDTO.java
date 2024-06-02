@@ -29,7 +29,6 @@ public class UserRequestDTO {
         boolean agree_marketing;
         LocalDate birth;
         boolean is_deleted;
-        String image;
         Integer point;
         String kakao;
         Integer like;
@@ -97,5 +96,50 @@ public class UserRequestDTO {
         @NotEmpty(message = "이메일을 입력해 주세요")
         private String email;
         private String authNum;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class PasswordEmailSendReq {
+        @Email//1)@기호를 포함해야 한다.2_@기호를 기준으로 이메일 주소를 이루는 로컬호스트와 도메인 파트가 존재해야 한다.3)도메인 파트는 최소하나의 점과
+        //그 뒤에 최소한 2개의 알파벳을 가진다를 검증
+        @NotEmpty(message = "이메일을 입력해 주세요")
+        private String email;
+        private String name;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class PasswordEmailSendCheckReq {
+        @Email//1)@기호를 포함해야 한다.2_@기호를 기준으로 이메일 주소를 이루는 로컬호스트와 도메인 파트가 존재해야 한다.3)도메인 파트는 최소하나의 점과
+        //그 뒤에 최소한 2개의 알파벳을 가진다를 검증
+        @NotEmpty(message = "이메일을 입력해 주세요")
+        private String email;
+        private String name;
+        private String authNum;
+    }
+
+    //비밀번호 변경
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class PasswordUpdateReq {
+
+        @NotEmpty(message = "변경할 비밀번호를 입력해 주세요")
+        private String newPassword;
+        private String newPasswordCheck;
+    }
+    //회원 탈퇴
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class Delete {
+        private String email;
     }
 }

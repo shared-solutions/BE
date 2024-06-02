@@ -3,25 +3,28 @@ package friend.spring.service;
 import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.CommentHandler;
+import friend.spring.converter.AlarmConverter;
 import friend.spring.converter.CommentConverter;
-import friend.spring.domain.Comment;
-import friend.spring.domain.Post;
-import friend.spring.domain.User;
+import friend.spring.converter.SseConverter;
+import friend.spring.domain.*;
+import friend.spring.domain.enums.AlarmType;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.repository.*;
+import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
+import friend.spring.web.dto.SseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
-import java.util.stream.Collectors;
+
+import static friend.spring.apiPayload.code.status.ErrorStatus.*;
 
 @Service
 @RequiredArgsConstructor
@@ -33,47 +36,55 @@ public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final CommentLikeRepository commentLikeRepository;
     private final CommentChoiceRepository commentChoiceRepository;
+    private final PointRepository pointRepository;
+    private final AlarmRepository alarmRepository;
     private final UserService userService;
     private final PostService postService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final SseService notificationService;
 
     @Override
     public void checkComment(Boolean flag) {
         if (!flag) {
-            throw new CommentHandler(ErrorStatus.COMMENT_NOT_FOUND);
+            throw new CommentHandler(COMMENT_NOT_FOUND);
         }
     }
 
     @Override
     public void checkCommentLike(Boolean flag) {
         if (!flag) {
-            throw new CommentHandler(ErrorStatus.COMMENT_LIKE_NOT_FOUND);
+            throw new CommentHandler(COMMENT_LIKE_NOT_FOUND);
+        } else {
+            throw new CommentHandler(COMMENT_LIKE_DUPLICATE);
         }
     }
 
     @Override
     public void checkCommentChoice(Boolean flag) {
         if (!flag) {
-            throw new CommentHandler(ErrorStatus.COMMENT_CHOICE_OVER_ONE);
+            throw new CommentHandler(COMMENT_CHOICE_OVER_ONE);
         }
     }
 
     @Override
     public void checkSelectCommentAnotherUser(Boolean flag) {
         if (!flag) {
-            throw new CommentHandler(ErrorStatus.COMMENT_SELECT_MYSELF);
+            throw new CommentHandler(COMMENT_SELECT_MYSELF);
         }
     }
 
     @Override
     public void checkCommentWriterUser(Boolean flag) {
         if (!flag) {
-            throw new CommentHandler(ErrorStatus.COMMENT_NOT_CORRECT_USER);
+            throw new CommentHandler(COMMENT_NOT_CORRECT_USER);
         }
     }
 
     @Override
     @Transactional
-    public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq request, Long userId) {
+    public Comment createComment(Long postId, CommentRequestDTO.commentCreateReq requestBody, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
@@ -89,22 +100,49 @@ public class CommentServiceImpl implements CommentService {
         User user = optionalUser.get();
 
         // 대댓글인 경우
-        if (request.getParentId() != null) {
-            Optional<Comment> optionalParentComment = commentRepository.findById(request.getParentId());
+        boolean isReplyComment = false;
+        if (requestBody.getParentId() != null) {
+            isReplyComment = true;
+            Optional<Comment> optionalParentComment = commentRepository.findById(requestBody.getParentId());
             if (optionalParentComment.isEmpty()) {
                 this.checkComment(false);
+            }
+
+            // 댓글 소속이 글과 일치하는지 확인
+            if (!Objects.equals(optionalParentComment.get().getPost().getId(), post.getId())) {
+                throw new CommentHandler(COMMENT_POST_NOT_MATCH);
             }
 
             parentComment = optionalParentComment.get();
         }
 
-        Comment comment = CommentConverter.toComment(request, post, user, parentComment);
+        Comment comment = CommentConverter.toComment(requestBody, post, user, parentComment);
+        commentRepository.save(comment);
 
-        return commentRepository.save(comment);
+        // 알림 ResponseDTO 생성
+        SseResponseDTO.CommentCreateResDTO commentCreateResDTO;
+
+        // 필수) 해당 댓글이 있는 글 주인에게 알림 생성
+        commentCreateResDTO = SseConverter.toCommentCreateResDTO(comment, AlarmType.COMMENT);
+        Alarm newAlarm = AlarmConverter.toAlarm(commentCreateResDTO.getAlarmContent(), AlarmType.COMMENT, post, comment.getPost().getUser(), comment);
+        alarmRepository.save(newAlarm);
+        notificationService.customNotify(comment.getPost().getUser().getId(), commentCreateResDTO, comment.getContent(), AlarmType.COMMENT.toString());
+
+        // 옵션) 해당 댓글이 대댓글인 경우, 루트 댓글 주인에게 알림 생성
+        if (isReplyComment) {
+            commentCreateResDTO = SseConverter.toCommentCreateResDTO(comment, AlarmType.REPLY_COMMENT);
+            newAlarm = AlarmConverter.toAlarm(commentCreateResDTO.getAlarmContent(), AlarmType.REPLY_COMMENT, post, comment.getPost().getUser(), comment);
+            alarmRepository.save(newAlarm);
+            notificationService.customNotify(comment.getParentComment().getUser().getId(), commentCreateResDTO, comment.getContent(), AlarmType.REPLY_COMMENT.toString());
+        }
+
+        return comment;
     }
 
     @Override
-    public Comment_like likeComment(Long postId, Long commentId, Long userId) {
+    public Comment_like likeComment(Long postId, Long commentId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
@@ -124,33 +162,101 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = optionalComment.get();
         User user = optionalUser.get();
 
+        // 댓글 소속이 글과 일치하는지 확인
+        if (!Objects.equals(comment.getPost().getId(), post.getId())) {
+            throw new CommentHandler(COMMENT_POST_NOT_MATCH);
+        }
+
+        Optional<Comment_like> optionalComment_like = commentLikeRepository.findByCommentIdAndUserId(commentId, userId);
+        if (!optionalComment_like.isEmpty()) {
+            this.checkCommentLike(true);
+        }
+
         Comment_like comment_like = CommentConverter.toCommentLike(post, comment, user);
         return commentLikeRepository.save(comment_like);
     }
 
     @Override
-    public Page<CommentResponseDTO.commentGetRes> getComments(Long postId, Integer page, Integer size) {
+    public List<CommentResponseDTO.commentGetRes> getComments(Long postId, HttpServletRequest request) {
+        Long loginUserId = jwtTokenProvider.getCurrentUser(request);
+        Optional<User> optionalUser = userRepository.findById(loginUserId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
         }
 
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Comment> commentPage = commentRepository.findByPostIdAndParentCommentIsNull(postId, pageable); // 루트 댓글만 가져옴
-        List<CommentResponseDTO.commentGetRes> commentGetResList = commentPage
-                .map(comment -> {
-                    CommentResponseDTO.commentGetRes commentGetRes = CommentConverter.toCommentGetRes(comment);
-                    return commentGetRes;
-                })
-                .filter(Objects::nonNull) // null인 요소는 필터링
-                .get()
-                .collect(Collectors.toList());
+        List<Comment> commentList = commentRepository.findByPostIdAndParentCommentIsNull(postId); // 루트 댓글만 가져옴
+        List<CommentResponseDTO.commentGetRes> commentGetResList = new ArrayList<>();
+        for (Comment comment : commentList) {
+            // 대댓글 처리
+            List<CommentResponseDTO.commentGetRes> subComments = new ArrayList<>();
+            if (comment.getSubCommentList() != null) {
+                for (Comment c : comment.getSubCommentList()) {
+                    Boolean isPushedLike_sub = checkIsPushedLike(c, loginUserId);
+                    Boolean isOwnerOfPost_sub = checkIsOwnerOfPost(c, loginUserId);
+                    Boolean isSelected = checkIsSelected(c);
+                    CommentResponseDTO.commentGetRes subCommentGetRes = CommentConverter.toCommentGetRes(c, loginUserId, isPushedLike_sub, isOwnerOfPost_sub, isSelected, new ArrayList<>());
+                    subComments.add(subCommentGetRes);
+                }
+            }
 
-        return new PageImpl<>(commentGetResList, pageable, commentPage.getTotalElements());
+            Boolean isPushedLike = checkIsPushedLike(comment, loginUserId);
+            Boolean isOwnerOfPost = checkIsOwnerOfPost(comment, loginUserId);
+            Boolean isSelected = checkIsSelected(comment);
+
+            CommentResponseDTO.commentGetRes commentGetRes = CommentConverter.toCommentGetRes(comment, loginUserId, isPushedLike, isOwnerOfPost, isSelected, subComments);
+            commentGetResList.add(commentGetRes);
+        }
+
+        return commentGetResList;
     }
 
+    public Boolean checkIsPushedLike(Comment comment, Long loginUserId) {
+        // 좋아요 이미 눌렀는지 여부
+        Optional<Comment_like> optionalComment_like = commentLikeRepository.findByCommentIdAndUserId(comment.getId(), loginUserId);
+        Boolean isPushedLike;
+        if (optionalComment_like.isEmpty()) {
+            isPushedLike = false;
+        } else {
+            isPushedLike = true;
+        }
+        return isPushedLike;
+    }
+
+    public Boolean checkIsOwnerOfPost(Comment comment, Long loginUserId) {
+        // 내가 쓴 글인지 여부
+        Boolean isOwnerOfPost;
+        if (Objects.equals(comment.getPost().getUser().getId(), loginUserId)) {
+            isOwnerOfPost = true;
+        } else {
+            isOwnerOfPost = false;
+        }
+        return isOwnerOfPost;
+    }
+
+    public Boolean checkIsSelected(Comment comment) {
+        Optional<Comment_choice> optionalComment_choice = commentChoiceRepository.findByCommentIdAndPostId(comment.getId(), comment.getPost().getId());
+
+        // 이 댓글이 채택되었는지 여부
+        Boolean isSelected;
+        if (optionalComment_choice.isEmpty()) {
+            isSelected = false;
+        } else {
+            isSelected = true;
+        }
+
+        return isSelected;
+    }
+
+
     @Override
-    public void dislikeComment(Long postId, Long commentId, Long userId) {
+    public void dislikeComment(Long postId, Long commentId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
@@ -159,6 +265,11 @@ public class CommentServiceImpl implements CommentService {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             this.checkComment(false);
+        }
+
+        // 댓글 소속이 글과 일치하는지 확인
+        if (!Objects.equals(optionalComment.get().getPost().getId(), optionalPost.get().getId())) {
+            throw new CommentHandler(COMMENT_POST_NOT_MATCH);
         }
 
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -176,7 +287,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Comment_choice selectComment(Long postId, Long commentId, Long userId) {
+    public Comment_choice selectComment(Long postId, Long commentId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             postService.checkPost(false);
@@ -185,6 +298,11 @@ public class CommentServiceImpl implements CommentService {
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
         if (optionalComment.isEmpty()) {
             this.checkComment(false);
+        }
+
+        // 댓글 소속이 글과 일치하는지 확인
+        if (!Objects.equals(optionalComment.get().getPost().getId(), optionalPost.get().getId())) {
+            throw new CommentHandler(COMMENT_POST_NOT_MATCH);
         }
 
         Optional<User> optionalUser = userRepository.findById(userId);
@@ -214,28 +332,46 @@ public class CommentServiceImpl implements CommentService {
         }
 
         Comment_choice comment_choice = CommentConverter.toCommentChoice(post, comment);
+
+        // 채택된 사용자에게 포인트 적립
+        comment.getUser().setPoint(comment.getUser().getPoint() + post.getPoint());
+        Point newPoint = Point.builder()
+                .amount(post.getPoint())
+                .content("채택된 댓글에 대한 " + post.getPoint() + " 포인트 적립")
+                .build();
+        newPoint.setUser(user);
+        pointRepository.save(newPoint);
+
         return commentChoiceRepository.save(comment_choice);
     }
 
     @Override
     @Transactional
-    public void editComment(Long postId, Long commentId, CommentRequestDTO.commentEditReq request, Long userId) {
+    public void editComment(Long postId, Long commentId, CommentRequestDTO.commentEditReq requestBody, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+
+        // 댓글 소속이 글과 일치하는지 확인
+        if (!Objects.equals(comment.getPost().getId(), post.getId())) {
+            throw new CommentHandler(COMMENT_POST_NOT_MATCH);
+        }
+
         // 로그인한 사용자가 이 댓글의 작성자인지 확인
         if (!Objects.equals(user.getId(), comment.getUser().getId())) {
             // 작성자가 아닌 경우 -> 에러 반환
             this.checkCommentWriterUser(false);
         }
-        comment.update(request.getContent());
+        comment.update(requestBody.getContent());
     }
 
     //한 유저의 모든 댓글
     @Override
     public Page<Comment> getMyCommentList(Long userId, Integer page) {
         Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isEmpty()){
+        if (optionalUser.isEmpty()) {
             userService.checkUser(false);
         }
         User user = optionalUser.get();
@@ -245,10 +381,18 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public void deleteComment(Long postId, Long commentId, Long userId) {
+    public void deleteComment(Long postId, Long commentId, HttpServletRequest request) {
+        Long userId = jwtTokenProvider.getCurrentUser(request);
+
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(ErrorStatus.USER_NOT_FOUND));
-        postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new GeneralException(ErrorStatus.POST_NOT_FOUND));
         Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new GeneralException(ErrorStatus.COMMENT_NOT_FOUND));
+
+        // 댓글 소속이 글과 일치하는지 확인
+        if (!Objects.equals(comment.getPost().getId(), post.getId())) {
+            throw new CommentHandler(COMMENT_POST_NOT_MATCH);
+        }
+
         // 로그인한 사용자가 이 댓글의 작성자인지 확인
         if (!Objects.equals(user.getId(), comment.getUser().getId())) {
             // 작성자가 아닌 경우 -> 에러 반환
