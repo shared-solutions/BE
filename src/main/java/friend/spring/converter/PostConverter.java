@@ -252,6 +252,7 @@ public class PostConverter {
         List<Integer> userVotePercent = null;
         List<Integer> topCandidatePercent = null;
         List<Integer> allCandidatePercent = null;
+        List<String> allCandidateResult=null;
         List<String> userVoteResult = null;
         List<String> topVoteResult = null;
         Integer userGauge = null;
@@ -362,6 +363,13 @@ public class PostConverter {
                         return (int) ((double) selectionCount / totalVotes * 100);
                     })
                     .collect(Collectors.toList());
+            allCandidateResult = post.getGeneralPoll().getCandidateList().stream()
+                    .map(candidate -> {
+                        Long candidateId = candidate.getId();
+                        long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                        return String.format("%d/%d", selectionCount, totalVotes);
+                    })
+                    .collect(Collectors.toList());
             if (engage) {
                 // 사용자가 투표한 후보의 ID
                 List<Long> userSelectedCandidateIds = post.getGeneralPoll().getGeneralVoteList().stream()
@@ -443,6 +451,7 @@ public class PostConverter {
                     .userVote(userChoiceList)
                     .userVotePercent(userVotePercent)
                     .userVoteResult(userVoteResult)
+                    .allCandidateResult(allCandidateResult)
                     .topVoteResult(topVoteResult)
                     .topCandidatePercent(topCandidatePercent)
                     .allCandidatePercent(allCandidatePercent)
@@ -480,6 +489,13 @@ public class PostConverter {
                     Long candidateId = candidate.getId();
                     long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
                     return (int) ((double) selectionCount / totalVotes * 100);
+                })
+                .collect(Collectors.toList());
+        allCandidateResult = post.getCardPoll().getCandidateList().stream()
+                .map(candidate -> {
+                    Long candidateId = candidate.getId();
+                    long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                    return String.format("%d/%d", selectionCount, totalVotes);
                 })
                 .collect(Collectors.toList());
         if (engage) {
@@ -563,6 +579,7 @@ public class PostConverter {
                 .userVote(userChoiceList)
                 .userVotePercent(userVotePercent)
                 .userVoteResult(userVoteResult)
+                .allCandidateResult(allCandidateResult)
                 .topVoteResult(topVoteResult)
                 .topCandidatePercent(topCandidatePercent)
                 .allCandidatePercent(allCandidatePercent)
@@ -585,6 +602,13 @@ public class PostConverter {
         List<Integer> userVotePercent = null;
         List<Integer> topCandidatePercent = null;
         List<Integer> allCandidatePercent = null;
+        List<String> topVoteResult = null;
+        List<String> allCandidateResult=null;
+        Boolean myPost=false;
+        if (post.getUser().getId().equals(userId)) {
+            myPost = true;
+        }
+
 
         if (userFileOptional.isPresent()) {
             userFile = userFileOptional.get();
@@ -631,7 +655,7 @@ public class PostConverter {
                     .map(Map.Entry::getKey)
                     .collect(Collectors.toList());
 
-            // 가장 높은 투표를 받은 후보들을 userChoiceList에 담기
+            // 가장 높은 투표를 받은 후보들을 topCandidateList에 담기
             topCandidateList = post.getGeneralPoll().getCandidateList().stream()
                     .filter(candidate -> mostVotedCandidateIds.contains(candidate.getId()))
                     .map(PostConverter::toPollOptionResDTO)
@@ -648,6 +672,20 @@ public class PostConverter {
                         Long candidateId = candidate.getId();
                         long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
                         return (int) ((double) selectionCount / totalVotes * 100);
+                    })
+                    .collect(Collectors.toList());
+            allCandidateResult = post.getGeneralPoll().getCandidateList().stream()
+                    .map(candidate -> {
+                        Long candidateId = candidate.getId();
+                        long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                        return String.format("%d/%d", selectionCount, totalVotes);
+                    })
+                    .collect(Collectors.toList());
+
+            topVoteResult = mostVotedCandidateIds.stream()
+                    .map(candidateId -> {
+                        long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                        return String.format("%d/%d", selectionCount, totalVotes);
                     })
                     .collect(Collectors.toList());
 
@@ -676,6 +714,7 @@ public class PostConverter {
             }
 
             return PostResponseDTO.PollPostGetResponse.builder()
+                    .myPost(myPost)
                     .onGoing(voteOnGoing)
                     .isVoted(isVoted)
                     .postId(post.getId())
@@ -691,6 +730,8 @@ public class PostConverter {
                     .userVotePercent(userVotePercent)
                     .topCandidatePercent(topCandidatePercent)
                     .allCandidatePercent(allCandidatePercent)
+                    .allCandidateResult(allCandidateResult)
+                    .topVoteResult(topVoteResult)
                     .like(likeCount)
                     .comment(commentCount)
                     .isLike(isLike)
@@ -713,6 +754,7 @@ public class PostConverter {
                 userGauge = userGaugeVoteOptional.get().getValue();
             }
             return PostResponseDTO.PollPostGetResponse.builder()
+                    .myPost(myPost)
                     .onGoing(voteOnGoing)
                     .isVoted(engage)
                     .postId(post.getId())
@@ -732,7 +774,7 @@ public class PostConverter {
                     .build();
         }
 
-//카드 투표 마감 전
+//카드 투표
         if (!post.getCardPoll().getCardVoteList().stream().filter(cardVote -> cardVote.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty()) {
             engage = true;
         }
@@ -781,6 +823,19 @@ public class PostConverter {
                     return (int) ((double) selectionCount / totalVotes * 100);
                 })
                 .collect(Collectors.toList());
+        allCandidateResult = post.getCardPoll().getCandidateList().stream()
+                .map(candidate -> {
+                    Long candidateId = candidate.getId();
+                    long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                    return String.format("%d/%d", selectionCount, totalVotes);
+                })
+                .collect(Collectors.toList());
+        topVoteResult = mostVotedCandidateIds.stream()
+                .map(candidateId -> {
+                    long selectionCount = candidateSelectionCounts.getOrDefault(candidateId, 0L);
+                    return String.format("%d/%d", selectionCount, totalVotes);
+                })
+                .collect(Collectors.toList());
 
         if (engage) {
             // 사용자가 투표한 후보의 ID
@@ -803,10 +858,12 @@ public class PostConverter {
                         return (int) ((double) selectionCount / totalVotes * 100);
                     })
                     .collect(Collectors.toList());
+
             isVoted = true;
         }
 
         return PostResponseDTO.PollPostGetResponse.builder()
+                .myPost(myPost)
                 .onGoing(voteOnGoing)
                 .isVoted(isVoted)
                 .postId(post.getId())
@@ -822,6 +879,8 @@ public class PostConverter {
                 .userVotePercent(userVotePercent)
                 .topCandidatePercent(topCandidatePercent)
                 .allCandidatePercent(allCandidatePercent)
+                .allCandidateResult(allCandidateResult)
+                .topVoteResult(topVoteResult)
                 .like(likeCount)
                 .comment(commentCount)
                 .isLike(isLike)

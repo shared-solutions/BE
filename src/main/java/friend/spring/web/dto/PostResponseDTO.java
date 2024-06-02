@@ -2,6 +2,7 @@ package friend.spring.web.dto;
 
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
+import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -45,6 +46,7 @@ public class PostResponseDTO {
         List<Integer> topCandidatePercent;
         List<Integer> allCandidatePercent;
         List<String> userVoteResult; // 투표글에서 사용자가 투표 완료시 투표인원/총인원
+        List<String> allCandidateResult;
         List<String> topVoteResult;
         Integer userGauge; // 게이지 투표글에서만 사용, 후기글에서는 null
         Integer totalGauge;
@@ -73,6 +75,7 @@ public class PostResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class PollPostGetResponse {
+        Boolean myPost;
         Boolean onGoing;
         Boolean isVoted;
         Long postId;
@@ -88,6 +91,8 @@ public class PostResponseDTO {
         List<Integer> userVotePercent;
         List<Integer> topCandidatePercent;
         List<Integer> allCandidatePercent;
+        List<String> allCandidateResult;
+        List<String> topVoteResult;
         String pollTitle; //게이지투표만 해당(게이지 투표 이름)
         Integer userGauge;
         Integer totalGauge;
