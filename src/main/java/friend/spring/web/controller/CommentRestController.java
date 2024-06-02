@@ -207,7 +207,7 @@ public class CommentRestController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다."),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001", description = "NOT_FOUND, 글을 찾을 수 없습니다."),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4018", description = "BAD_REQUEST, 이 유저가 해당 글을 신고한 신고 내역 데이터가 이미 존재합니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMENT4008", description = "BAD_REQUEST, 이 유저가 해당 댓글을 신고한 신고 내역 데이터가 이미 존재합니다."),
     })
     @Parameters({
             @Parameter(name = "post-id", description = "path variable - 글 아이디"),
