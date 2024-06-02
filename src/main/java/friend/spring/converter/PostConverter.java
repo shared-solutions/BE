@@ -4,6 +4,7 @@ import friend.spring.domain.*;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
+import friend.spring.domain.enums.ReportType;
 import friend.spring.service.PostQueryService;
 import friend.spring.web.dto.*;
 import org.springframework.data.domain.Page;
@@ -995,6 +996,22 @@ public class PostConverter {
                 .post_scrap_id(post_scrap.getId())
                 .build();
     }
+
+    public static Report toReportPost(Post post, User user, ReportCategory reportCategory) {
+        return Report.builder()
+                .targetType(ReportType.POST)
+                .targetId(post.getId())
+                .reportCategory(reportCategory)
+                .user(user)
+                .build();
+    }
+
+    public static PostResponseDTO.PostReportRes toPostReportRes(Report report) {
+        return PostResponseDTO.PostReportRes.builder()
+                .reportId(report.getId())
+                .build();
+    }
+
 }
 
 

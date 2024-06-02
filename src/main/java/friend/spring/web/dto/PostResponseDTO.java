@@ -158,4 +158,12 @@ public class PostResponseDTO {
     public static class ScrapCreateRes {
         Long post_scrap_id;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostReportRes {
+        Long reportId;
+    }
 }

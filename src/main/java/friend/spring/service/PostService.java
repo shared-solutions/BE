@@ -3,6 +3,7 @@ package friend.spring.service;
 
 import friend.spring.domain.Candidate;
 import friend.spring.domain.Post;
+import friend.spring.domain.Report;
 import friend.spring.domain.User;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
@@ -48,5 +49,7 @@ public interface PostService {
     Post_scrap createScrapPost(Long postId, HttpServletRequest request);
 
     void deleteScrapPost(Long postId, HttpServletRequest request);
+
+    Report createReportPost(Long postId, PostRequestDTO.PostReportReq request, HttpServletRequest request2);
 }
 

@@ -1,7 +1,6 @@
 package friend.spring.domain;
 
 import friend.spring.domain.common.BaseEntity;
-import friend.spring.domain.enums.ReportCategory;
 import friend.spring.domain.enums.ReportType;
 import lombok.*;
 
@@ -22,14 +21,11 @@ public class Report extends BaseEntity {
     private ReportType targetType;
 
     @Column(nullable = false)
-    private Integer targetId;
+    private Long targetId;
 
-    @Column(nullable = false, length = 500)
-    private String content;
-
-    @Enumerated(EnumType.STRING)
-    @Column
-    private ReportCategory category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "report_category_id")
+    private ReportCategory reportCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
