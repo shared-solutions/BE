@@ -303,4 +303,23 @@ public class PostRestController {
         postService.deleteScrapPost(postId, request);
         return ApiResponse.onSuccess(null);
     }
+
+    @GetMapping("/post/search/")
+    @Operation(summary = "글 검색 API", description = "글을 검색합니다")
+    @Parameters({
+            @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
+            @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
+            @Parameter(name = "search", description = "query string(RequestParam) - 검색어.")
+    })
+    public ApiResponse<PostResponseDTO.PostSearchList> getPostSearch(@RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                                     @RequestParam(name = "size", defaultValue = "15") Integer size,
+                                                                     @RequestParam(name = "search") String search,
+                                                                     @RequestHeader("atk") String atk,
+                                                                     HttpServletRequest request2) {
+        Long userId = jwtTokenService.JwtToId(request2);
+        Page<Post> postPage = postQueryService.getPostSearch(page, size, search);
+        return ApiResponse.onSuccess(PostConverter.PostSearchListDTO(postPage, userId));
+
+    }
 }

@@ -48,5 +48,5 @@ public interface PostService {
     Post_scrap createScrapPost(Long postId, HttpServletRequest request);
 
     void deleteScrapPost(Long postId, HttpServletRequest request);
-}
 
+}

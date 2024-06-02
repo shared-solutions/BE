@@ -153,4 +153,29 @@ public class PostResponseDTO {
     public static class ScrapCreateRes {
         Long post_scrap_id;
     }
+
+    @Builder
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostSearchList {
+        List<PostSearchRes> reviewPostList;
+        private Boolean isEnd;
+    }
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostSearchRes{
+        Long postId;
+        String nickname;
+        String userImg;
+        String title;
+        String content;
+        LocalDateTime uploadDate;
+        Integer like;
+        Integer comment;
+        Boolean isLike;
+        Boolean isComment;
+    }
 }
