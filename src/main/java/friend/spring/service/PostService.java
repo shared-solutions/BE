@@ -50,5 +50,5 @@ public interface PostService {
     void deleteScrapPost(Long postId, HttpServletRequest request);
 
     PostResponseDTO.ReportResult createReportPost(Long postId, PostRequestDTO.PostReportReq request, HttpServletRequest request2);
-}
 
+}

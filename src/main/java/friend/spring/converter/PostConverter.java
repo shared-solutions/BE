@@ -1012,6 +1012,41 @@ public class PostConverter {
                 .build();
     }
 
+    public static PostResponseDTO.PostSearchRes PostSearchResDTO(Post post,Long userId) {
+        Integer likeCount = post.getPostLikeList().size();
+        Integer commentCount = post.getCommentList().size();
+        Boolean isLike = !post.getPostLikeList().stream().filter(like -> like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        Boolean isComment = !post.getCommentList().stream().filter(like -> like.getUser().getId().equals(userId)).collect(Collectors.toList()).isEmpty();
+        File userFile = null;
+        String userImg = null;
+        Optional<File> userFileOptional = Optional.ofNullable(post.getUser().getFile());
+
+        if (userFileOptional.isPresent()) {
+            userFile = userFileOptional.get();
+            userImg = userFile.getUrl();
+        }
+        return PostResponseDTO.PostSearchRes.builder()
+                .postId(post.getId())
+                .nickname(post.getUser().getNickname())
+                .userImg(userImg)
+                .title(post.getTitle())
+                .content(post.getContent())
+                .uploadDate(post.getCreatedAt())
+                .like(likeCount)
+                .comment(commentCount)
+                .isLike(isLike)
+                .isComment(isComment)
+                .build();
+    }
+
+    public static PostResponseDTO.PostSearchList PostSearchListDTO(Page<Post> postList, Long userId) {
+        List<PostResponseDTO.PostSearchRes> postSearchLists = postList.stream()
+                .map(post -> PostSearchResDTO(post, userId)).collect(Collectors.toList());
+        return PostResponseDTO.PostSearchList.builder()
+                .reviewPostList(postSearchLists)
+                .isEnd(postList.isLast())
+                .build();
+    }
 }
 
 

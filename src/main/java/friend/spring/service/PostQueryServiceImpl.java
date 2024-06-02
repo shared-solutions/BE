@@ -143,4 +143,10 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     }
 
+    @Override
+    @Transactional
+    public Page<Post> getPostSearch(Integer page, Integer size, String search) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        return postRepository.findByKeyWord(search, pageable);
+    }
 }
