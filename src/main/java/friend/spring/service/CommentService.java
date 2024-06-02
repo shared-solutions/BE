@@ -1,6 +1,7 @@
 package friend.spring.service;
 
 import friend.spring.domain.Comment;
+import friend.spring.domain.Report;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.web.dto.CommentRequestDTO;
@@ -36,4 +37,6 @@ public interface CommentService {
     Page<Comment> getMyCommentList(Long userId, Integer page);
 
     void deleteComment(Long postId, Long commentId, HttpServletRequest request);
+
+    Report createReportComment(Long commentId, CommentRequestDTO.CommentReportReq request, HttpServletRequest request2);
 }

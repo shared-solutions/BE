@@ -1,13 +1,13 @@
 package friend.spring.converter;
 
-import friend.spring.domain.Comment;
-import friend.spring.domain.Post;
-import friend.spring.domain.User;
+import friend.spring.domain.*;
 import friend.spring.domain.enums.CommentState;
+import friend.spring.domain.enums.ReportType;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
+import friend.spring.web.dto.PostResponseDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -116,4 +116,18 @@ public class CommentConverter {
                 .build();
     }
 
+    public static CommentResponseDTO.CommentReportRes toCommentReportRes(Report report) {
+        return CommentResponseDTO.CommentReportRes.builder()
+                .reportId(report.getId())
+                .build();
+    }
+
+    public static Report toReportComment(Comment comment, User user, ReportCategory reportCategory) {
+        return Report.builder()
+                .targetType(ReportType.COMMENT)
+                .targetId(comment.getId())
+                .reportCategory(reportCategory)
+                .user(user)
+                .build();
+    }
 }

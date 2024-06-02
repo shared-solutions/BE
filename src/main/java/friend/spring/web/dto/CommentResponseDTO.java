@@ -70,4 +70,12 @@ public class CommentResponseDTO {
         Integer commentLike;
         Integer reComment;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CommentReportRes {
+        Long reportId;
+    }
 }

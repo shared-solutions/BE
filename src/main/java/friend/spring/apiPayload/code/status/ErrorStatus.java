@@ -73,6 +73,7 @@ ErrorStatus implements BaseErrorCode {
     COMMENT_NOT_CORRECT_USER(HttpStatus.BAD_REQUEST, "COMMENT4005", "올바른 사용자(댓글 작성자)가 아닙니다."),
     COMMENT_POST_NOT_MATCH(HttpStatus.BAD_REQUEST, "COMMENT4006", "해당 글에 작성된 댓글이 아닙니다."),
     COMMENT_LIKE_DUPLICATE(HttpStatus.BAD_REQUEST, "COMMENT4007", "댓글에 대한 좋아요 데이터가 이미 존재합니다."),
+    COMMENT_REPORT_DUPLICATE(HttpStatus.BAD_REQUEST, "COMMENT4008", "이 유저가 해당 댓글을 신고한 신고 내역 데이터가 이미 존재합니다."),
 
     // 알림 관련 응답
     ALARM_NOT_FOUND(HttpStatus.NOT_FOUND, "ALARM4001", "알림이 없습니다"),
