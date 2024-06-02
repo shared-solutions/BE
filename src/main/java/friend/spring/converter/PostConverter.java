@@ -20,10 +20,8 @@ import friend.spring.domain.User;
 
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
-import friend.spring.web.dto.CandidateResponseDTO;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.List;
 
@@ -1006,9 +1004,11 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostResponseDTO.PostReportRes toPostReportRes(Report report) {
+    public static PostResponseDTO.PostReportRes toPostReportRes(PostResponseDTO.ReportResult reportResult) {
         return PostResponseDTO.PostReportRes.builder()
-                .reportId(report.getId())
+                .reportId(reportResult.getReport().getId())
+                .createdAt(reportResult.getReport().getCreatedAt())
+                .duplicatedReport(reportResult.getDuplicatedReport())
                 .build();
     }
 

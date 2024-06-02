@@ -10,6 +10,7 @@ import friend.spring.domain.mapping.Comment_like;
 import friend.spring.service.CommentService;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
+import friend.spring.web.dto.PostResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -219,7 +220,7 @@ public class CommentRestController {
             @RequestHeader("atk") String atk,
             HttpServletRequest request2
     ) {
-        Report commentReport = commentService.createReportComment(commentId, request, request2);
+        PostResponseDTO.ReportResult commentReport = commentService.createReportComment(commentId, request, request2);
         return ApiResponse.onSuccess(CommentConverter.toCommentReportRes(commentReport));
     }
 }

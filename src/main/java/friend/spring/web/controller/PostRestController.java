@@ -5,7 +5,6 @@ import friend.spring.converter.CandidateConverter;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.Candidate;
 import friend.spring.domain.Post;
-import friend.spring.domain.Report;
 import friend.spring.repository.PostRepository;
 import friend.spring.service.JwtTokenService;
 import friend.spring.service.PostQueryService;
@@ -26,8 +25,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
-
-import static friend.spring.apiPayload.code.status.ErrorStatus.POST_REPORT_DUPLICATE;
 
 @RestController
 @RequiredArgsConstructor
@@ -326,7 +323,7 @@ public class PostRestController {
             @RequestHeader("atk") String atk,
             HttpServletRequest request2
     ) {
-        Report postReport = postService.createReportPost(postId, request, request2);
+        PostResponseDTO.ReportResult postReport = postService.createReportPost(postId, request, request2);
         return ApiResponse.onSuccess(PostConverter.toPostReportRes(postReport));
     }
 }

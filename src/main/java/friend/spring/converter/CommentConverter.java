@@ -116,9 +116,11 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.CommentReportRes toCommentReportRes(Report report) {
+    public static CommentResponseDTO.CommentReportRes toCommentReportRes(PostResponseDTO.ReportResult reportResult) {
         return CommentResponseDTO.CommentReportRes.builder()
-                .reportId(report.getId())
+                .reportId(reportResult.getReport().getId())
+                .createdAt(reportResult.getReport().getCreatedAt())
+                .duplicatedReport(reportResult.getDuplicatedReport())
                 .build();
     }
 

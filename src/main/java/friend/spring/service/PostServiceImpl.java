@@ -474,7 +474,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Report createReportPost(Long postId, PostRequestDTO.PostReportReq request, HttpServletRequest request2) {
+    public PostResponseDTO.ReportResult createReportPost(Long postId, PostRequestDTO.PostReportReq request, HttpServletRequest request2) {
         Long userId = jwtTokenProvider.getCurrentUser(request2);
 
         Optional<Post> optionalPost = postRepository.findById(postId);
@@ -493,11 +493,17 @@ public class PostServiceImpl implements PostService {
         // 이미 신고된 건인지 확인
         Optional<Report> optionalReport = reportRepository.findByTargetTypeAndTargetIdAndUserId(ReportType.POST, postId, userId);
         if (!optionalReport.isEmpty()) {
-            throw new PostHandler(POST_REPORT_DUPLICATE);
+            return PostResponseDTO.ReportResult.builder()
+                    .report(optionalReport.get())
+                    .duplicatedReport(true)
+                    .build();
         }
 
         ReportCategory reportCategory = reportCategoryRepository.findByName(request.getReportCategory());
         Report report = PostConverter.toReportPost(post, user, reportCategory);
-        return reportRepository.save(report);
+        return PostResponseDTO.ReportResult.builder()
+                .report(reportRepository.save(report))
+                .duplicatedReport(false)
+                .build();
     }
 }

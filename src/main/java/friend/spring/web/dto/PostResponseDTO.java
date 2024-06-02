@@ -1,8 +1,8 @@
 package friend.spring.web.dto;
 
+import friend.spring.domain.Report;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
-import io.swagger.models.auth.In;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -165,5 +165,16 @@ public class PostResponseDTO {
     @AllArgsConstructor
     public static class PostReportRes {
         Long reportId;
+        LocalDateTime createdAt;
+        Boolean duplicatedReport;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ReportResult {
+        Report report;
+        Boolean duplicatedReport;
     }
 }

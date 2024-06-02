@@ -17,6 +17,7 @@ import friend.spring.repository.*;
 import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
+import friend.spring.web.dto.PostResponseDTO;
 import friend.spring.web.dto.SseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -407,7 +408,7 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Report createReportComment(Long commentId, CommentRequestDTO.CommentReportReq request, HttpServletRequest request2) {
+    public PostResponseDTO.ReportResult createReportComment(Long commentId, CommentRequestDTO.CommentReportReq request, HttpServletRequest request2) {
         Long userId = jwtTokenProvider.getCurrentUser(request2);
 
         Optional<Comment> optionalComment = commentRepository.findById(commentId);
@@ -426,12 +427,18 @@ public class CommentServiceImpl implements CommentService {
         // 이미 신고된 건인지 확인
         Optional<Report> optionalReport = reportRepository.findByTargetTypeAndTargetIdAndUserId(ReportType.COMMENT, commentId, userId);
         if (!optionalReport.isEmpty()) {
-            throw new CommentHandler(COMMENT_REPORT_DUPLICATE);
+            return PostResponseDTO.ReportResult.builder()
+                    .report(optionalReport.get())
+                    .duplicatedReport(true)
+                    .build();
         }
 
         ReportCategory reportCategory = reportCategoryRepository.findByName(request.getReportCategory());
         Report report = CommentConverter.toReportComment(comment, user, reportCategory);
-        return reportRepository.save(report);
+        return PostResponseDTO.ReportResult.builder()
+                .report(reportRepository.save(report))
+                .duplicatedReport(false)
+                .build();
     }
 }
 

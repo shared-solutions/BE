@@ -1,5 +1,6 @@
 package friend.spring.web.dto;
 
+import friend.spring.domain.Report;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -77,5 +78,7 @@ public class CommentResponseDTO {
     @AllArgsConstructor
     public static class CommentReportRes {
         Long reportId;
+        LocalDateTime createdAt;
+        Boolean duplicatedReport;
     }
 }
