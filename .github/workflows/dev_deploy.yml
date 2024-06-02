@@ -2,7 +2,7 @@ name: Solution-friend Dev CI/CD
 
 on:
   pull_request:
-    types: [closed]
+    types: [ closed ]
   workflow_dispatch: # (2).수동 실행도 가능하도록
 
 jobs:
@@ -41,21 +41,21 @@ jobs:
 
       - name: Generate deployment package
         run: |
-            mkdir -p deploy
-            cp build/libs/*.jar deploy/application.jar
-            cp Procfile deploy/Procfile
-            cp -r .ebextensions-dev deploy/.ebextensions
-            cp -r .platform deploy/.platform
-            cd deploy && zip -r deploy.zip .
-    
+          mkdir -p deploy
+          cp build/libs/*.jar deploy/application.jar
+          cp Procfile deploy/Procfile
+          cp -r .ebextensions-dev deploy/.ebextensions
+          cp -r .platform deploy/.platform
+          cd deploy && zip -r deploy.zip .
+
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v20
         with:
-            aws_access_key: ${{ secrets.AWS_ACTION_ACCESS_KEY_ID }}
-            aws_secret_key: ${{ secrets.AWS_ACTION_SECRET_ACCESS_KEY }}
-            application_name: solution-friend-dev
-            environment_name: Solution-friend-dev-env
-            version_label: github-action-${{ steps.current-time.outputs.formattedTime }}
-            region: ap-northeast-2
-            deployment_package: deploy/deploy.zip
-            wait_for_deployment: false
+          aws_access_key: ${{ secrets.AWS_ACTION_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_ACTION_SECRET_ACCESS_KEY }}
+          application_name: solution-friend-dev
+          environment_name: Solution-friend-dev-env
+          version_label: github-action-${{ steps.current-time.outputs.formattedTime }}
+          region: ap-northeast-2
+          deployment_package: deploy/deploy.zip
+          wait_for_deployment: false

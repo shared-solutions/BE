@@ -1,5 +1,5 @@
 package friend.spring.domain.enums;
 
 public enum AlarmType {
-    COMMENT, VOTE_FINISH
+    COMMENT, REPLY_COMMENT, VOTE_FINISH
 }

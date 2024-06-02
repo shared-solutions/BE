@@ -1,6 +1,5 @@
 package friend.spring.web.dto;
 
-import friend.spring.domain.enums.AlarmType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,17 +14,32 @@ public class AlarmResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AlarmListResDTO{
+    public static class AlarmListResDTO {
         List<AlarmResDTO> alarmList;
     }
+
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AlarmResDTO{
-        String nickName;
-        AlarmType type;
-        String content;
+    public static class AlarmResDTO {
+        Long alarmId;
+        String userNickname;
+        String userPhoto;
+        String alarmType;
+        String alarmContent;
+        String commentContent;
+        Long postId;
+        Long commentId;
+        Boolean read;
         LocalDateTime createdAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AlarmLeftResDTO {
+        Boolean isAlarmLeft;
     }
 }

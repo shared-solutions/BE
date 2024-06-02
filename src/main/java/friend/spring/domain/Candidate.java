@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+
 @Entity
 @Getter
 @Builder
@@ -18,8 +19,6 @@ public class Candidate extends BaseEntity {
 
     private String name;
 
-    private String image;
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "generalPoll_id")
     private General_poll generalPoll;
@@ -28,15 +27,19 @@ public class Candidate extends BaseEntity {
     @JoinColumn(name = "cardPoll_id")
     private Card_poll cardPoll;
 
+    @OneToOne(mappedBy = "candidate")
+    @JoinColumn(name = "file_id")
+    private File file;
+
     public void setGeneralPoll(General_poll generalPoll) {
-    this.generalPoll = generalPoll;
-    if (this.generalPoll != null) {
-        Hibernate.initialize(this.generalPoll);
-        if (this.generalPoll.getCandidateList() != null) {
-            this.generalPoll.getCandidateList().add(this);
+        this.generalPoll = generalPoll;
+        if (this.generalPoll != null) {
+            Hibernate.initialize(this.generalPoll);
+            if (this.generalPoll.getCandidateList() != null) {
+                this.generalPoll.getCandidateList().add(this);
+            }
         }
     }
-}
 
     public void setCardPoll(Card_poll cardPoll) {
         this.cardPoll = cardPoll;
@@ -48,5 +51,7 @@ public class Candidate extends BaseEntity {
         }
     }
 
-
+    public void setFile(File file) {
+        this.file = file;
+    }
 }
