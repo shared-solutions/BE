@@ -9,6 +9,7 @@ import friend.spring.domain.mapping.Post_scrap;
 import friend.spring.web.dto.CandidateRequestDTO;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
+import friend.spring.web.dto.UserRequestDTO;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,5 +49,4 @@ public interface PostService {
     Post_scrap createScrapPost(Long postId, HttpServletRequest request);
 
     void deleteScrapPost(Long postId, HttpServletRequest request);
-
 }

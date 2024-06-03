@@ -5,6 +5,7 @@ import friend.spring.converter.CandidateConverter;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.Candidate;
 import friend.spring.domain.Post;
+import friend.spring.domain.Redis.SearchLog;
 import friend.spring.repository.PostRepository;
 import friend.spring.service.JwtTokenService;
 import friend.spring.service.PostQueryService;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -310,16 +312,27 @@ public class PostRestController {
             @Parameter(name = "page", description = "query string(RequestParam) - 몇번째 페이지인지 가리키는 page 변수 입니다! (0부터 시작)"),
             @Parameter(name = "size", description = "query string(RequestParam) - 몇 개씩 불러올지 개수를 세는 변수입니다. (1 이상 자연수로 설정)"),
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
-            @Parameter(name = "search", description = "query string(RequestParam) - 검색어.")
+            @Parameter(name = "keyword", description = "query string(RequestParam) - 검색어.")
     })
     public ApiResponse<PostResponseDTO.PostSearchList> getPostSearch(@RequestParam(name = "page", defaultValue = "0") Integer page,
                                                                      @RequestParam(name = "size", defaultValue = "15") Integer size,
-                                                                     @RequestParam(name = "search") String search,
+                                                                     @RequestParam(name = "keyword") String keyword,
                                                                      @RequestHeader("atk") String atk,
                                                                      HttpServletRequest request2) {
         Long userId = jwtTokenService.JwtToId(request2);
-        Page<Post> postPage = postQueryService.getPostSearch(page, size, search);
+        Page<Post> postPage = postQueryService.getPostSearch(userId,page, size, keyword);
         return ApiResponse.onSuccess(PostConverter.PostSearchListDTO(postPage, userId));
+    }
 
+    @GetMapping("/post/search/recent-log")
+    @Operation(summary = "최근 검색어 목록 조회 API", description = "최신순으로 검색어 목록을 최대 10개까지 조회합니다.")
+    @Parameters({
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
+    })
+    public ApiResponse<PostResponseDTO.RecentSearchRes> getRecentSearch(@RequestHeader("atk") String atk,
+                                                               HttpServletRequest request){
+        Long userId = jwtTokenService.JwtToId(request);
+        List<SearchLog> recentSearchLogs = postQueryService.getRecentSearchLogs(userId);
+        return ApiResponse.onSuccess(PostConverter.toRecentSearchRes(recentSearchLogs));
     }
 }

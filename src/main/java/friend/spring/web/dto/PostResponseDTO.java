@@ -183,4 +183,20 @@ public class PostResponseDTO {
         Boolean isLike;
         Boolean isComment;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecentSearchRes {
+        List<SearchLog> recentSearchList;
+    }
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SearchLog{
+        private String name;
+        private String createdAt;
+    }
 }

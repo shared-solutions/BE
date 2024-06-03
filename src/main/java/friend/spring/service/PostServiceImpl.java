@@ -6,6 +6,7 @@ import friend.spring.apiPayload.handler.PostHandler;
 import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.*;
+import friend.spring.domain.Redis.SearchLog;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.S3ImageType;
@@ -16,6 +17,7 @@ import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -456,7 +458,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deleteScrapPost(Long postId, HttpServletRequest request) {
         Long userId = jwtTokenProvider.getCurrentUser(request);
-
         Optional<Post> optionalPost = postRepository.findById(postId);
         if (optionalPost.isEmpty()) {
             this.checkPost(false);
@@ -475,5 +476,4 @@ public class PostServiceImpl implements PostService {
         Post_scrap post_scrap = optionalPost_scrap.get();
         postScrapRepository.delete(post_scrap);
     }
-
 }
