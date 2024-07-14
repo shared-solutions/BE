@@ -50,4 +50,11 @@ public class PostRequestDTO {
         Boolean voteOnGoing;
     }
 
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostReportReq {
+        String reportCategory;
+    }
 }

@@ -3,17 +3,21 @@ package friend.spring.service;
 import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.apiPayload.handler.CommentHandler;
+import friend.spring.apiPayload.handler.PostHandler;
 import friend.spring.converter.AlarmConverter;
 import friend.spring.converter.CommentConverter;
+import friend.spring.converter.PostConverter;
 import friend.spring.converter.SseConverter;
 import friend.spring.domain.*;
 import friend.spring.domain.enums.AlarmType;
+import friend.spring.domain.enums.ReportType;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.repository.*;
 import friend.spring.security.JwtTokenProvider;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
+import friend.spring.web.dto.PostResponseDTO;
 import friend.spring.web.dto.SseResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,6 +42,8 @@ public class CommentServiceImpl implements CommentService {
     private final CommentChoiceRepository commentChoiceRepository;
     private final PointRepository pointRepository;
     private final AlarmRepository alarmRepository;
+    private final ReportRepository reportRepository;
+    private final ReportCategoryRepository reportCategoryRepository;
     private final UserService userService;
     private final PostService postService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -399,6 +405,40 @@ public class CommentServiceImpl implements CommentService {
             this.checkCommentWriterUser(false);
         }
         comment.updateStateToDeleted();
+    }
+
+    @Override
+    public PostResponseDTO.ReportResult createReportComment(Long commentId, CommentRequestDTO.CommentReportReq request, HttpServletRequest request2) {
+        Long userId = jwtTokenProvider.getCurrentUser(request2);
+
+        Optional<Comment> optionalComment = commentRepository.findById(commentId);
+        if (optionalComment.isEmpty()) {
+            this.checkComment(false);
+        }
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
+        Comment comment = optionalComment.get();
+        User user = optionalUser.get();
+
+        // 이미 신고된 건인지 확인
+        Optional<Report> optionalReport = reportRepository.findByTargetTypeAndTargetIdAndUserId(ReportType.COMMENT, commentId, userId);
+        if (!optionalReport.isEmpty()) {
+            return PostResponseDTO.ReportResult.builder()
+                    .report(optionalReport.get())
+                    .duplicatedReport(true)
+                    .build();
+        }
+
+        ReportCategory reportCategory = reportCategoryRepository.findByName(request.getReportCategory());
+        Report report = CommentConverter.toReportComment(comment, user, reportCategory);
+        return PostResponseDTO.ReportResult.builder()
+                .report(reportRepository.save(report))
+                .duplicatedReport(false)
+                .build();
     }
 }
 
