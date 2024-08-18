@@ -27,4 +27,12 @@ public class CommentRequestDTO {
         @NotBlank
         String content;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class CommentReportReq {
+        String reportCategory;
+    }
 }

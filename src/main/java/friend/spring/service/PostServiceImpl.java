@@ -9,6 +9,7 @@ import friend.spring.domain.*;
 import friend.spring.domain.Redis.SearchLog;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
+import friend.spring.domain.enums.ReportType;
 import friend.spring.domain.enums.S3ImageType;
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
@@ -44,6 +45,8 @@ public class PostServiceImpl implements PostService {
     private final Card_PollRepository cardPollRepository;
     private final PointRepository pointRepository;
     private final CategoryRepository categoryRepository;
+    private final ReportCategoryRepository reportCategoryRepository;
+    private final ReportRepository reportRepository;
 
     private final PostLikeRepository postLikeRepository;
     private final CommentRepository commentRepository;
@@ -475,5 +478,39 @@ public class PostServiceImpl implements PostService {
 
         Post_scrap post_scrap = optionalPost_scrap.get();
         postScrapRepository.delete(post_scrap);
+    }
+
+    @Override
+    public PostResponseDTO.ReportResult createReportPost(Long postId, PostRequestDTO.PostReportReq request, HttpServletRequest request2) {
+        Long userId = jwtTokenProvider.getCurrentUser(request2);
+
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            this.checkPost(false);
+        }
+
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            userService.checkUser(false);
+        }
+
+        Post post = optionalPost.get();
+        User user = optionalUser.get();
+
+        // 이미 신고된 건인지 확인
+        Optional<Report> optionalReport = reportRepository.findByTargetTypeAndTargetIdAndUserId(ReportType.POST, postId, userId);
+        if (!optionalReport.isEmpty()) {
+            return PostResponseDTO.ReportResult.builder()
+                    .report(optionalReport.get())
+                    .duplicatedReport(true)
+                    .build();
+        }
+
+        ReportCategory reportCategory = reportCategoryRepository.findByName(request.getReportCategory());
+        Report report = PostConverter.toReportPost(post, user, reportCategory);
+        return PostResponseDTO.ReportResult.builder()
+                .report(reportRepository.save(report))
+                .duplicatedReport(false)
+                .build();
     }
 }

@@ -306,6 +306,30 @@ public class PostRestController {
         return ApiResponse.onSuccess(null);
     }
 
+    // 글 신고
+    @PostMapping("/posts/{post-id}/report")
+    @Operation(summary = "글 신고 API", description = "글 신고하는 API입니다. ex) /posts/1/report")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "COMMON200", description = "OK, 요청에 성공했습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "USER4001", description = "NOT_FOUND, 사용자를 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4001", description = "NOT_FOUND, 글을 찾을 수 없습니다."),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "POST4018", description = "BAD_REQUEST, 이 유저가 해당 글을 신고한 신고 내역 데이터가 이미 존재합니다."),
+    })
+    @Parameters({
+            @Parameter(name = "post-id", description = "path variable - 글 아이디"),
+            @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
+    })
+    public ApiResponse<PostResponseDTO.PostReportRes> createReportPost(
+            @PathVariable("post-id") Long postId,
+            @RequestBody PostRequestDTO.PostReportReq request,
+            @RequestHeader("atk") String atk,
+            HttpServletRequest request2
+    ) {
+        PostResponseDTO.ReportResult postReport = postService.createReportPost(postId, request, request2);
+        return ApiResponse.onSuccess(PostConverter.toPostReportRes(postReport));
+    }
+
+    // 글 검색
     @GetMapping("/post/search/")
     @Operation(summary = "글 검색 API", description = "글을 검색합니다")
     @Parameters({
@@ -334,5 +358,6 @@ public class PostRestController {
         Long userId = jwtTokenService.JwtToId(request);
         List<SearchLog> recentSearchLogs = postQueryService.getRecentSearchLogs(userId);
         return ApiResponse.onSuccess(PostConverter.toRecentSearchRes(recentSearchLogs));
+
     }
 }

@@ -5,6 +5,7 @@ import friend.spring.domain.Redis.SearchLog;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
+import friend.spring.domain.enums.ReportType;
 import friend.spring.service.PostQueryService;
 import friend.spring.web.dto.*;
 import org.springframework.data.domain.Page;
@@ -20,10 +21,8 @@ import friend.spring.domain.User;
 
 import friend.spring.domain.mapping.Post_like;
 import friend.spring.domain.mapping.Post_scrap;
-import friend.spring.web.dto.CandidateResponseDTO;
 import friend.spring.web.dto.PostRequestDTO;
 import friend.spring.web.dto.PostResponseDTO;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.List;
 
@@ -994,6 +993,23 @@ public class PostConverter {
     public static PostResponseDTO.ScrapCreateRes toScrapCreateRes(Post_scrap post_scrap) {
         return PostResponseDTO.ScrapCreateRes.builder()
                 .post_scrap_id(post_scrap.getId())
+                .build();
+    }
+
+    public static Report toReportPost(Post post, User user, ReportCategory reportCategory) {
+        return Report.builder()
+                .targetType(ReportType.POST)
+                .targetId(post.getId())
+                .reportCategory(reportCategory)
+                .user(user)
+                .build();
+    }
+
+    public static PostResponseDTO.PostReportRes toPostReportRes(PostResponseDTO.ReportResult reportResult) {
+        return PostResponseDTO.PostReportRes.builder()
+                .reportId(reportResult.getReport().getId())
+                .createdAt(reportResult.getReport().getCreatedAt())
+                .duplicatedReport(reportResult.getDuplicatedReport())
                 .build();
     }
 

@@ -1,10 +1,12 @@
 package friend.spring.service;
 
 import friend.spring.domain.Comment;
+import friend.spring.domain.Report;
 import friend.spring.domain.mapping.Comment_choice;
 import friend.spring.domain.mapping.Comment_like;
 import friend.spring.web.dto.CommentRequestDTO;
 import friend.spring.web.dto.CommentResponseDTO;
+import friend.spring.web.dto.PostResponseDTO;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,4 +38,6 @@ public interface CommentService {
     Page<Comment> getMyCommentList(Long userId, Integer page);
 
     void deleteComment(Long postId, Long commentId, HttpServletRequest request);
+
+    PostResponseDTO.ReportResult createReportComment(Long commentId, CommentRequestDTO.CommentReportReq request, HttpServletRequest request2);
 }
