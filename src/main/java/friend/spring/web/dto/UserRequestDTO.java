@@ -142,4 +142,12 @@ public class UserRequestDTO {
     public static class Delete {
         private String email;
     }
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class SearchReq{
+        private String name;
+        private String createdAt;
+    }
 }

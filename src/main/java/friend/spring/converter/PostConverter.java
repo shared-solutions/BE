@@ -1,6 +1,7 @@
 package friend.spring.converter;
 
 import friend.spring.domain.*;
+import friend.spring.domain.Redis.SearchLog;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
@@ -1045,6 +1046,20 @@ public class PostConverter {
         return PostResponseDTO.PostSearchList.builder()
                 .reviewPostList(postSearchLists)
                 .isEnd(postList.isLast())
+                .build();
+    }
+
+    public static PostResponseDTO.RecentSearchRes toRecentSearchRes(List<SearchLog> recentSearchLogs){
+        List<PostResponseDTO.SearchLog> searchLogList = recentSearchLogs.stream().map(PostConverter::toSearchLog).collect(Collectors.toList());
+        return PostResponseDTO.RecentSearchRes.builder()
+                .recentSearchList(searchLogList)
+                .build();
+    }
+
+    public static PostResponseDTO.SearchLog toSearchLog(SearchLog searchLog){
+        return PostResponseDTO.SearchLog.builder()
+                .name(searchLog.getName())
+                .createdAt(searchLog.getCreatedAt())
                 .build();
     }
 }

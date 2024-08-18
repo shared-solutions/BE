@@ -4,6 +4,7 @@ import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
 import friend.spring.converter.PostConverter;
 import friend.spring.domain.*;
+import friend.spring.domain.Redis.SearchLog;
 import friend.spring.domain.enums.PostState;
 import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
@@ -14,6 +15,7 @@ import friend.spring.web.dto.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static friend.spring.apiPayload.code.status.ErrorStatus.USER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +38,7 @@ public class PostQueryServiceImpl implements PostQueryService {
     private final Card_VoteRepository cardVoteRepository;
     private final CategoryRepository categoryRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate<String, Object> objectRedisTemplate;
 
     @Override
     @Transactional
@@ -145,8 +150,31 @@ public class PostQueryServiceImpl implements PostQueryService {
 
     @Override
     @Transactional
-    public Page<Post> getPostSearch(Integer page, Integer size, String search) {
+    public Page<Post> getPostSearch(Long userId,Integer page, Integer size, String search) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
+        String now = LocalDateTime.now().toString();
+        String key = "CurrentSearch" + user.getId();
+        SearchLog value = SearchLog.builder()
+                .name(search)
+                .createdAt(now)
+                .build();
+        Long redisSize = objectRedisTemplate.opsForList().size(key);
+        if(redisSize == 10){
+            objectRedisTemplate.opsForList().rightPop(key);
+        }
+        objectRedisTemplate.opsForList().leftPush(key, value);
         return postRepository.findByKeyWord(search, pageable);
+    }
+
+    public List<SearchLog> getRecentSearchLogs(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
+
+        String key = "CurrentSearch" + user.getId();
+        List<Object> objLogs = objectRedisTemplate.opsForList().
+                range(key, 0, 10);
+        List<SearchLog> searchLogs = objLogs.stream().map(i -> (SearchLog) i).collect(Collectors.toList());
+        return searchLogs;
     }
 }

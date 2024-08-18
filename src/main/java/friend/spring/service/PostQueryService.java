@@ -1,11 +1,11 @@
 package friend.spring.service;
 
 import friend.spring.domain.Post;
-import friend.spring.web.dto.PostRequestDTO;
-import friend.spring.web.dto.PostResponseDTO;
+import friend.spring.domain.Redis.SearchLog;
 import org.springframework.data.domain.Page;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 public interface PostQueryService {
@@ -22,6 +22,7 @@ public interface PostQueryService {
     Page<Post> getReviewList(Integer page, Integer size, Integer arrange);
 
     Page<Post> getParentPostList(Integer page, Integer size, HttpServletRequest request);
-    Page<Post> getPostSearch(Integer page, Integer size, String search);
+    Page<Post> getPostSearch(Long userId,Integer page, Integer size, String search);
+    List<SearchLog> getRecentSearchLogs(Long userId);
 
 }
