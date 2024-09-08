@@ -194,7 +194,7 @@ public class PostQueryServiceImpl implements PostQueryService {
         String key = "CurrentSearch" + user.getId();
 
         // score 높은순으로 10개 가져오기
-        Set<ZSetOperations.TypedTuple<Object>> recentLogs = objectRedisTemplate.opsForZSet().reverseRangeByScoreWithScores(key, 0, 9);
+        Set<ZSetOperations.TypedTuple<Object>> recentLogs = objectRedisTemplate.opsForZSet().reverseRangeWithScores(key, 0, 9);
 
         // 검색어 문자열로 변환
         List<String> searchLogs = recentLogs.stream()

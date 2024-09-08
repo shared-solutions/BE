@@ -1051,7 +1051,7 @@ public class PostConverter {
 
     public static PostResponseDTO.RecentSearchRes toRecentSearchRes(List<SearchLog> recentSearchLogs) {
         List<PostResponseDTO.SearchLog> searchLogList = recentSearchLogs.stream()
-                .map(PostConverter::toSearchLog) // string을 searchLog로 변환gown
+                .map(PostConverter::toSearchLog) // String을 SearchLog로 변환하였습니다.
                 .collect(Collectors.toList());
 
         return PostResponseDTO.RecentSearchRes.builder()

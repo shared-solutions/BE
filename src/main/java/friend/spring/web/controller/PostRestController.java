@@ -360,7 +360,7 @@ public class PostRestController {
         Long userId = jwtTokenService.JwtToId(request);
         List<String> recentSearchLogs = postQueryService.getRecentSearchLogs(userId);
 
-        // String을 SearchLog로 변환하는 로직 필요
+
         List<SearchLog> searchLogs = recentSearchLogs.stream()
                 .map(search -> new SearchLog(search, LocalDateTime.now().toString()))
                 .collect(Collectors.toList());
