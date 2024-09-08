@@ -26,7 +26,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -353,11 +355,17 @@ public class PostRestController {
     @Parameters({
             @Parameter(name = "atk", description = "RequestHeader - 로그인한 사용자의 accessToken"),
     })
-    public ApiResponse<PostResponseDTO.RecentSearchRes> getRecentSearch(@RequestHeader("atk") String atk,
-                                                               HttpServletRequest request){
+    public ApiResponse<PostResponseDTO.RecentSearchRes> getRecentSearchLogs(@RequestHeader("atk") String atk,
+                                                                            HttpServletRequest request) {
         Long userId = jwtTokenService.JwtToId(request);
-        List<SearchLog> recentSearchLogs = postQueryService.getRecentSearchLogs(userId);
-        return ApiResponse.onSuccess(PostConverter.toRecentSearchRes(recentSearchLogs));
+        List<String> recentSearchLogs = postQueryService.getRecentSearchLogs(userId);
 
+
+//        List<SearchLog> searchLogs = recentSearchLogs.stream()
+//                .map(search -> new SearchLog(search, LocalDateTime.now().toString()))
+//                .collect(Collectors.toList());
+
+        return ApiResponse.onSuccess(PostConverter.toRecentSearchRes(recentSearchLogs));
     }
+
 }

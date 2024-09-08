@@ -23,6 +23,6 @@ public interface PostQueryService {
 
     Page<Post> getParentPostList(Integer page, Integer size, HttpServletRequest request);
     Page<Post> getPostSearch(Long userId,Integer page, Integer size, String search);
-    List<SearchLog> getRecentSearchLogs(Long userId);
+    List<String> getRecentSearchLogs(Long userId);
 
 }
