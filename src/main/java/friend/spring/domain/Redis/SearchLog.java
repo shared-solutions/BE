@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Getter
 public class SearchLog {
     private String name;
-    private String createdAt;
+//    private String createdAt;
 }

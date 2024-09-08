@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static friend.spring.apiPayload.code.status.ErrorStatus.USER_NOT_FOUND;
@@ -153,17 +154,14 @@ public class PostQueryServiceImpl implements PostQueryService {
     public Page<Post> getPostSearch(Long userId,Integer page, Integer size, String search) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
-        String now = LocalDateTime.now().toString();
         String key = "CurrentSearch" + user.getId();
-        SearchLog value = SearchLog.builder()
-                .name(search)
-                .createdAt(now)
-                .build();
-        Long redisSize = objectRedisTemplate.opsForList().size(key);
+        long now = -System.currentTimeMillis();
+        Long redisSize = objectRedisTemplate.opsForZSet().size(key);
         if(redisSize == 10){
-            objectRedisTemplate.opsForList().rightPop(key);
+//            objectRedisTemplate.opsForList().rightPop(key);
+            objectRedisTemplate.opsForZSet().popMax(key);
         }
-        objectRedisTemplate.opsForList().leftPush(key, value);
+        objectRedisTemplate.opsForZSet().add(key,search,now);
         return postRepository.findByKeyWord(search, pageable);
     }
 
@@ -172,8 +170,9 @@ public class PostQueryServiceImpl implements PostQueryService {
                 .orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
 
         String key = "CurrentSearch" + user.getId();
-        List<Object> objLogs = objectRedisTemplate.opsForList().
-                range(key, 0, 10);
+//        List<Object> objLogs = objectRedisTemplate.opsForList().
+//                range(key, 0, 10);
+        Set<Object> objLogs=objectRedisTemplate.opsForZSet().range(key,0,9);
         List<SearchLog> searchLogs = objLogs.stream().map(i -> (SearchLog) i).collect(Collectors.toList());
         return searchLogs;
     }

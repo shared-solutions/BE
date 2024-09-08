@@ -1059,7 +1059,6 @@ public class PostConverter {
     public static PostResponseDTO.SearchLog toSearchLog(SearchLog searchLog){
         return PostResponseDTO.SearchLog.builder()
                 .name(searchLog.getName())
-                .createdAt(searchLog.getCreatedAt())
                 .build();
     }
 }
