@@ -361,11 +361,11 @@ public class PostRestController {
         List<String> recentSearchLogs = postQueryService.getRecentSearchLogs(userId);
 
 
-        List<SearchLog> searchLogs = recentSearchLogs.stream()
-                .map(search -> new SearchLog(search, LocalDateTime.now().toString()))
-                .collect(Collectors.toList());
+//        List<SearchLog> searchLogs = recentSearchLogs.stream()
+//                .map(search -> new SearchLog(search, LocalDateTime.now().toString()))
+//                .collect(Collectors.toList());
 
-        return ApiResponse.onSuccess(PostConverter.toRecentSearchRes(searchLogs));
+        return ApiResponse.onSuccess(PostConverter.toRecentSearchRes(recentSearchLogs));
     }
 
 }

@@ -209,7 +209,6 @@ public class PostResponseDTO {
     @AllArgsConstructor
     public static class SearchLog{
         private String name;
-        private String createdAt;
     }
   
     @Builder

@@ -150,30 +150,11 @@ public class PostQueryServiceImpl implements PostQueryService {
     public Page<Post> getPostSearch(Long userId,Integer page, Integer size, String search) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
-//        String now = LocalDateTime.now().toString();
-//        String key = "CurrentSearch" + user.getId();
-//        SearchLog value = SearchLog.builder()
-//                .name(search)
-//                .createdAt(now)
-//                .build();
-//        Long redisSize = objectRedisTemplate.opsForList().size(key);
-//        if(redisSize == 10){
-//            objectRedisTemplate.opsForList().rightPop(key);
-//        }
-//        objectRedisTemplate.opsForList().leftPush(key, value);
 
         // 기존 큐 방식을 soreted set 방식으로 리팩토링
 
         double score = System.currentTimeMillis(); // 시스템의 현재시간을 점수로 사용하였습니다.
         String key = "CurrentSearch" + user.getId();
-
-//        SearchLog value = SearchLog.builder()
-//                .name(search)
-//                .createdAt(LocalDateTime.now().toString())
-//                .build();
-
-        // 중복된 검색어가 있는 경우 제거
-        objectRedisTemplate.opsForZSet().remove(key, search, score);
 
         objectRedisTemplate.opsForZSet().add(key, search, score); // sorted set에 새로운 검색로그를 저장하였습니다.
 
