@@ -2,7 +2,6 @@ package friend.spring.service;
 
 import friend.spring.apiPayload.GeneralException;
 import friend.spring.apiPayload.code.status.ErrorStatus;
-import friend.spring.converter.PostConverter;
 import friend.spring.domain.*;
 import friend.spring.domain.Redis.SearchLog;
 import friend.spring.domain.enums.PostState;
@@ -10,20 +9,18 @@ import friend.spring.domain.enums.PostType;
 import friend.spring.domain.enums.PostVoteType;
 import friend.spring.repository.*;
 import friend.spring.security.JwtTokenProvider;
-import friend.spring.web.dto.PostRequestDTO;
-import friend.spring.web.dto.PostResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static friend.spring.apiPayload.code.status.ErrorStatus.USER_NOT_FOUND;
@@ -153,28 +150,60 @@ public class PostQueryServiceImpl implements PostQueryService {
     public Page<Post> getPostSearch(Long userId,Integer page, Integer size, String search) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         User user = userRepository.findById(userId).orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
-        String now = LocalDateTime.now().toString();
+//        String now = LocalDateTime.now().toString();
+//        String key = "CurrentSearch" + user.getId();
+//        SearchLog value = SearchLog.builder()
+//                .name(search)
+//                .createdAt(now)
+//                .build();
+//        Long redisSize = objectRedisTemplate.opsForList().size(key);
+//        if(redisSize == 10){
+//            objectRedisTemplate.opsForList().rightPop(key);
+//        }
+//        objectRedisTemplate.opsForList().leftPush(key, value);
+
+        // 기존 큐 방식을 soreted set 방식으로 리팩토링
+
+        double score = System.currentTimeMillis(); // 시스템의 현재시간을 점수로 사용하였습니다.
         String key = "CurrentSearch" + user.getId();
-        SearchLog value = SearchLog.builder()
-                .name(search)
-                .createdAt(now)
-                .build();
-        Long redisSize = objectRedisTemplate.opsForList().size(key);
-        if(redisSize == 10){
-            objectRedisTemplate.opsForList().rightPop(key);
+
+//        SearchLog value = SearchLog.builder()
+//                .name(search)
+//                .createdAt(LocalDateTime.now().toString())
+//                .build();
+
+        // 중복된 검색어가 있는 경우 제거
+        objectRedisTemplate.opsForZSet().remove(key, search, score);
+
+        objectRedisTemplate.opsForZSet().add(key, search, score); // sorted set에 새로운 검색로그를 저장하였습니다.
+
+        Long redisSize = objectRedisTemplate.opsForZSet().size(key);
+
+        // 10개면 오래된 항목 제거
+        if (redisSize != null && redisSize > 10) {
+            objectRedisTemplate.opsForZSet().removeRange(key, 0, 0);
         }
-        objectRedisTemplate.opsForList().leftPush(key, value);
+
         return postRepository.findByKeyWord(search, pageable);
     }
 
-    public List<SearchLog> getRecentSearchLogs(Long userId) {
+    public List<String> getRecentSearchLogs(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(USER_NOT_FOUND));
 
         String key = "CurrentSearch" + user.getId();
-        List<Object> objLogs = objectRedisTemplate.opsForList().
-                range(key, 0, 10);
-        List<SearchLog> searchLogs = objLogs.stream().map(i -> (SearchLog) i).collect(Collectors.toList());
+
+        // score 높은순으로 10개 가져오기
+        Set<ZSetOperations.TypedTuple<Object>> recentLogs = objectRedisTemplate.opsForZSet().reverseRangeByScoreWithScores(key, 0, 9);
+
+        // 검색어 문자열로 변환
+        List<String> searchLogs = recentLogs.stream()
+                .map(ZSetOperations.TypedTuple::getValue) // 문자열 검색어 가져오기
+                .map(Object::toString)// string으로 타입을 변환
+                .collect(Collectors.toList());
+
         return searchLogs;
     }
+
+
 }

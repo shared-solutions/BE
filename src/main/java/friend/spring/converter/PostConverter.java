@@ -1049,12 +1049,16 @@ public class PostConverter {
                 .build();
     }
 
-    public static PostResponseDTO.RecentSearchRes toRecentSearchRes(List<SearchLog> recentSearchLogs){
-        List<PostResponseDTO.SearchLog> searchLogList = recentSearchLogs.stream().map(PostConverter::toSearchLog).collect(Collectors.toList());
+    public static PostResponseDTO.RecentSearchRes toRecentSearchRes(List<SearchLog> recentSearchLogs) {
+        List<PostResponseDTO.SearchLog> searchLogList = recentSearchLogs.stream()
+                .map(PostConverter::toSearchLog) // string을 searchLog로 변환gown
+                .collect(Collectors.toList());
+
         return PostResponseDTO.RecentSearchRes.builder()
                 .recentSearchList(searchLogList)
                 .build();
     }
+
 
     public static PostResponseDTO.SearchLog toSearchLog(SearchLog searchLog){
         return PostResponseDTO.SearchLog.builder()
