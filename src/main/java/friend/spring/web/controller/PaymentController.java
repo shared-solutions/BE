@@ -2,9 +2,9 @@ package friend.spring.web.controller;
 
 import com.siot.IamportRestClient.IamportClient;
 import com.siot.IamportRestClient.response.IamportResponse;
+import com.siot.IamportRestClient.response.Payment;
 import friend.spring.apiPayload.ApiResponse;
 import friend.spring.domain.Order;
-import friend.spring.domain.Payment;
 import friend.spring.repository.OrderRepository;
 import friend.spring.service.PaymentService;
 import friend.spring.web.dto.PaymentCallback;

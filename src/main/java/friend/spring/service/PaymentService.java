@@ -1,7 +1,8 @@
 package friend.spring.service;
 
 import com.siot.IamportRestClient.response.IamportResponse;
-import friend.spring.domain.Payment;
+
+import com.siot.IamportRestClient.response.Payment;
 import friend.spring.web.dto.PaymentCallback;
 import friend.spring.web.dto.PaymentResponseDTO;
 
