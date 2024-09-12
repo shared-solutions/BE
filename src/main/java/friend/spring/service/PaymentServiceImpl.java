@@ -1,8 +1,11 @@
 package friend.spring.service;
 
 import com.siot.IamportRestClient.IamportClient;
+import com.siot.IamportRestClient.response.IamportResponse;
 import friend.spring.domain.Order;
+import friend.spring.domain.Payment;
 import friend.spring.repository.OrderRepository;
+import friend.spring.web.dto.PaymentCallback;
 import friend.spring.web.dto.PaymentResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class PaymentServiceImpl implements PaymentService{
 
     private final OrderRepository orderRepository;
+    private final IamportClient iamportClient;
 
     @Override
     public String previewOrderUid(Long orderId) {
@@ -31,6 +35,14 @@ public class PaymentServiceImpl implements PaymentService{
                 .product(order.getProduct())
                 .orderUid(order.getOrderUid())
                 .build();
+    }
+
+    @Override
+    public IamportResponse<Payment> paymentByCallBack(PaymentCallback paymentCallback) {
+        try{
+            // 결제 단건 조회
+            IamportResponse<Payment> iamportResponse = iam
+        }
     }
 
 
