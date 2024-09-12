@@ -67,4 +67,7 @@ kakao:
     client: ${KAKAO_AUTH_CLIENT}
     redirect_uri: ${KAKAO_AUTH_REDIRECT_URI}
     secret_key: ${KAKAO_AUTH_SECRET_KEY}
+iamport:
+  api_key: ${iamport_Rest_Api_Key}
+  api_secret: ${iamport_Rest_Api_Secret}
 

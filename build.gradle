@@ -19,6 +19,7 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven { url 'https://jitpack.io' } // 깃허브에 있는 오픈소스 프로젝트를 직접 의존성으로 가져와 사용할 수 있게 해주는 설정입니다.
 }
 
 dependencies {

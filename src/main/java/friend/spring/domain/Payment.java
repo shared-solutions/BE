@@ -19,25 +19,17 @@ public class Payment extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private BigDecimal amount;
-
-    //주문 고유 번호
-    private String merchantUid;
+    private BigDecimal price;
 
     //결제 상태
-    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private PaymentState paymentState = PaymentState.READY;
+    private PaymentState paymentState;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    //주문 고유 번호
+    private String paymentUid;
 
-
-    // 결제 상태 업데이트 편의 메서드
-    public void updatePaymentState(PaymentState paymentState) {
-        this.paymentState = paymentState;
-    }
-
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private User user;
 
 }
