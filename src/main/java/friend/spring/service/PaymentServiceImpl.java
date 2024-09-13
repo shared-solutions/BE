@@ -7,13 +7,12 @@ import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import friend.spring.domain.Order;
 
+import friend.spring.domain.enums.PaymentState;
 import friend.spring.repository.OrderRepository;
 import friend.spring.repository.PaymentRepository;
 import friend.spring.web.dto.PaymentCallback;
 import friend.spring.web.dto.PaymentResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -66,7 +65,9 @@ public class PaymentServiceImpl implements PaymentService{
             int iamportPrice = iamportResponse.getResponse().getAmount().intValue();
 
             // 결제 금액 검증
-            if (iamportPrice != price) {
+            if (price.compareTo(BigDecimal.valueOf(iamportPrice)) != 0) {
+
+                // 금액이 다를경우 주문 및 결제정보를 삭제합니다.
                 orderRepository.delete(order);
                 paymentRepository.delete(order.getPayment());
 
@@ -76,12 +77,19 @@ public class PaymentServiceImpl implements PaymentService{
                 throw new RuntimeException("결제금액 위변조 의심");
             }
             // 결제 상태 변경
-            // order.getPayment().
+            order.getPayment().changePaymentBySuccess(PaymentState.PAID, iamportResponse.getResponse().getImpUid());
 
+            // 멤버 포인트 변경
+            int currentPoint = order.getUser().getPoint();
 
-        } catch (IamportResponseException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
+            if(price.compareTo(BigDecimal.valueOf(1000)) == 0) {
+                order.getUser().setPoint(currentPoint + 1000);
+            } else if (price.compareTo(BigDecimal.valueOf(2000)) == 0) {
+                order.getUser().setPoint(currentPoint + 2000);
+            } else {
+               // 추후 pm님과 상의 후 포인트 로직 추가하거나 수정하면 될 것 같습니다.
+            }
+        } catch (IamportResponseException | IOException e) {
             throw new RuntimeException(e);
         }
     }

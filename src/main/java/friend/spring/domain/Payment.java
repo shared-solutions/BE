@@ -28,8 +28,11 @@ public class Payment extends BaseEntity {
     //주문 고유 번호
     private String paymentUid;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private User user;
+
+    // 상태 변경 메서드
+    public void changePaymentBySuccess(PaymentState paymentState, String paymentUid) {
+        this.paymentState = paymentState;
+        this.paymentUid = paymentUid;
+    }
 
 }
