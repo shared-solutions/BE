@@ -32,7 +32,7 @@ public class PaymentServiceImpl implements PaymentService{
     public String previewOrderUid(Long orderId) {
         Order result = orderRepository.findById(orderId).orElseThrow(() -> {
             throw new PaymentHandler(ErrorStatus.ORDER_ID_NOT_FOUND);
-        }); // 추후 핸들러, 에러상태 수정
+        });
         return result.getOrderUid();
     }
 
