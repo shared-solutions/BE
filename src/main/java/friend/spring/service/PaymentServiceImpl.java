@@ -5,6 +5,8 @@ import com.siot.IamportRestClient.exception.IamportResponseException;
 import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
+import friend.spring.apiPayload.code.status.ErrorStatus;
+import friend.spring.apiPayload.handler.PaymentHandler;
 import friend.spring.domain.Order;
 
 import friend.spring.domain.enums.PaymentState;
@@ -28,13 +30,17 @@ public class PaymentServiceImpl implements PaymentService{
 
     @Override
     public String previewOrderUid(Long orderId) {
-        Order result = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("주문 번호가 없습니다.")); // 추후 핸들러, 에러상태 수정
+        Order result = orderRepository.findById(orderId).orElseThrow(() -> {
+            throw new PaymentHandler(ErrorStatus.ORDER_ID_NOT_FOUND);
+        }); // 추후 핸들러, 에러상태 수정
         return result.getOrderUid();
     }
 
     @Override
     public PaymentResponseDTO previewOrderResponse(String orderUid) {
-        Order order = orderRepository.findOrderAndPaymentAndMember(orderUid).orElseThrow(() ->  new RuntimeException("주문이 존재하지 않습니다."));
+        Order order = orderRepository.findOrderAndPaymentAndMember(orderUid).orElseThrow(() ->  {
+            throw new PaymentHandler(ErrorStatus.ORDER_NOT_FOUND);
+        });
 
         return PaymentResponseDTO.builder()
                 .buyerName(order.getUser().getNickname())
@@ -56,7 +62,7 @@ public class PaymentServiceImpl implements PaymentService{
             if(!iamportResponse.getResponse().getStatus().equals("paid")) {
                 orderRepository.delete(order);
                 paymentRepository.delete(order.getPayment());
-                throw new RuntimeException("결제 미완료 에러입니다.");
+                throw new PaymentHandler(ErrorStatus.PAYMENT_NOT_PAID);
             }
 
             // 데이터 베이스상에 있는 결제금액
@@ -74,7 +80,7 @@ public class PaymentServiceImpl implements PaymentService{
                 // 결제금액 위변조로 의심되는 결제 금액을 취소
                 iamportClient.cancelPaymentByImpUid(new CancelData(iamportResponse.getResponse().getImpUid(), true, new BigDecimal(iamportPrice)));
 
-                throw new RuntimeException("결제금액 위변조 의심");
+                throw new PaymentHandler(ErrorStatus.PRICE_NOT_OK);
             }
             // 결제 상태 변경
             order.getPayment().changePaymentBySuccess(PaymentState.PAID, iamportResponse.getResponse().getImpUid());

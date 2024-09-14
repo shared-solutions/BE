@@ -1,6 +1,7 @@
 package friend.spring.service;
 
 import friend.spring.apiPayload.code.status.ErrorStatus;
+import friend.spring.apiPayload.handler.PaymentHandler;
 import friend.spring.apiPayload.handler.UserHandler;
 import friend.spring.domain.Order;
 import friend.spring.domain.Payment;
@@ -41,7 +42,7 @@ public class OrderServiceImpl implements OrderService{
             price = 2000L;
         }
         else {
-            throw new RuntimeException("잘못된 상품 이름입니다."); // 추후에 에러핸들러와 에러 코드 만들어야합니다.
+            throw new PaymentHandler(ErrorStatus.ORDER_PRODUCT_NOT_FOUND);
         }
 
         Long userId = jwtTokenProvider.getCurrentUser(request);
@@ -73,7 +74,7 @@ public class OrderServiceImpl implements OrderService{
     @Override
     public Order checkOrder(Long orderId) {
         return orderRepository.findById(orderId).orElseThrow(() -> {
-            throw new RuntimeException("주문 id가 존재하지 않습니다."); // 추후에 핸들러,에러상태 추가해야합니다.
+            throw new PaymentHandler(ErrorStatus.ORDER_NOT_FOUND);
         });
     }
 
