@@ -89,6 +89,7 @@ public class PaymentServiceImpl implements PaymentService{
             } else {
                // 추후 pm님과 상의 후 포인트 로직 추가하거나 수정하면 될 것 같습니다.
             }
+            return iamportResponse;
         } catch (IamportResponseException | IOException e) {
             throw new RuntimeException(e);
         }

@@ -7,10 +7,12 @@ import lombok.*;
 import javax.persistence.*;
 import java.math.BigDecimal;
 
+@Entity
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+
 public class Order extends BaseEntity {
 
     @Id

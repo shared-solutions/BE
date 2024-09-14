@@ -26,7 +26,7 @@ public class OrderController {
 
     // 생성된 주문 id 로 체크
     @GetMapping("/check")
-    public Order checkOrder(Long orderId) {
+    public Order checkOrder(Long orderId, @RequestHeader("atk") String atk, HttpServletRequest request) {
         return orderService.checkOrder(orderId);
     }
 }

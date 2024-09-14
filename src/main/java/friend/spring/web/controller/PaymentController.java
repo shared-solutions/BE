@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RestController
 @RequiredArgsConstructor
 public class PaymentController {
@@ -25,7 +27,7 @@ public class PaymentController {
 
 
     @GetMapping("/payment/{orderId}")
-    public ApiResponse<PaymentResponseDTO> paymentPreview(@PathVariable Long orderId) {
+    public ApiResponse<PaymentResponseDTO> paymentPreview(@PathVariable Long orderId, @RequestHeader("atk") String atk, HttpServletRequest request) {
 
         String orderUid = paymentService.previewOrderUid(orderId);
         PaymentResponseDTO paymentResponseDTO = paymentService.previewOrderResponse(orderUid);
@@ -33,7 +35,7 @@ public class PaymentController {
     }
 
     @PostMapping("/payment")
-    public ApiResponse<IamportResponse<Payment>> validationPayment(@RequestBody PaymentCallback paymentCallback) {
+    public ApiResponse<IamportResponse<Payment>> validationPayment(@RequestBody PaymentCallback paymentCallback, @RequestHeader("atk") String atk, HttpServletRequest request) {
         IamportResponse<Payment> iamportResponse = paymentService.paymentByCallBack(paymentCallback);
         log.info("결제 응답입니다.", iamportResponse.getResponse().toString()); // 결제 응답 로그 출력입니다.
         return ApiResponse.onSuccess(iamportResponse);
