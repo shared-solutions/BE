@@ -78,7 +78,15 @@ public enum ErrorStatus implements BaseErrorCode {
 
 
     // 공지사항 관련 응답
-    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICE4001", "공지사항이 없습니다.");
+    NOTICE_NOT_FOUND(HttpStatus.NOT_FOUND, "NOTICE4001", "공지사항이 없습니다."),
+
+    // 결제 관련 응답
+    ORDER_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT4001", "주문건을 찾을 수 없습니다"),
+    ORDER_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT4002", "해당 주문 번호가 존재하지 않습니다"),
+    ORDER_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "PAYMENT4003", "해당 상품을 찾을 수 없습니다."),
+    PRICE_NOT_OK(HttpStatus.CONFLICT, "PAYMENT4004", "결제 금액이 실제 결제 금액과 불일치합니다.(결제 금액 위변조 의심)"),
+    PAYMENT_NOT_PAID(HttpStatus.PAYMENT_REQUIRED, "PAYMENT4005", "결제 미완료 에러입니다.");
+
 
     private final HttpStatus httpStatus;
     private final String code;
